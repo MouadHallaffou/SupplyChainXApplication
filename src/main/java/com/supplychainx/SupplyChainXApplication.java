@@ -15,7 +15,7 @@ public class SupplyChainXApplication {
 
     @GetMapping("/")
     public String home() {
-        return "Welcome to SupplyChainX!";
+        return "Welcome to SupplyChainX Application!";
     }
 
 }
