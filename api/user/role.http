@@ -1,0 +1,23 @@
+POST http://localhost:8080/api/v1/roles
+Content-Type: application/json
+
+{
+    "name": "GESTIONNAIRE_APPROVISIONNEMENT"
+}
+
+###
+GET http://localhost:8080/api/v1/roles
+
+###
+GET http://localhost:8080/api/v1/roles/2
+
+###
+PUT http://localhost:8080/api/v1/roles/20
+Content-Type: application/json
+
+{
+    "name": "superadmin"
+}
+
+###
+DELETE http://localhost:8080/api/v1/roles/20
