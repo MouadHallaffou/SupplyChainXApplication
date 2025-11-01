@@ -1,0 +1,41 @@
+### environnement
+@baseUrl = http://localhost:8080/api/v1/matieres-premieres
+
+###
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "name": "Chocolat",
+  "stockMinimum": 150,
+  "stockQuantity": 500,
+  "unit": "kg",
+  "fournisseurIds": [
+    6,
+    8
+  ]
+}
+
+
+###
+GET {{baseUrl}}?page=0&size=10
+
+###
+GET {{baseUrl}}/3
+
+###
+PUT {{baseUrl}}/3
+Content-Type: application/json
+
+{
+  "name": "Acier Inoxydable",
+  "stockMinimum": 150.00,
+  "stockQuantity": 450,
+  "unit": "kg",
+    "fournisseurIds": [
+        8
+    ]
+}
+
+###
+DELETE {{baseUrl}}/2
