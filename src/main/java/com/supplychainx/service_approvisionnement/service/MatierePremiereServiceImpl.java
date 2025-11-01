@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class MatierePremiereServiceImpl implements MatierePremiereService {
     private final MatierePremiereRepository matierePremiereRepository;
@@ -26,6 +25,7 @@ public class MatierePremiereServiceImpl implements MatierePremiereService {
     private final FournisseurRepository fournisseurRepository;
 
     @Override
+    @Transactional
     public MatierePremiereResponseDTO create(MatierePremiereRequestDTO dto) {
         if (dto == null) {
             throw new ResourceNotFoundException("MatierePremiereRequestDTO object is null");
@@ -58,6 +58,7 @@ public class MatierePremiereServiceImpl implements MatierePremiereService {
     }
 
     @Override
+    @Transactional
     public MatierePremiereResponseDTO update(MatierePremiereRequestDTO matierePremiereRequestDTO, Long id) {
         MatierePremiere existingMatierePremiere = matierePremiereRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("MatierePremiere not found with id: " + id));
@@ -79,6 +80,7 @@ public class MatierePremiereServiceImpl implements MatierePremiereService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         if (!matierePremiereRepository.existsById(id)) {
             throw new ResourceNotFoundException("MatierePremiere not found with id: " + id);

@@ -13,13 +13,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepository;
     private final RoleMapper roleMapper;
 
     @Override
+    @Transactional
     public RoleResponseDTO create(RoleRequestDTO roleRequestDTO) {
         Role role = roleMapper.toEntity(roleRequestDTO);
         Role savedRole = roleRepository.save(role);
@@ -34,6 +34,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    @Transactional
     public RoleResponseDTO update(Long id, RoleRequestDTO roleRequestDTO) {
         Role existingRole = roleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found with id: " + id));
@@ -44,6 +45,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         if (roleRepository.findById(id).isEmpty()) {
             throw new ResourceNotFoundException("Role not found with id: " + id);

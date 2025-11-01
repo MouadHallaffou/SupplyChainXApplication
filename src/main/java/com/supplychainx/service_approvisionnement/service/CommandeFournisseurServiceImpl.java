@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class CommandeFournisseurServiceImpl implements CommandeFournisseurService {
     private final CommandeFournisseurMapper commandeFournisseurMapper;
@@ -26,6 +25,7 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
     private final CommandeFournisseurRepository commandeFournisseurRepository;
 
     @Override
+    @Transactional
     public CommandeFournisseurResponseDTO create(CommandeFournisseurRequestDTO commandeFournisseurRequestDTO) {
         CommandeFournisseur commandeFournisseur = commandeFournisseurMapper.toEntity(commandeFournisseurRequestDTO);
         List<CommandeFournisseurMatiere> matiereList = commandeFournisseurRequestDTO.getCommandeFournisseurMatieres()
@@ -40,7 +40,6 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
     }
 
     @Override
-    @Transactional(readOnly = true)
     public CommandeFournisseurResponseDTO getById(Long id) {
         CommandeFournisseur commande = commandeFournisseurRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Commande not found with id: " + id));
@@ -48,6 +47,7 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
     }
 
     @Override
+    @Transactional
     public CommandeFournisseurResponseDTO update(CommandeFournisseurRequestDTO commandeFournisseurRequestDTO, Long id) {
         CommandeFournisseur existingCommande = commandeFournisseurRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Commande not found with id: " + id));
@@ -65,6 +65,7 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         if (!commandeFournisseurRepository.existsById(id)) {
             throw new RuntimeException("Commande not found with id: " + id);

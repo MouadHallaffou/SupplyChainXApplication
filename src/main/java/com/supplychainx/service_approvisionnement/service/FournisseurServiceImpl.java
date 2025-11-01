@@ -15,12 +15,12 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class FournisseurServiceImpl implements FournisseurService {
     private final FournisseurRepository fournisseurRepository;
     private final FournisseurMapper fournisseurMapper;
 
     @Override
+    @Transactional
     public FournisseurResponseDTO create(FournisseurRequestDTO fournisseurRequestDTO) {
         Fournisseur fournisseur = fournisseurMapper.toEntity(fournisseurRequestDTO);
         Fournisseur savedFournisseur = fournisseurRepository.save(fournisseur);
@@ -35,6 +35,7 @@ public class FournisseurServiceImpl implements FournisseurService {
     }
 
     @Override
+    @Transactional
     public FournisseurResponseDTO update(FournisseurRequestDTO fournisseurRequestDTO, Long id) {
         Fournisseur existingFournisseur = fournisseurRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Fournisseur not found " + id));
@@ -48,6 +49,7 @@ public class FournisseurServiceImpl implements FournisseurService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         if (!fournisseurRepository.existsById(id)) {
             throw new ResourceNotFoundException("Fournisseur not found " + id);
