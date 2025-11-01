@@ -5,10 +5,10 @@ import com.supplychainx.service_user.dto.UserResponseDTO;
 import com.supplychainx.service_user.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
-
     // convertir requestDTO to Entity
     @Mapping(target = "role.roleId", source = "roleId")
     User toEntity(UserRequestDTO dto);
@@ -18,4 +18,5 @@ public interface UserMapper {
     @Mapping(target = "isActive", source = "isActive")
     UserResponseDTO toResponseDTO(User user);
 
+    void updateEntityFromDTO(UserRequestDTO userRequestDTO,@MappingTarget User existingUser);
 }
