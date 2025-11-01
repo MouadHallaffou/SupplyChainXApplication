@@ -1,18 +1,22 @@
-POST http://localhost:8080/api/v1/roles
+### environment
+@baseUrl = http://localhost:8080/api/v1/roles
+
+###
+POST {{baseUrl}}
 Content-Type: application/json
 
 {
-    "name": "GESTIONNAIRE_APPROVISIONNEMENT"
+    "name": "CHEF_PRODUCTION"
 }
 
 ###
-GET http://localhost:8080/api/v1/roles
+GET {{baseUrl}}
 
 ###
-GET http://localhost:8080/api/v1/roles/2
+GET {{baseUrl}}/2
 
 ###
-PUT http://localhost:8080/api/v1/roles/20
+PUT {{baseUrl}}/20
 Content-Type: application/json
 
 {
@@ -20,4 +24,4 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://localhost:8080/api/v1/roles/20
+DELETE {{baseUrl}}/20
