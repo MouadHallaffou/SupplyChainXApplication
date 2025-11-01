@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class RoleDTO {
+public class RoleRequestDTO {
     private Long roleId;
 
     @NotBlank(message = "Role name is required")
