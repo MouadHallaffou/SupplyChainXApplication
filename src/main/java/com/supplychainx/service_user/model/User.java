@@ -1,5 +1,6 @@
 package com.supplychainx.service_user.model;
 
+import jakarta.annotation.PreDestroy;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -34,6 +35,12 @@ public class User {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
+    @Column(name = "is_deleted", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private Boolean isDeleted = false;
+
+    @Column(name = "deleted_at", nullable = true)
+    private LocalDateTime deletedAt;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -45,6 +52,7 @@ public class User {
         LocalDateTime now = LocalDateTime.now();
         this.createdAt = now;
         this.updatedAt = now;
+        if (this.isDeleted == null) this.isDeleted = false;
     }
 
     @PreUpdate

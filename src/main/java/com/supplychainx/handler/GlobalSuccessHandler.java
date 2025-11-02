@@ -32,4 +32,7 @@ public class GlobalSuccessHandler {
         return handleSuccess(message, HttpStatus.OK);
     }
 
+    public static ResponseEntity<Map<String, Object>> handleActivate(String message) {
+        return handleSuccess(message, HttpStatus.OK);
+    }
 }

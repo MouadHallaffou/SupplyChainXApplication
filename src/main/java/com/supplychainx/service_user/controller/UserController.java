@@ -40,9 +40,22 @@ public class UserController {
         return GlobalSuccessHandler.handleSuccessWithData("User updated successfully", updatedDTO);
     }
 
-    @DeleteMapping("/{id}")
+    @PutMapping("/softDelete/{id}")
     public ResponseEntity<Map<String, Object>> deleteUser(@PathVariable("id") Long id) {
-        userService.delete(id);
+        userService.softDelete(id);
         return GlobalSuccessHandler.handleDeleted("User deleted successfully");
     }
+
+    @PutMapping("/deactivate/{id}")
+    public ResponseEntity<Map<String, Object>> deactivateUser(@PathVariable("id") Long id) {
+        userService.deactivate(id);
+        return GlobalSuccessHandler.handleDeleted("User deactivated successfully");
+    }
+
+    @PutMapping("/activate/{id}")
+    public ResponseEntity<Map<String, Object>> activateUser(@PathVariable("id") Long id) {
+        userService.activate(id);
+        return GlobalSuccessHandler.handleActivate("User activated successfully");
+    }
+
 }
