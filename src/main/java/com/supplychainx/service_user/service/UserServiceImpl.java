@@ -1,5 +1,6 @@
 package com.supplychainx.service_user.service;
 
+import com.fasterxml.jackson.annotation.OptBoolean;
 import com.supplychainx.exception.ResourceNotFoundException;
 import com.supplychainx.service_user.dto.UserRequestDTO;
 import com.supplychainx.service_user.dto.UserResponseDTO;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -102,4 +104,8 @@ public class UserServiceImpl implements UserService {
                 .toList();
     }
 
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
 }

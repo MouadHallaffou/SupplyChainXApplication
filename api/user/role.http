@@ -4,9 +4,11 @@
 ###
 POST {{baseUrl}}
 Content-Type: application/json
+email: mouad@gmail.ma #invalid field, just for testing headers
+password: 00000000 #invalid field, just for testing headers
 
 {
-    "name": "CHEF_PRODUCTION"
+  "name": "PLANIFICATEUR"
 }
 
 ###
