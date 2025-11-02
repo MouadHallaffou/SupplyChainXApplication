@@ -24,8 +24,11 @@ public class UserRequestDTO {
     @NotBlank(message = "PasswordUtil is required")
     private String password;
 
-//    @NotNull(message = "Active status is required")
+    @NotNull(message = "Active status is required")
     private Boolean isActive;
+
+    @NotNull(message = "Deleted status is required")
+    private Boolean isDeleted;
 
     @NotNull(message = "Role ID is required")
     private Long roleId;
