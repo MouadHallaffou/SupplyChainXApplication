@@ -14,9 +14,13 @@ public interface UserMapper {
     User toEntity(UserRequestDTO dto);
 
     // convertir Entity to responseDTO
-    @Mapping(target = "roleName", source = "role.name")
+    @Mapping(target = "userId", source = "userId")
+    @Mapping(target = "roleName", source = "role.name", defaultValue = "No Role Assigned")
     @Mapping(target = "isActive", source = "isActive")
+    @Mapping(target = "isDeleted", source = "isDeleted")
     UserResponseDTO toResponseDTO(User user);
 
+    @Mapping(target = "userId", ignore = true)
+    @Mapping(target = "role", ignore = true)
     void updateEntityFromDTO(UserRequestDTO userRequestDTO,@MappingTarget User existingUser);
 }

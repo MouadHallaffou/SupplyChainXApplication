@@ -9,6 +9,8 @@ public interface UserService {
     UserResponseDTO create(UserRequestDTO userRequestDTO);
     UserResponseDTO getById(Long id);
     UserResponseDTO update(Long id, UserRequestDTO userRequestDTO);
-    void delete(Long id);
+    void softDelete(Long id);
+    void deactivate(Long id);
+    void activate(Long id);
     List<UserResponseDTO> getAll();
 }

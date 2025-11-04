@@ -5,32 +5,40 @@ POST {{baseUrl}}
 Content-Type: application/json
 
 {
-  "firstName": "mouad",
+  "firstName": "jabir",
   "lastName": "hallaffou",
-  "email": "mouad@gmail.com",
+  "email": "jabir@gmail.com",
   "password": "12345678",
   "isActive": true,
-  "roleId": 1
+  "isDeleted": false,
+  "roleId": 2
 }
 
 ###
 GET {{baseUrl}}
 
 ###
-GET {{baseUrl}}/1
+GET {{baseUrl}}/2
 
 ###
-PUT {{baseUrl}}/10
+PUT {{baseUrl}}/5
 Content-Type: application/json
 
 {
-  "firstName": "mouad",
+  "firstName": "anass",
   "lastName": "hallaffou",
-  "email": "mouad@gmail.ma",
-  "password": "12345678",
+  "email": "anasshlf@gmail.ma",
+  "password": "00000000",
   "isActive": true,
-  "roleId": 1
+  "isDeleted": false,
+  "roleId": 2
 }
 
 ###
-DELETE {{baseUrl}}/10
+PUT {{baseUrl}}/activate/5
+
+###
+PUT {{baseUrl}}/deactivate/5
+
+###
+PUT {{baseUrl}}/softDelete/2
