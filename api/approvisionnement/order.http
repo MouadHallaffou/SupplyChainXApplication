@@ -8,7 +8,7 @@ Content-Type: application/json
 {
   "fournisseurId": 8,
   "orderDate": "2024-06-20",
-  "status": "EN_COURS",
+  "status": "EN_ATTENTE",
   "commandeFournisseurMatieres": [
     {
       "matierePremiereId": 3,
@@ -49,3 +49,12 @@ Content-Type: application/json
 
 ###
 DELETE {{baseUrl}}/7
+
+### start order processing
+PUT {{baseUrl}}/11/start
+
+### complete order processing
+PUT {{baseUrl}}/11/complete
+
+### cancel order
+PUT {{baseUrl}}/11/cancel

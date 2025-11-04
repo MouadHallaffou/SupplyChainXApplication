@@ -38,4 +38,8 @@ Content-Type: application/json
 }
 
 ###
-DELETE {{baseUrl}}/2
+DELETE {{baseUrl}}/5
+
+### filter par stock minimum
+GET {{baseUrl}}/filtrer-par-stock-critique?stockCritique=150&page=0&size=5
+

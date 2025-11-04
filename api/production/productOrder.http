@@ -1,0 +1,35 @@
+### environement
+@baseUrl = http://localhost:8080/api/v1/products-orders
+
+### create a new product order
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "productId": 1,
+  "quantity": 10,
+  "status": "EN_ATTENTE",
+  "startDate": "2024-07-01T10:00:00Z",
+  "endDate": "2024-07-10T10:00:00Z"
+}
+
+### Get all product orders
+GET {{baseUrl}}?page=0&size=10
+
+### Get a product order by ID
+GET {{baseUrl}}/1
+
+### Update a product order
+PUT {{baseUrl}}/1
+Content-Type: application/json
+
+{
+    "productId": 1,
+    "quantity": 15,
+    "status": "BLOQUEE",
+    "startDate": "2024-07-01T10:00:00Z",
+    "endDate": "2024-07-15T10:00:00Z"
+}
+
+### Delete a product order
+DELETE {{baseUrl}}/1
