@@ -11,4 +11,5 @@ public interface FournisseurService {
     FournisseurResponseDTO update(FournisseurRequestDTO fournisseurRequestDTO, Long id);
     void delete(Long id);
     List<FournisseurResponseDTO> getAll();
+    FournisseurResponseDTO searchByName(String name);
 }

@@ -5,6 +5,7 @@ import com.supplychainx.service_approvisionnement.dto.FournisseurRequestDTO;
 import com.supplychainx.service_approvisionnement.dto.FournisseurResponseDTO;
 import com.supplychainx.service_approvisionnement.mapper.FournisseurMapper;
 import com.supplychainx.service_approvisionnement.model.Fournisseur;
+import com.supplychainx.service_approvisionnement.repository.CommandeFournisseurRepository;
 import com.supplychainx.service_approvisionnement.repository.FournisseurRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 public class FournisseurServiceImpl implements FournisseurService {
     private final FournisseurRepository fournisseurRepository;
     private final FournisseurMapper fournisseurMapper;
+    private final CommandeFournisseurRepository commandeFournisseurRepository;
 
     @Override
     @Transactional
@@ -54,6 +56,16 @@ public class FournisseurServiceImpl implements FournisseurService {
         if (!fournisseurRepository.existsById(id)) {
             throw new ResourceNotFoundException("Fournisseur not found " + id);
         }
+        // check si have never active orders before delete
+        boolean hasActiveOrders = commandeFournisseurRepository.findAll().stream()
+                .anyMatch(commande -> commande.getFournisseur() != null &&
+                        commande.getFournisseur().getFournisseurId().equals(id)
+                && commande.getStatus().name().equals("EN_COURS") || commande.getStatus().name().equals("EN_ATTENTE"));
+
+        if (hasActiveOrders) {
+            throw new IllegalStateException("Cannot delete fournisseur with active orders " + id);
+        }
+
         fournisseurRepository.deleteById(id);
     }
 
@@ -63,6 +75,13 @@ public class FournisseurServiceImpl implements FournisseurService {
                 .stream()
                 .map(fournisseurMapper::toResponseDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public FournisseurResponseDTO searchByName(String name) {
+        Fournisseur fournisseur = fournisseurRepository.findByNameIgnoreCase(name)
+                .orElseThrow(() -> new ResourceNotFoundException("Fournisseur not found with name: " + name));
+        return fournisseurMapper.toResponseDTO(fournisseur);
     }
 
 }

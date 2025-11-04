@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/fournisseurs")
 @RequiredArgsConstructor
+@RequestMapping("/api/v1/fournisseurs")
 public class FournisseurController {
     private final FournisseurService fournisseurService;
 
@@ -44,4 +44,10 @@ public class FournisseurController {
         fournisseurService.delete(id);
         return GlobalSuccessHandler.handleDeleted("Fournisseur deleted successfully");
     }
+
+    @GetMapping("/search")
+    public FournisseurResponseDTO searchFournisseurByName(@RequestParam("name") String name) {
+        return fournisseurService.searchByName(name);
+    }
+
 }
