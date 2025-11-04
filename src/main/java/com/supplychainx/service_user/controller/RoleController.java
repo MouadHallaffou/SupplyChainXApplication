@@ -4,6 +4,7 @@ import com.supplychainx.handler.GlobalSuccessHandler;
 import com.supplychainx.service_user.dto.RoleRequestDTO;
 import com.supplychainx.service_user.dto.RoleResponseDTO;
 import com.supplychainx.service_user.service.RoleService;
+import com.supplychainx.util.AuthUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class RoleController {
     private final RoleService roleService;
+    private final AuthUtil authUtil;
 
     @GetMapping
     public List<RoleResponseDTO> getAllRoles() {
@@ -24,7 +26,11 @@ public class RoleController {
     }
 
     @PostMapping
-    public ResponseEntity<Map<String,Object>> createRole(@Valid @RequestBody RoleRequestDTO roleRequestDTO) {
+    public ResponseEntity<Map<String, Object>> createRole(
+            @RequestHeader("email") String email,
+            @RequestHeader("password") String password,
+            @Valid @RequestBody RoleRequestDTO roleRequestDTO) {
+        authUtil.verifyAccess(email, password, "ADMIN");
         RoleResponseDTO createdDTO = roleService.create(roleRequestDTO);
         return GlobalSuccessHandler.handleSuccessWithData("Role created successfully", createdDTO);
     }

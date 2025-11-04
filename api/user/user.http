@@ -21,17 +21,17 @@ GET {{baseUrl}}
 GET {{baseUrl}}/2
 
 ###
-PUT {{baseUrl}}/5
+PUT {{baseUrl}}/2
 Content-Type: application/json
 
 {
-  "firstName": "anass",
+  "firstName": "mouad",
   "lastName": "hallaffou",
-  "email": "anasshlf@gmail.ma",
+  "email": "mouadhlf@gmail.ma",
   "password": "00000000",
   "isActive": true,
   "isDeleted": false,
-  "roleId": 2
+  "roleId": 1
 }
 
 ###

@@ -47,4 +47,12 @@ public class MatierePremiereController {
         matierePremiereService.delete(id);
         return GlobalSuccessHandler.handleDeleted("Matière premiere deleted successfully");
     }
+
+    @GetMapping("/filtrer-par-stock-critique")
+    public Page<MatierePremiereResponseDTO> filtrerParStockCritique(@RequestParam int stockCritique,
+                                                                   @RequestParam(defaultValue = "0") int page,
+                                                                   @RequestParam(defaultValue = "10") int size) {
+        return matierePremiereService.filtrerParStockCritique(stockCritique, page, size);
+    }
+
 }

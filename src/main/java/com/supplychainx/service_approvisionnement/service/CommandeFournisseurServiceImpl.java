@@ -6,6 +6,7 @@ import com.supplychainx.service_approvisionnement.mapper.CommandeFournisseurMapp
 import com.supplychainx.service_approvisionnement.mapper.CommandeFournisseurMatiereMapper;
 import com.supplychainx.service_approvisionnement.model.CommandeFournisseur;
 import com.supplychainx.service_approvisionnement.model.CommandeFournisseurMatiere;
+import com.supplychainx.service_approvisionnement.model.enums.FournisseurOrderStatus;
 import com.supplychainx.service_approvisionnement.repository.CommandeFournisseurRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -36,6 +37,7 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
             matiere.setCommandeFournisseur(commandeFournisseur);
         }
         commandeFournisseur.setCommandeFournisseurMatieres(matiereList);
+        commandeFournisseur.setStatus(FournisseurOrderStatus.EN_ATTENTE);
         return commandeFournisseurMapper.toResponseDTO(commandeFournisseurRepository.save(commandeFournisseur));
     }
 
@@ -73,14 +75,41 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
         commandeFournisseurRepository.deleteById(id);
     }
 
-  @Override
-  public Page<CommandeFournisseurResponseDTO> getAllCommandeFournisseurs(int page, int size) {
-      Pageable pageable = Pageable.ofSize(size).withPage(page);
-      Page<CommandeFournisseur> commandeFournisseurPage = commandeFournisseurRepository.findAll(pageable);
-      List<CommandeFournisseurResponseDTO> dtoList = commandeFournisseurPage
-              .map(commandeFournisseurMapper::toResponseDTO)
-              .getContent();
-      return new PageImpl<>(dtoList, commandeFournisseurPage.getPageable(), commandeFournisseurPage.getTotalElements());
-  }
+    @Override
+    public Page<CommandeFournisseurResponseDTO> getAllCommandeFournisseurs(int page, int size) {
+        Pageable pageable = Pageable.ofSize(size).withPage(page);
+        Page<CommandeFournisseur> commandeFournisseurPage = commandeFournisseurRepository.findAll(pageable);
+        List<CommandeFournisseurResponseDTO> dtoList = commandeFournisseurPage
+                .map(commandeFournisseurMapper::toResponseDTO)
+                .getContent();
+        return new PageImpl<>(dtoList, commandeFournisseurPage.getPageable(), commandeFournisseurPage.getTotalElements());
+    }
+
+    @Override
+    @Transactional
+    public CommandeFournisseurResponseDTO startProductionOrder(Long id) {
+        CommandeFournisseur commandeFournisseur = commandeFournisseurRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Commande not found with id: " + id));
+        commandeFournisseur.setStatus(FournisseurOrderStatus.EN_COURS);
+        return commandeFournisseurMapper.toResponseDTO(commandeFournisseurRepository.save(commandeFournisseur));
+    }
+
+    @Override
+    @Transactional
+    public CommandeFournisseurResponseDTO completeProductionOrder(Long id) {
+        CommandeFournisseur commandeFournisseur = commandeFournisseurRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Commande not found with id: " + id));
+        commandeFournisseur.setStatus(FournisseurOrderStatus.RECUE);
+        return commandeFournisseurMapper.toResponseDTO(commandeFournisseurRepository.save(commandeFournisseur));
+    }
+
+    @Override
+    @Transactional
+    public CommandeFournisseurResponseDTO cancelProductionOrder(Long id) {
+        CommandeFournisseur commandeFournisseur = commandeFournisseurRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Commande not found with id: " + id));
+        commandeFournisseur.setStatus(FournisseurOrderStatus.ANNULEE);
+        return commandeFournisseurMapper.toResponseDTO(commandeFournisseurRepository.save(commandeFournisseur));
+    }
 
 }

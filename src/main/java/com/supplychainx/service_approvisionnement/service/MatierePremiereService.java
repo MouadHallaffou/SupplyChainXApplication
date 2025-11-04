@@ -10,4 +10,5 @@ public interface MatierePremiereService {
     MatierePremiereResponseDTO update(MatierePremiereRequestDTO matierePremiereRequestDTO, Long id);
     void delete(Long id);
     Page<MatierePremiereResponseDTO> getAll(int page, int size);
+    Page<MatierePremiereResponseDTO> filtrerParStockCritique(int stockCritique, int page, int size);
 }
