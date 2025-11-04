@@ -1,6 +1,5 @@
 package com.supplychainx.service_user.service;
 
-import com.fasterxml.jackson.annotation.OptBoolean;
 import com.supplychainx.exception.ResourceNotFoundException;
 import com.supplychainx.service_user.dto.UserRequestDTO;
 import com.supplychainx.service_user.dto.UserResponseDTO;

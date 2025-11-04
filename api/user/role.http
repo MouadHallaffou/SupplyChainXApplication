@@ -8,7 +8,7 @@ email: mouad@gmail.ma #invalid field, just for testing headers
 password: 00000000 #invalid field, just for testing headers
 
 {
-  "name": "PLANIFICATEUR"
+  "name": "SUPERVISEUR_PRODUCTION"
 }
 
 ###

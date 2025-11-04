@@ -30,10 +30,7 @@ public class RoleController {
             @RequestHeader("email") String email,
             @RequestHeader("password") String password,
             @Valid @RequestBody RoleRequestDTO roleRequestDTO) {
-
-        // Vérifie que seul un ADMIN peut créer un rôle
         authUtil.verifyAccess(email, password, "ADMIN");
-
         RoleResponseDTO createdDTO = roleService.create(roleRequestDTO);
         return GlobalSuccessHandler.handleSuccessWithData("Role created successfully", createdDTO);
     }
