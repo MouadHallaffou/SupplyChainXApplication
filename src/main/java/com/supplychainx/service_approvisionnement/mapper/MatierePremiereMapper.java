@@ -3,6 +3,7 @@ package com.supplychainx.service_approvisionnement.mapper;
 import com.supplychainx.service_approvisionnement.dto.FournisseurResponseDTO;
 import com.supplychainx.service_approvisionnement.dto.MatierePremiereRequestDTO;
 import com.supplychainx.service_approvisionnement.dto.MatierePremiereResponseDTO;
+import com.supplychainx.service_approvisionnement.model.Fournisseur;
 import com.supplychainx.service_approvisionnement.model.MatierePremiere;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -20,7 +21,7 @@ public interface MatierePremiereMapper {
     @Mapping(target = "matierePremiereId", ignore = true) // Ignorer la mise à jour de l'ID
     void updateEntityFromDTO(MatierePremiereRequestDTO dto, @MappingTarget MatierePremiere entity);
 
-    default List<FournisseurResponseDTO> mapFournisseurs(List<com.supplychainx.service_approvisionnement.model.Fournisseur> fournisseurs) {
+    default List<FournisseurResponseDTO> mapFournisseurs(List<Fournisseur> fournisseurs) {
         if (fournisseurs == null) {
             return null;
         }

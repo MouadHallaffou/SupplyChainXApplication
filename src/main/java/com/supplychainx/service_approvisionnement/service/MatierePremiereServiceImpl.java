@@ -6,6 +6,7 @@ import com.supplychainx.service_approvisionnement.dto.MatierePremiereResponseDTO
 import com.supplychainx.service_approvisionnement.mapper.MatierePremiereMapper;
 import com.supplychainx.service_approvisionnement.model.Fournisseur;
 import com.supplychainx.service_approvisionnement.model.MatierePremiere;
+import com.supplychainx.service_approvisionnement.repository.CommandeFournisseurRepository;
 import com.supplychainx.service_approvisionnement.repository.FournisseurRepository;
 import com.supplychainx.service_approvisionnement.repository.MatierePremiereRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class MatierePremiereServiceImpl implements MatierePremiereService {
     private final MatierePremiereRepository matierePremiereRepository;
     private final MatierePremiereMapper matierePremiereMapper;
     private final FournisseurRepository fournisseurRepository;
+    private final CommandeFournisseurRepository commandeFournisseurRepository;
 
     @Override
     @Transactional
@@ -85,6 +87,16 @@ public class MatierePremiereServiceImpl implements MatierePremiereService {
         if (!matierePremiereRepository.existsById(id)) {
             throw new ResourceNotFoundException("MatierePremiere not found with id: " + id);
         }
+        // check if matiere not used in any CommandeFournisseur
+        boolean isUsedInOrders = commandeFournisseurRepository.findAll().stream()
+                .anyMatch(matierePremiere ->
+                    matierePremiere.getCommandeFournisseurMatieres().stream()
+                    .anyMatch(cmd -> cmd.getMatierePremiere().getMatierePremiereId().equals(id))
+                );
+        System.out.println(isUsedInOrders);
+        if (isUsedInOrders) {
+            throw new ResourceNotFoundException("Cannot delete MatierePremiere with id: " + id + " as it is used in existing orders.");
+        }
         matierePremiereRepository.deleteById(id);
     }
 
@@ -92,6 +104,13 @@ public class MatierePremiereServiceImpl implements MatierePremiereService {
     public Page<MatierePremiereResponseDTO> getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<MatierePremiere> matierePremierePage = matierePremiereRepository.findAll(pageable);
+        return matierePremierePage.map(matierePremiereMapper::toResponseDTO);
+    }
+
+    @Override
+    public Page<MatierePremiereResponseDTO> filtrerParStockCritique(int stockCritique, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<MatierePremiere> matierePremierePage = matierePremiereRepository.findByStockMinimumLessOrEqual(stockCritique, pageable);
         return matierePremierePage.map(matierePremiereMapper::toResponseDTO);
     }
 
