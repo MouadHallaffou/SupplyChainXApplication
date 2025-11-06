@@ -6,7 +6,7 @@ POST {{baseUrl}}
 Content-Type: application/json
 
 {
-  "name": "Product A",
+  "name": "Product B",
   "productionTimeHours": 48,
   "costPerUnit": 19.99,
   "stock": 100
