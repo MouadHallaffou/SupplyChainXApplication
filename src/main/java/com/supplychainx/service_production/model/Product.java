@@ -1,14 +1,20 @@
 package com.supplychainx.service_production.model;
 
+import com.supplychainx.service_livraison.model.OrderProductClient;
+import com.supplychainx.util.BaseEntity;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "products")
-public class Product {
+public class Product extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,21 +33,7 @@ public class Product {
     @Column(name = "stock", nullable = false)
     private Integer stock;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
-
-    @PrePersist
-    private void OnCreate() {
-        LocalDateTime now = LocalDateTime.now();
-        this.createdAt = now;
-        this.updatedAt = now;
-    }
-    @PreUpdate
-    public void OnUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderProductClient> orderProducts = new ArrayList<>();
 
 }

@@ -2,14 +2,17 @@ package com.supplychainx.service_production.model;
 
 import com.supplychainx.service_production.model.enums.ProductionOrderStatus;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "product_orders")
-public class ProductOrder {
+public class ProductOrder{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

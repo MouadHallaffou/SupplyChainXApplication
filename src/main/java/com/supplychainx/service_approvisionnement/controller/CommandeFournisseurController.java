@@ -4,6 +4,7 @@ import com.supplychainx.handler.GlobalSuccessHandler;
 import com.supplychainx.service_approvisionnement.dto.CommandeFournisseurRequestDTO;
 import com.supplychainx.service_approvisionnement.dto.CommandeFournisseurResponseDTO;
 import com.supplychainx.service_approvisionnement.service.CommandeFournisseurService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class CommandeFournisseurController {
     private final CommandeFournisseurService commandeFournisseurService;
 
     @PostMapping
-    public ResponseEntity<CommandeFournisseurResponseDTO> createCommandeFournisseur(@RequestBody CommandeFournisseurRequestDTO commandeFournisseurRequestDTO) {
+    public ResponseEntity<CommandeFournisseurResponseDTO> createCommandeFournisseur(@Valid @RequestBody CommandeFournisseurRequestDTO commandeFournisseurRequestDTO) {
         CommandeFournisseurResponseDTO responseDTO = commandeFournisseurService.create(commandeFournisseurRequestDTO);
         return ResponseEntity.ok(responseDTO);
     }
@@ -36,9 +37,7 @@ public class CommandeFournisseurController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CommandeFournisseurResponseDTO> updateCommandeFournisseur(@PathVariable("id") Long id, @RequestBody CommandeFournisseurRequestDTO commandeFournisseurRequestDTO) {
-        System.out.println("Updating CommandeFournisseur with ID: " + id);
-        System.out.println("Request Data: " + commandeFournisseurRequestDTO);
+    public ResponseEntity<CommandeFournisseurResponseDTO> updateCommandeFournisseur(@Valid @PathVariable("id") Long id, @RequestBody CommandeFournisseurRequestDTO commandeFournisseurRequestDTO) {
         CommandeFournisseurResponseDTO responseDTO = commandeFournisseurService.update(commandeFournisseurRequestDTO, id);
         return ResponseEntity.ok(responseDTO);
     }
