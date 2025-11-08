@@ -1,7 +1,7 @@
 package com.supplychainx.service_production.mapper;
 
-import com.supplychainx.service_production.dto.ProductOrderRequestDTO;
-import com.supplychainx.service_production.dto.ProductOrderResponseDTO;
+import com.supplychainx.service_production.dto.Request.ProductOrderRequestDTO;
+import com.supplychainx.service_production.dto.Response.ProductOrderResponseDTO;
 import com.supplychainx.service_production.model.ProductOrder;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

@@ -1,6 +1,5 @@
-package com.supplychainx.service_production.dto;
+package com.supplychainx.service_production.dto.Request;
 
-import com.supplychainx.service_production.model.Product;
 import com.supplychainx.service_production.model.enums.ProductionOrderStatus;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

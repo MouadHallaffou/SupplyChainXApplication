@@ -1,4 +1,4 @@
-package com.supplychainx.service_production.dto;
+package com.supplychainx.service_production.dto.Response;
 
 import com.supplychainx.service_production.model.enums.ProductionOrderStatus;
 
