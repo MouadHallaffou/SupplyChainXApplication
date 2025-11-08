@@ -26,10 +26,14 @@ public class Address extends BaseEntity {
     @Column(name = "state")
     private String state;
 
+    @Column(name = "country")
+    private String country;
+
     @Column(name = "zip_code", nullable = false)
     private String zipCode;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_client_id", nullable = false)
     private Client client;
 
 }
