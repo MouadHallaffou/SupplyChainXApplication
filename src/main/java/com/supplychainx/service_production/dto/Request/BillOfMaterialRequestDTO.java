@@ -1,4 +1,4 @@
-package com.supplychainx.service_production.dto;
+package com.supplychainx.service_production.dto.Request;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
