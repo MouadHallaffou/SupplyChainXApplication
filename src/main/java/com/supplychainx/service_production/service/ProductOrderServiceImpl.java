@@ -1,8 +1,8 @@
 package com.supplychainx.service_production.service;
 
 import com.supplychainx.exception.ResourceNotFoundException;
-import com.supplychainx.service_production.dto.ProductOrderRequestDTO;
-import com.supplychainx.service_production.dto.ProductOrderResponseDTO;
+import com.supplychainx.service_production.dto.Request.ProductOrderRequestDTO;
+import com.supplychainx.service_production.dto.Response.ProductOrderResponseDTO;
 import com.supplychainx.service_production.mapper.ProductOrderMapper;
 import com.supplychainx.service_production.model.ProductOrder;
 import com.supplychainx.service_production.model.enums.ProductionOrderStatus;
