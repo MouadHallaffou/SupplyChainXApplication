@@ -3,8 +3,8 @@ package com.supplychainx.service_production.service;
 import com.supplychainx.exception.ResourceNotFoundException;
 import com.supplychainx.service_approvisionnement.model.MatierePremiere;
 import com.supplychainx.service_approvisionnement.repository.MatierePremiereRepository;
-import com.supplychainx.service_production.dto.BillOfMaterialRequestDTO;
-import com.supplychainx.service_production.dto.BillOfMaterialResponseDTO;
+import com.supplychainx.service_production.dto.Request.BillOfMaterialRequestDTO;
+import com.supplychainx.service_production.dto.Response.BillOfMaterialResponseDTO;
 import com.supplychainx.service_production.mapper.BillOfMaterialMapper;
 import com.supplychainx.service_production.model.BillOfMaterial;
 import com.supplychainx.service_production.model.Product;
@@ -42,7 +42,6 @@ public class BillOfMaterialServiceImpl implements BillOfMaterialService {
     @Override
     @Transactional
     public BillOfMaterialResponseDTO updateBillOfMaterial(Long bomId, BillOfMaterialRequestDTO dto) {
-
         BillOfMaterial entity = billOfMaterialRepository.findById(bomId)
                 .orElseThrow(() -> new ResourceNotFoundException("Bill of Material not found with id: " + bomId));
 
@@ -59,7 +58,6 @@ public class BillOfMaterialServiceImpl implements BillOfMaterialService {
                     .orElseThrow(() -> new ResourceNotFoundException("MatierePremiere not found"));
             entity.setMatierePremiere(matierePremiere);
         }
-
         BillOfMaterial saved = billOfMaterialRepository.save(entity);
         return billOfMaterialMapper.toResponseDto(saved);
     }
