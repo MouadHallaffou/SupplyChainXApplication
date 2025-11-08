@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +35,7 @@ class CommandeFournisseurServiceImplTest {
     @Test void create_ShouldReturnResponseDTO() {
         CommandeFournisseurRequestDTO dto = new CommandeFournisseurRequestDTO();
         CommandeFournisseur commande = new CommandeFournisseur();
-        CommandeFournisseurResponseDTO responseDTO = new CommandeFournisseurResponseDTO(1L, null, null, null, List.of());
+        CommandeFournisseurResponseDTO responseDTO = new CommandeFournisseurResponseDTO(1L, LocalDate.now(), FournisseurOrderStatus.RECUE, "Mouad hlf", List.of());
 
         when(commandeFournisseurMapper.toEntity(dto)).thenReturn(commande);
         when(commandeFournisseurRepository.save(commande)).thenReturn(commande);

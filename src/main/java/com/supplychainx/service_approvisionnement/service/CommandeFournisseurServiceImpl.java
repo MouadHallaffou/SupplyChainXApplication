@@ -16,7 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,14 +32,9 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
     @Transactional
     public CommandeFournisseurResponseDTO create(CommandeFournisseurRequestDTO commandeFournisseurRequestDTO) {
         CommandeFournisseur commandeFournisseur = commandeFournisseurMapper.toEntity(commandeFournisseurRequestDTO);
-        List<CommandeFournisseurMatiere> matiereList = commandeFournisseurRequestDTO.getCommandeFournisseurMatieres()
-                .stream()
-                .map(commandeFournisseurMatiereMapper::toEntity)
-                .collect(Collectors.toList());
-        for (CommandeFournisseurMatiere matiere : matiereList) {
-            matiere.setCommandeFournisseur(commandeFournisseur);
-        }
-        commandeFournisseur.setCommandeFournisseurMatieres(matiereList);
+
+        handleCommandeMatieresSafely(commandeFournisseurRequestDTO, commandeFournisseur);
+
         commandeFournisseur.setStatus(FournisseurOrderStatus.EN_ATTENTE);
         return commandeFournisseurMapper.toResponseDTO(commandeFournisseurRepository.save(commandeFournisseur));
     }
@@ -55,16 +52,23 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
         CommandeFournisseur existingCommande = commandeFournisseurRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Commande not found with id: " + id));
         commandeFournisseurMapper.updateEntityFromDTO(commandeFournisseurRequestDTO, existingCommande);
-        List<CommandeFournisseurMatiere> matiereList = commandeFournisseurRequestDTO.getCommandeFournisseurMatieres()
-                .stream()
-                .map(commandeFournisseurMatiereMapper::toEntity)
-                .collect(Collectors.toList());
-        for (CommandeFournisseurMatiere matiere : matiereList) {
-            matiere.setCommandeFournisseur(existingCommande);
-        }
-        existingCommande.setCommandeFournisseurMatieres(matiereList);
+
+        handleCommandeMatieresSafely(commandeFournisseurRequestDTO, existingCommande);
+
         existingCommande.setOrderFournisseurId(id);
         return commandeFournisseurMapper.toResponseDTO(commandeFournisseurRepository.save(existingCommande));
+    }
+
+    private void handleCommandeMatieresSafely(CommandeFournisseurRequestDTO dto, CommandeFournisseur commande) {
+        List<CommandeFournisseurMatiere> matieres =
+                Optional.ofNullable(dto.getCommandeFournisseurMatieres())
+                        .orElse(Collections.emptyList())
+                        .stream()
+                        .map(commandeFournisseurMatiereMapper::toEntity)
+                        .peek(m -> m.setCommandeFournisseur(commande))
+                        .collect(Collectors.toList());
+
+        commande.setCommandeFournisseurMatieres(matieres);
     }
 
     @Override

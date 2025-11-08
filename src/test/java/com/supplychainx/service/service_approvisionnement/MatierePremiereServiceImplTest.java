@@ -35,7 +35,6 @@ class MatierePremiereServiceImplTest {
 
     @Test void create_ShouldReturnResponseDTO_WhenValidInput() {
         MatierePremiereRequestDTO dto = new MatierePremiereRequestDTO();
-        // "Matiere1", 100, 10, "kg", List.of(1L)
         dto.setName("Matiere1");
         dto.setMatierePremiereId(100L);
         dto.setStockQuantity(10);

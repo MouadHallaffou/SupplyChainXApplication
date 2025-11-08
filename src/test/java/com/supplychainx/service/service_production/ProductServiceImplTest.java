@@ -1,4 +1,4 @@
-package com.supplychainx.service_production.service;
+package com.supplychainx.service.service_production;
 
 import com.supplychainx.exception.ResourceNotFoundException;
 import com.supplychainx.service_production.dto.Request.ProductRequestDTO;
@@ -6,6 +6,7 @@ import com.supplychainx.service_production.dto.Response.ProductResponseDTO;
 import com.supplychainx.service_production.mapper.ProductMapper;
 import com.supplychainx.service_production.model.Product;
 import com.supplychainx.service_production.repository.ProductRepository;
+import com.supplychainx.service_production.service.ProductServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,7 +30,7 @@ class ProductServiceImplTest {
     @Test void createProduct_ShouldReturnResponseDTO() {
         ProductRequestDTO request = new ProductRequestDTO();
         Product product = new Product();
-        ProductResponseDTO response = new ProductResponseDTO(1L, "Product1", "Desc", 100.0, 10, "unit", null, null, null);
+        ProductResponseDTO response = new ProductResponseDTO(1L, "Updated", 11, 150.0, 15,   null, null);
 
         when(productMapper.toEntity(request)).thenReturn(product);
         when(productRepository.save(product)).thenReturn(product);
@@ -42,7 +43,7 @@ class ProductServiceImplTest {
 
     @Test void getProductById_ShouldReturnResponseDTO_WhenExists() {
         Product product = new Product();
-        ProductResponseDTO response = new ProductResponseDTO(1L, "Product1", "Desc", 100.0, 10, "unit", null, null, null);
+        ProductResponseDTO response = new ProductResponseDTO(1L, "Updated", 11, 150.0, 15,   null, null);
 
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
         when(productMapper.toResponseDto(product)).thenReturn(response);
@@ -60,7 +61,7 @@ class ProductServiceImplTest {
     @Test void updateProduct_ShouldReturnUpdatedDTO() {
         ProductRequestDTO request = new ProductRequestDTO();
         Product existing = new Product();
-        ProductResponseDTO response = new ProductResponseDTO(1L, "Updated", "Desc", 150.0, 15, "unit", null, null, null);
+        ProductResponseDTO response = new ProductResponseDTO(1L, "Updated", 11, 150.0, 15,   null, null);
 
         when(productRepository.findById(1L)).thenReturn(Optional.of(existing));
         when(productRepository.save(existing)).thenReturn(existing);
@@ -79,7 +80,7 @@ class ProductServiceImplTest {
 
     @Test void getAllProducts_ShouldReturnPage() {
         Product product = new Product();
-        ProductResponseDTO response = new ProductResponseDTO(1L, "Product1", "Desc", 100.0, 10, "unit", null, null, null);
+        ProductResponseDTO response = new ProductResponseDTO(1L, "Updated", 11, 150.0, 15,   null, null);
 
         when(productRepository.findAll()).thenReturn(List.of(product));
         when(productMapper.toResponseDto(product)).thenReturn(response);
@@ -91,7 +92,7 @@ class ProductServiceImplTest {
 
     @Test void getProductByName_ShouldReturnResponseDTO() {
         Product product = new Product();
-        ProductResponseDTO response = new ProductResponseDTO(1L, "Product1", "Desc", 100.0, 10, "unit", null, null, null);
+        ProductResponseDTO response = new ProductResponseDTO(1L, "Updated", 11, 150.0, 15,   null, null);
 
         when(productRepository.findByNameIgnoreCase("Product1")).thenReturn(Optional.of(product));
         when(productMapper.toResponseDto(product)).thenReturn(response);

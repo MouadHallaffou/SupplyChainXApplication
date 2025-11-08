@@ -8,6 +8,7 @@ import com.supplychainx.service_user.model.Role;
 import com.supplychainx.service_user.model.User;
 import com.supplychainx.service_user.repository.RoleRepository;
 import com.supplychainx.service_user.repository.UserRepository;
+import com.supplychainx.service_user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,7 +37,7 @@ public class TestUserService {
     private RoleRepository roleRepository;
 
     @InjectMocks
-    private UserServiceImpl userService;
+    private UserService userService;
 
     private User user;
     private UserRequestDTO userRequestDTO;

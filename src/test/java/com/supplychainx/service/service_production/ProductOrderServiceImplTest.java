@@ -1,4 +1,4 @@
-package com.supplychainx.service_production.service;
+package com.supplychainx.service.service_production;
 
 import com.supplychainx.service_production.dto.Request.ProductOrderRequestDTO;
 import com.supplychainx.service_production.dto.Response.ProductOrderResponseDTO;
@@ -6,6 +6,7 @@ import com.supplychainx.service_production.mapper.ProductOrderMapper;
 import com.supplychainx.service_production.model.ProductOrder;
 import com.supplychainx.service_production.model.enums.ProductionOrderStatus;
 import com.supplychainx.service_production.repository.ProductOrderRepository;
+import com.supplychainx.service_production.service.ProductOrderServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,7 +30,7 @@ class ProductOrderServiceImplTest {
     @Test void createProductOrder_ShouldReturnResponseDTO() {
         ProductOrderRequestDTO request = new ProductOrderRequestDTO();
         ProductOrder order = new ProductOrder();
-        ProductOrderResponseDTO response = new ProductOrderResponseDTO(1L, null, null, 0, null, null, null, null);
+        ProductOrderResponseDTO response = new ProductOrderResponseDTO(1L, null, null, 1L, null,  null);
 
         when(productOrderMapper.toEntity(request)).thenReturn(order);
         when(productOrderRepository.save(order)).thenReturn(order);
@@ -42,7 +43,7 @@ class ProductOrderServiceImplTest {
 
     @Test void getProductOrderById_ShouldReturnResponseDTO_WhenExists() {
         ProductOrder order = new ProductOrder();
-        ProductOrderResponseDTO response = new ProductOrderResponseDTO(1L, null, null, 0, null, null, null, null);
+        ProductOrderResponseDTO response = new ProductOrderResponseDTO(1L, null, null, 1L, null, null);
 
         when(productOrderRepository.findById(1L)).thenReturn(Optional.of(order));
         when(productOrderMapper.toResponseDTO(order)).thenReturn(response);
@@ -55,7 +56,7 @@ class ProductOrderServiceImplTest {
     @Test void updateProductOrder_ShouldReturnUpdatedDTO() {
         ProductOrderRequestDTO request = new ProductOrderRequestDTO();
         ProductOrder existing = new ProductOrder();
-        ProductOrderResponseDTO response = new ProductOrderResponseDTO(1L, null, null, 0, null, null, null, null);
+        ProductOrderResponseDTO response = new ProductOrderResponseDTO(1L, null, null, 1L, null, null);
 
         when(productOrderRepository.findById(1L)).thenReturn(Optional.of(existing));
         when(productOrderRepository.save(existing)).thenReturn(existing);
@@ -77,7 +78,7 @@ class ProductOrderServiceImplTest {
 
     @Test void getAllProductOrders_ShouldReturnPage() {
         ProductOrder order = new ProductOrder();
-        ProductOrderResponseDTO response = new ProductOrderResponseDTO(1L, null, null, 0, null, null, null, null);
+        ProductOrderResponseDTO response = new ProductOrderResponseDTO(1L, null, null, 1L, null, null);
 
         when(productOrderRepository.findAll()).thenReturn(List.of(order));
         when(productOrderMapper.toResponseDTO(order)).thenReturn(response);
@@ -89,7 +90,7 @@ class ProductOrderServiceImplTest {
 
     @Test void startProduction_ShouldUpdateStatusToEnProduction() {
         ProductOrder order = new ProductOrder();
-        ProductOrderResponseDTO response = new ProductOrderResponseDTO(1L, null, ProductionOrderStatus.EN_PRODUCTION, 0, null, null, null, null);
+        ProductOrderResponseDTO response = new ProductOrderResponseDTO(1L, null, ProductionOrderStatus.EN_PRODUCTION, 1L, null, null);
 
         when(productOrderRepository.findById(1L)).thenReturn(Optional.of(order));
         when(productOrderRepository.save(order)).thenReturn(order);
@@ -102,7 +103,7 @@ class ProductOrderServiceImplTest {
 
     @Test void completeProduction_ShouldUpdateStatusToTermine() {
         ProductOrder order = new ProductOrder();
-        ProductOrderResponseDTO response = new ProductOrderResponseDTO(1L, null, ProductionOrderStatus.TERMINE, 0, null, null, null, null);
+        ProductOrderResponseDTO response = new ProductOrderResponseDTO(1L, null, ProductionOrderStatus.TERMINE, 1L, null, null);
 
         when(productOrderRepository.findById(1L)).thenReturn(Optional.of(order));
         when(productOrderRepository.save(order)).thenReturn(order);
@@ -115,7 +116,7 @@ class ProductOrderServiceImplTest {
 
     @Test void cancelProduction_ShouldUpdateStatusToBloquee() {
         ProductOrder order = new ProductOrder();
-        ProductOrderResponseDTO response = new ProductOrderResponseDTO(1L, null, ProductionOrderStatus.BLOQUEE, 0, null, null, null, null);
+        ProductOrderResponseDTO response = new ProductOrderResponseDTO(1L, null, ProductionOrderStatus.BLOQUEE, 1L, null, null);
 
         when(productOrderRepository.findById(1L)).thenReturn(Optional.of(order));
         when(productOrderRepository.save(order)).thenReturn(order);

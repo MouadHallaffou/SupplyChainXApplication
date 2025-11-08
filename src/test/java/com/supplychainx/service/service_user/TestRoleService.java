@@ -6,6 +6,7 @@ import com.supplychainx.service_user.dto.Response.RoleResponseDTO;
 import com.supplychainx.service_user.mapper.RoleMapper;
 import com.supplychainx.service_user.model.Role;
 import com.supplychainx.service_user.repository.RoleRepository;
+import com.supplychainx.service_user.service.RoleServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,7 +32,7 @@ public class TestRoleService {
     private RoleMapper roleMapper;
 
     @InjectMocks
-    private RoleServiceImpl roleService;
+    private RoleServiceImpl roleService = new RoleServiceImpl(roleRepository, roleMapper);
 
     private Role role;
     private RoleRequestDTO roleRequestDTO;
