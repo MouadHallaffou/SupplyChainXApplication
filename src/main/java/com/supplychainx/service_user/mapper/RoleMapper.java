@@ -1,7 +1,7 @@
 package com.supplychainx.service_user.mapper;
 
-import com.supplychainx.service_user.dto.RoleRequestDTO;
-import com.supplychainx.service_user.dto.RoleResponseDTO;
+import com.supplychainx.service_user.dto.Request.RoleRequestDTO;
+import com.supplychainx.service_user.dto.Response.RoleResponseDTO;
 import com.supplychainx.service_user.model.Role;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;

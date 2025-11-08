@@ -1,7 +1,7 @@
 package com.supplychainx.service_production.service;
 
-import com.supplychainx.service_production.dto.ProductRequestDTO;
-import com.supplychainx.service_production.dto.ProductResponseDTO;
+import com.supplychainx.service_production.dto.Request.ProductRequestDTO;
+import com.supplychainx.service_production.dto.Response.ProductResponseDTO;
 import org.springframework.data.domain.Page;
 
 public interface ProductService {

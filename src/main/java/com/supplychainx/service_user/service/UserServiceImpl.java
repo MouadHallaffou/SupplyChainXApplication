@@ -1,8 +1,8 @@
 package com.supplychainx.service_user.service;
 
 import com.supplychainx.exception.ResourceNotFoundException;
-import com.supplychainx.service_user.dto.UserRequestDTO;
-import com.supplychainx.service_user.dto.UserResponseDTO;
+import com.supplychainx.service_user.dto.Request.UserRequestDTO;
+import com.supplychainx.service_user.dto.Response.UserResponseDTO;
 import com.supplychainx.service_user.mapper.UserMapper;
 import com.supplychainx.service_user.model.Role;
 import com.supplychainx.service_user.model.User;
@@ -51,6 +51,7 @@ public class UserServiceImpl implements UserService {
         Role role = roleRepository.findById(userRequestDTO.getRoleId())
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found with id: " + userRequestDTO.getRoleId()));
         existingUser.setRole(role);
+        existingUser.setUserId(id);
         User updatedUser = userRepository.save(existingUser);
         return userMapper.toResponseDTO(updatedUser);
     }

@@ -4,26 +4,37 @@
 ###
 POST {{baseUrl}}
 Content-Type: application/json
-email: mouad@gmail.ma #invalid field, just for testing headers
-password: 00000000 #invalid field, just for testing headers
+email: mouadhlf@gmail.ma
+password: 00000000
 
 {
-  "name": "SUPERVISEUR_PRODUCTION"
+  "name": "SUPERVISEUR_LIVRAISONS"
 }
 
 ###
 GET {{baseUrl}}
+Content-Type: application/json
+email: mouadhlf@gmail.ma
+password: 00000000
 
 ###
 GET {{baseUrl}}/2
+Content-Type: application/json
+email: mouadhlf@gmail.ma
+password: 00000000
 
 ###
-PUT {{baseUrl}}/20
+PUT {{baseUrl}}/11
 Content-Type: application/json
+email: mouadhlf@gmail.ma
+password: 00000000
 
 {
-    "name": "superadmin"
+    "name": "ADMIN"
 }
 
 ###
 DELETE {{baseUrl}}/20
+Content-Type: application/json
+email: mouadhlf@gmail.ma
+password: 00000000

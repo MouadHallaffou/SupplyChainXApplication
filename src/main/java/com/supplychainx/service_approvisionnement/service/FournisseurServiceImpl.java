@@ -1,8 +1,8 @@
 package com.supplychainx.service_approvisionnement.service;
 
 import com.supplychainx.exception.ResourceNotFoundException;
-import com.supplychainx.service_approvisionnement.dto.FournisseurRequestDTO;
-import com.supplychainx.service_approvisionnement.dto.FournisseurResponseDTO;
+import com.supplychainx.service_approvisionnement.dto.Request.FournisseurRequestDTO;
+import com.supplychainx.service_approvisionnement.dto.Response.FournisseurResponseDTO;
 import com.supplychainx.service_approvisionnement.mapper.FournisseurMapper;
 import com.supplychainx.service_approvisionnement.model.Fournisseur;
 import com.supplychainx.service_approvisionnement.repository.CommandeFournisseurRepository;
@@ -41,11 +41,8 @@ public class FournisseurServiceImpl implements FournisseurService {
     public FournisseurResponseDTO update(FournisseurRequestDTO fournisseurRequestDTO, Long id) {
         Fournisseur existingFournisseur = fournisseurRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Fournisseur not found " + id));
-
-        // Mettre à jour l'entité existante avec les données du DTO
         fournisseurMapper.updateEntityFromDTO(fournisseurRequestDTO, existingFournisseur);
         existingFournisseur.setFournisseurId(id);
-
         Fournisseur updatedFournisseur = fournisseurRepository.save(existingFournisseur);
         return fournisseurMapper.toResponseDTO(updatedFournisseur);
     }

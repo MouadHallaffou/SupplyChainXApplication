@@ -1,7 +1,7 @@
 package com.supplychainx.service_production.service;
 
-import com.supplychainx.service_production.dto.BillOfMaterialRequestDTO;
-import com.supplychainx.service_production.dto.BillOfMaterialResponseDTO;
+import com.supplychainx.service_production.dto.Request.BillOfMaterialRequestDTO;
+import com.supplychainx.service_production.dto.Response.BillOfMaterialResponseDTO;
 import org.springframework.data.domain.Page;
 
 public interface BillOfMaterialService {

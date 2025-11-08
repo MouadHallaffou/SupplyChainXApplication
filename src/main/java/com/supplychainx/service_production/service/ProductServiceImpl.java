@@ -1,8 +1,8 @@
 package com.supplychainx.service_production.service;
 
 import com.supplychainx.exception.ResourceNotFoundException;
-import com.supplychainx.service_production.dto.ProductRequestDTO;
-import com.supplychainx.service_production.dto.ProductResponseDTO;
+import com.supplychainx.service_production.dto.Request.ProductRequestDTO;
+import com.supplychainx.service_production.dto.Response.ProductResponseDTO;
 import com.supplychainx.service_production.mapper.ProductMapper;
 import com.supplychainx.service_production.model.Product;
 import com.supplychainx.service_production.repository.ProductRepository;
@@ -39,8 +39,6 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public ProductResponseDTO updateProduct(ProductRequestDTO productRequestDTO, Long id) {
         Product existingProduct = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
-        System.out.println("Existing product before update: " + existingProduct);
-        System.out.println("ProductRequestDTO: " + productRequestDTO);
         productMapper.updateEntityFromDto(productRequestDTO, existingProduct);
         existingProduct.setProductId(id);
         Product updatedProduct = productRepository.save(existingProduct);

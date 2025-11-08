@@ -1,7 +1,6 @@
 package com.supplychainx.service_livraison.model;
 
-import com.supplychainx.service_livraison.model.enums.OrderClientStatus;
-import com.supplychainx.service_production.model.Product;
+import com.supplychainx.service_livraison.model.enums.ClientOrderStatus;
 import com.supplychainx.util.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -30,11 +29,15 @@ public class ClientOrder extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private OrderClientStatus status;
+    private ClientOrderStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "delivery_address_id")
+    private Address deliveryAddress;
 
     @Column(name = "total_amount")
     private Double totalAmount;

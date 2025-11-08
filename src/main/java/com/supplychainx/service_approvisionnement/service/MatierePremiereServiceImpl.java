@@ -1,8 +1,8 @@
 package com.supplychainx.service_approvisionnement.service;
 
 import com.supplychainx.exception.ResourceNotFoundException;
-import com.supplychainx.service_approvisionnement.dto.MatierePremiereRequestDTO;
-import com.supplychainx.service_approvisionnement.dto.MatierePremiereResponseDTO;
+import com.supplychainx.service_approvisionnement.dto.Request.MatierePremiereRequestDTO;
+import com.supplychainx.service_approvisionnement.dto.Response.MatierePremiereResponseDTO;
 import com.supplychainx.service_approvisionnement.mapper.MatierePremiereMapper;
 import com.supplychainx.service_approvisionnement.model.Fournisseur;
 import com.supplychainx.service_approvisionnement.model.MatierePremiere;
@@ -15,8 +15,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
@@ -77,6 +75,7 @@ public class MatierePremiereServiceImpl implements MatierePremiereService {
             }
             fournisseurRepository.save(fournisseur);
         }
+        existingMatierePremiere.setMatierePremiereId(id);
         MatierePremiere updatedMatierePremiere = matierePremiereRepository.save(existingMatierePremiere);
         return matierePremiereMapper.toResponseDTO(updatedMatierePremiere);
     }

@@ -1,8 +1,8 @@
 package com.supplychainx.service_approvisionnement.mapper;
 
-import com.supplychainx.service_approvisionnement.dto.FournisseurResponseDTO;
-import com.supplychainx.service_approvisionnement.dto.MatierePremiereRequestDTO;
-import com.supplychainx.service_approvisionnement.dto.MatierePremiereResponseDTO;
+import com.supplychainx.service_approvisionnement.dto.Response.FournisseurResponseDTO;
+import com.supplychainx.service_approvisionnement.dto.Request.MatierePremiereRequestDTO;
+import com.supplychainx.service_approvisionnement.dto.Response.MatierePremiereResponseDTO;
 import com.supplychainx.service_approvisionnement.model.Fournisseur;
 import com.supplychainx.service_approvisionnement.model.MatierePremiere;
 import org.mapstruct.Mapper;

@@ -1,7 +1,8 @@
 package com.supplychainx.service_approvisionnement.service;
 
-import com.supplychainx.service_approvisionnement.dto.CommandeFournisseurResponseDTO;
-import com.supplychainx.service_approvisionnement.dto.CommandeFournisseurRequestDTO;
+import com.supplychainx.exception.ResourceNotFoundException;
+import com.supplychainx.service_approvisionnement.dto.Response.CommandeFournisseurResponseDTO;
+import com.supplychainx.service_approvisionnement.dto.Request.CommandeFournisseurRequestDTO;
 import com.supplychainx.service_approvisionnement.mapper.CommandeFournisseurMapper;
 import com.supplychainx.service_approvisionnement.mapper.CommandeFournisseurMatiereMapper;
 import com.supplychainx.service_approvisionnement.model.CommandeFournisseur;
@@ -44,7 +45,7 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
     @Override
     public CommandeFournisseurResponseDTO getById(Long id) {
         CommandeFournisseur commande = commandeFournisseurRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Commande not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Commande not found with id: " + id));
         return commandeFournisseurMapper.toResponseDTO(commande);
     }
 
@@ -52,7 +53,7 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
     @Transactional
     public CommandeFournisseurResponseDTO update(CommandeFournisseurRequestDTO commandeFournisseurRequestDTO, Long id) {
         CommandeFournisseur existingCommande = commandeFournisseurRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Commande not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Commande not found with id: " + id));
         commandeFournisseurMapper.updateEntityFromDTO(commandeFournisseurRequestDTO, existingCommande);
         List<CommandeFournisseurMatiere> matiereList = commandeFournisseurRequestDTO.getCommandeFournisseurMatieres()
                 .stream()
@@ -70,7 +71,7 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
     @Transactional
     public void delete(Long id) {
         if (!commandeFournisseurRepository.existsById(id)) {
-            throw new RuntimeException("Commande not found with id: " + id);
+            throw new ResourceNotFoundException("Commande not found with id: " + id);
         }
         commandeFournisseurRepository.deleteById(id);
     }
@@ -89,7 +90,7 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
     @Transactional
     public CommandeFournisseurResponseDTO startProductionOrder(Long id) {
         CommandeFournisseur commandeFournisseur = commandeFournisseurRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Commande not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Commande not found with id: " + id));
         commandeFournisseur.setStatus(FournisseurOrderStatus.EN_COURS);
         return commandeFournisseurMapper.toResponseDTO(commandeFournisseurRepository.save(commandeFournisseur));
     }
@@ -98,7 +99,7 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
     @Transactional
     public CommandeFournisseurResponseDTO completeProductionOrder(Long id) {
         CommandeFournisseur commandeFournisseur = commandeFournisseurRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Commande not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Commande not found with id: " + id));
         commandeFournisseur.setStatus(FournisseurOrderStatus.RECUE);
         return commandeFournisseurMapper.toResponseDTO(commandeFournisseurRepository.save(commandeFournisseur));
     }
@@ -107,7 +108,7 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
     @Transactional
     public CommandeFournisseurResponseDTO cancelProductionOrder(Long id) {
         CommandeFournisseur commandeFournisseur = commandeFournisseurRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Commande not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Commande not found with id: " + id));
         commandeFournisseur.setStatus(FournisseurOrderStatus.ANNULEE);
         return commandeFournisseurMapper.toResponseDTO(commandeFournisseurRepository.save(commandeFournisseur));
     }

@@ -1,7 +1,7 @@
 package com.supplychainx.service_approvisionnement.service;
 
-import com.supplychainx.service_approvisionnement.dto.FournisseurRequestDTO;
-import com.supplychainx.service_approvisionnement.dto.FournisseurResponseDTO;
+import com.supplychainx.service_approvisionnement.dto.Request.FournisseurRequestDTO;
+import com.supplychainx.service_approvisionnement.dto.Response.FournisseurResponseDTO;
 
 import java.util.List;
 

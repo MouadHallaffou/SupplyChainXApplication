@@ -1,8 +1,8 @@
 package com.supplychainx.service_livraison.service;
 
 import com.supplychainx.exception.ResourceNotFoundException;
-import com.supplychainx.service_livraison.dto.ClientRequestDTO;
-import com.supplychainx.service_livraison.dto.ClientResponseDTO;
+import com.supplychainx.service_livraison.dto.Request.ClientRequestDTO;
+import com.supplychainx.service_livraison.dto.Response.ClientResponseDTO;
 import com.supplychainx.service_livraison.mapper.ClientMapper;
 import com.supplychainx.service_livraison.model.Client;
 import com.supplychainx.service_livraison.repository.ClientRepository;
@@ -38,7 +38,6 @@ public class ClientServiceImpl implements ClientService {
     public ClientResponseDTO updateClient(Long clientId, ClientRequestDTO clientRequestDTO) {
         Client existingClient = clientRepository.findById(clientId).orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + clientId));
         clientMapper.toUpdateEntity(clientRequestDTO, existingClient);
-        existingClient.setClientId(clientId);
         Client updatedClient = clientRepository.save(existingClient);
         return clientMapper.toResponseDTO(updatedClient);
     }

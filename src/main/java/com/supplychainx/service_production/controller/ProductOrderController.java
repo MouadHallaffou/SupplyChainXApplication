@@ -1,8 +1,8 @@
 package com.supplychainx.service_production.controller;
 
 import com.supplychainx.handler.GlobalSuccessHandler;
-import com.supplychainx.service_production.dto.ProductOrderResponseDTO;
-import com.supplychainx.service_production.dto.ProductOrderRequestDTO;
+import com.supplychainx.service_production.dto.Response.ProductOrderResponseDTO;
+import com.supplychainx.service_production.dto.Request.ProductOrderRequestDTO;
 import com.supplychainx.service_production.service.ProductOrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
