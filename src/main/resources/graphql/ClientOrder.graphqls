@@ -1,0 +1,69 @@
+type AddressResponse {
+    addressId: ID!
+    street: String!
+    city: String!
+    state: String
+    zipCode: String!
+    country: String
+    createdAt: String
+    updatedAt: String
+}
+
+type ClientResponse {
+    clientId: ID!
+    name: String!
+    email: String!
+    phoneNumber: String
+    createdAt: String
+    updatedAt: String
+}
+
+type ClientOrderResponse {
+    orderId: ID!
+    orderNumber: String!
+    client: ClientResponse
+    deliveryAddress: AddressResponse
+    status: String!
+    totalAmount: Float
+    items: [OrderItemResponse!]!
+    createdAt: String
+    updatedAt: String
+}
+
+type OrderItemResponse {
+    id: ID!
+    productId: ID!
+    productName: String
+    quantity: Int!
+}
+
+type ClientOrderPage {
+    content: [ClientOrderResponse!]!
+    totalElements: Int!
+    totalPages: Int!
+    size: Int!
+    number: Int!
+}
+
+input ClientOrderInput {
+    clientId: ID!
+    deliveryAddressId: ID
+    items: [OrderItemInput!]!
+}
+
+input OrderItemInput {
+    productId: ID!
+    quantity: Int!
+}
+
+extend type Query {
+    getClientOrderById(orderId: ID!): ClientOrderResponse
+    getAllClientOrders(page: Int, size: Int, sortBy: String): ClientOrderPage
+    getClientOrdersByStatus(status: String!, page: Int, size: Int): ClientOrderPage
+}
+
+extend type Mutation {
+    createClientOrder(input: ClientOrderInput!): ClientOrderResponse!
+    updateClientOrder(orderId: ID!, input: ClientOrderInput!): ClientOrderResponse!
+    cancelClientOrder(orderId: ID!): ClientOrderResponse!
+}
