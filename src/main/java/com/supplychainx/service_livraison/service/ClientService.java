@@ -1,7 +1,7 @@
 package com.supplychainx.service_livraison.service;
 
-import com.supplychainx.service_livraison.dto.ClientRequestDTO;
-import com.supplychainx.service_livraison.dto.ClientResponseDTO;
+import com.supplychainx.service_livraison.dto.Request.ClientRequestDTO;
+import com.supplychainx.service_livraison.dto.Response.ClientResponseDTO;
 import org.springframework.data.domain.Page;
 
 public interface ClientService {
