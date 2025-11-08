@@ -6,27 +6,27 @@ POST {{baseUrl}}
 Content-Type: application/json
 
 {
-  "name": "Product B",
+  "name": "Product C",
   "productionTimeHours": 48,
-  "costPerUnit": 19.99,
-  "stock": 100
+  "costPerUnit": 119.99,
+  "stock": 200
 }
 
 ### Get all products
 GET {{baseUrl}}?page=1&size=10
 
 ### Get product by ID
-GET {{baseUrl}}/10
+GET {{baseUrl}}/3
 
 ### Update product by ID
-PUT {{baseUrl}}/10
+PUT {{baseUrl}}/1
 Content-Type: application/json
 
 {
   "name": "Updated Product A",
   "productionTimeHours": 72,
-  "costPerUnit": 24.99,
-  "stock": 150
+  "costPerUnit": 214.99,
+  "stock": 1500
 }
 
 ### Delete product by ID
