@@ -1,4 +1,4 @@
-package com.supplychainx.service_approvisionnement.dto;
+package com.supplychainx.service_approvisionnement.dto.Request;
 
 import com.supplychainx.service_approvisionnement.model.enums.FournisseurOrderStatus;
 import jakarta.validation.constraints.NotNull;
@@ -9,6 +9,7 @@ import java.util.List;
 
 @Data
 public class CommandeFournisseurRequestDTO {
+    private Long orderFournisseurId;
     @NotNull(message = "Le fournisseur est obligatoire")
     private Long fournisseurId;
     @NotNull(message = "La date de la commande est obligatoire")
