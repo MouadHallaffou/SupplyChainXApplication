@@ -1,7 +1,7 @@
 package com.supplychainx.service_user.service;
 
-import com.supplychainx.service_user.dto.RoleRequestDTO;
-import com.supplychainx.service_user.dto.RoleResponseDTO;
+import com.supplychainx.service_user.dto.Request.RoleRequestDTO;
+import com.supplychainx.service_user.dto.Response.RoleResponseDTO;
 
 import java.util.List;
 

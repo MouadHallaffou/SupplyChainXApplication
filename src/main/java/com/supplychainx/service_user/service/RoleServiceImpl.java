@@ -1,8 +1,8 @@
 package com.supplychainx.service_user.service;
 
 import com.supplychainx.exception.ResourceNotFoundException;
-import com.supplychainx.service_user.dto.RoleRequestDTO;
-import com.supplychainx.service_user.dto.RoleResponseDTO;
+import com.supplychainx.service_user.dto.Request.RoleRequestDTO;
+import com.supplychainx.service_user.dto.Response.RoleResponseDTO;
 import com.supplychainx.service_user.mapper.RoleMapper;
 import com.supplychainx.service_user.model.Role;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +40,7 @@ public class RoleServiceImpl implements RoleService {
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found with id: " + id));
 
         roleMapper.updateEntityFromDTO(roleRequestDTO, existingRole);
+        existingRole.setRoleId(id);
         Role updatedRole = roleRepository.save(existingRole);
         return roleMapper.toDTO(updatedRole);
     }
