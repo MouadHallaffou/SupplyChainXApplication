@@ -1,0 +1,55 @@
+type Livraison {
+    livraisonId: ID!
+    clientOrderId: ID!
+    cost: Float!
+    deliveryDate: String!
+    vehicule: String!
+    driverName: String!
+    status: LivraisonStatus!
+    address: String!
+    createdAt: String!
+    updatedAt: String!
+}
+
+enum LivraisonStatus {
+    PLANNIFIEE,
+    EN_COURS,
+    TERMINEE,
+    ANNULEE
+}
+
+type LivraisonPage {
+    content: [Livraison!]!
+    totalElements: Int!
+    totalPages: Int!
+    number: Int!
+    size: Int!
+    empty: Boolean!
+}
+
+input  LivraisonInput {
+    clientOrderId: ID!
+    vehicule: String!
+    driverName: String!
+    cost: Float!
+    deliveryDate: String!
+    status: LivraisonStatus
+}
+
+extend type Query {
+    getAllLivraisons(
+        page: Int = 0,
+        size: Int = 10,
+        sortBy: String = "livraisonId",
+        sortDir: String = "asc"
+    ): LivraisonPage!
+
+    getLivraisonById(id: ID!): Livraison
+}
+
+extend type Mutation {
+    createLivraison(input: LivraisonInput!): Livraison!
+    updateLivraison(id: ID!, input: LivraisonInput!): Livraison!
+    deleteLivraison(id: ID!): Boolean!
+    updateLivraisonStatus(id: ID!, status: LivraisonStatus!): Livraison!
+}
