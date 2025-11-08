@@ -1,4 +1,4 @@
-package com.supplychainx.service_user.dto;
+package com.supplychainx.service_user.dto.Request;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;

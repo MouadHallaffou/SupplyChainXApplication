@@ -1,7 +1,7 @@
 package com.supplychainx.service_user.service;
 
-import com.supplychainx.service_user.dto.UserRequestDTO;
-import com.supplychainx.service_user.dto.UserResponseDTO;
+import com.supplychainx.service_user.dto.Request.UserRequestDTO;
+import com.supplychainx.service_user.dto.Response.UserResponseDTO;
 import com.supplychainx.service_user.model.User;
 
 import java.util.List;

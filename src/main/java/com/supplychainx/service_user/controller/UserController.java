@@ -1,8 +1,8 @@
 package com.supplychainx.service_user.controller;
 
 import com.supplychainx.handler.GlobalSuccessHandler;
-import com.supplychainx.service_user.dto.UserRequestDTO;
-import com.supplychainx.service_user.dto.UserResponseDTO;
+import com.supplychainx.service_user.dto.Request.UserRequestDTO;
+import com.supplychainx.service_user.dto.Response.UserResponseDTO;
 import com.supplychainx.service_user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
