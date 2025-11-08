@@ -1,4 +1,4 @@
-package com.supplychainx.service_approvisionnement.dto;
+package com.supplychainx.service_approvisionnement.dto.Request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
