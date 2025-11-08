@@ -1,8 +1,8 @@
 package com.supplychainx.service_approvisionnement.controller;
 
 import com.supplychainx.handler.GlobalSuccessHandler;
-import com.supplychainx.service_approvisionnement.dto.FournisseurRequestDTO;
-import com.supplychainx.service_approvisionnement.dto.FournisseurResponseDTO;
+import com.supplychainx.service_approvisionnement.dto.Request.FournisseurRequestDTO;
+import com.supplychainx.service_approvisionnement.dto.Response.FournisseurResponseDTO;
 import com.supplychainx.service_approvisionnement.service.FournisseurService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
