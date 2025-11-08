@@ -1,8 +1,8 @@
 package com.supplychainx.service_livraison.service;
 
 import com.supplychainx.exception.ResourceNotFoundException;
-import com.supplychainx.service_livraison.dto.AddressRequestDTO;
-import com.supplychainx.service_livraison.dto.AddressResponseDTO;
+import com.supplychainx.service_livraison.dto.Request.AddressRequestDTO;
+import com.supplychainx.service_livraison.dto.Response.AddressResponseDTO;
 import com.supplychainx.service_livraison.mapper.AddressMapper;
 import com.supplychainx.service_livraison.model.Address;
 import com.supplychainx.service_livraison.model.Client;
@@ -11,6 +11,7 @@ import com.supplychainx.service_livraison.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +36,7 @@ public class AddressServiceImpl implements AddressService {
             throw new IllegalArgumentException("Address with street: " + addressRequestDTO.getStreet() + " already exists.");
         }
         Client client = clientRepository.findById(addressRequestDTO.getClientId())
-                .orElseThrow(() -> new RuntimeException("Client not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Client not found"));
         Address address = addressMapper.toEntity(addressRequestDTO);
         address.setClient(client);
         Address savedAddress = addressRepository.save(address);
@@ -53,11 +54,10 @@ public class AddressServiceImpl implements AddressService {
         }
         if (addressRequestDTO.getClientId() != null) {
             Client client = clientRepository.findById(addressRequestDTO.getClientId())
-                    .orElseThrow(() -> new RuntimeException("Client not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Client not found"));
             existingAddress.setClient(client);
         }
         addressMapper.toUpdateEntity(addressRequestDTO, existingAddress);
-        existingAddress.setAddressId(addressId);
         Address updatedAddress = addressRepository.save(existingAddress);
         return addressMapper.toResponseDTO(updatedAddress);
     }
@@ -71,8 +71,11 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public Page<AddressResponseDTO> getAllAddresses(int page, int size) {
-        Page<Address> addressPage = addressRepository.findAll(PageRequest.of(page, size));
+    public Page<AddressResponseDTO> getAllAddresses(int page, int size, String sortBy, String direction) {
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+        Page<Address> addressPage = addressRepository.findAll(PageRequest.of(page, size, sort));
         return addressPage.map(addressMapper::toResponseDTO);
     }
 
