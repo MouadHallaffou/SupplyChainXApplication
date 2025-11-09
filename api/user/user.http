@@ -19,6 +19,9 @@ GET {{baseUrl}}
 
 ###
 GET {{baseUrl}}/2
+Content-Type: application/json
+email: mouadhlf@gmail.ma
+password: 00000000
 
 ###
 PUT {{baseUrl}}/2
