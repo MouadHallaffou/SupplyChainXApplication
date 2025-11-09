@@ -18,9 +18,9 @@ Content-Type: application/json
 GET {{baseUrl}}
 
 ###
-GET {{baseUrl}}/2
+GET {{baseUrl}}/1
 Content-Type: application/json
-email: mouadhlf@gmail.ma
+email: admin@supplychainx.com
 password: 00000000
 
 ###
