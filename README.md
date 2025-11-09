@@ -337,7 +337,7 @@ Les schémas sont définis dans `src/main/resources/graphql/` :
 
 **Créer un client :**
 
-```graphql
+```graphqli
 mutation {
   createClient(input: {
     nom: "Entreprise XYZ"
@@ -360,7 +360,7 @@ mutation {
 
 **Lister tous les clients :**
 
-```graphql
+```graphqli
 query {
   allClients(page: 0, size: 10) {
     content {
@@ -381,7 +381,7 @@ query {
 
 **Créer une livraison :**
 
-```graphql
+```graphqli
 mutation {
   createLivraison(input: {
     commandeClientId: 1
@@ -581,7 +581,7 @@ SupplyChainX/
 
 #### Queries
 
-```graphql
+```graphqli
 # Clients
 allClients(page: Int, size: Int): ClientPage
 clientById(id: ID!): Client
@@ -597,7 +597,7 @@ livraisonById(id: ID!): Livraison
 
 #### Mutations
 
-```graphql
+```graphqli
 # Clients
 createClient(input: ClientInput!): Client
 updateClient(id: ID!, input: ClientInput!): Client

@@ -65,5 +65,69 @@ class AddressTestImplTest {
         verify(addressRepository).save(address);
     }
 
-}
+    @Test
+    void update_ShouldReturnResponseDTO() {
+        // Given
+        Long addressId = 1L;
+        AddressRequestDTO requestDTO = new AddressRequestDTO();
+        requestDTO.setStreet("Updated Street");
+        requestDTO.setClientId(1L);
 
+        Client client = new Client();
+        client.setClientId(1L);
+
+        Address existingAddress = new Address();
+        Address updatedAddress = new Address();
+        AddressResponseDTO responseDTO = new AddressResponseDTO(1L, "Updated Street", "City", "State", "12342", "maroc", 1L,"mouad", null, null);
+
+        when(addressRepository.findById(addressId)).thenReturn(Optional.of(existingAddress));
+        when(clientRepository.findById(1L)).thenReturn(Optional.of(client));
+        when(addressMapper.toEntity(requestDTO)).thenReturn(updatedAddress);
+        when(addressRepository.save(existingAddress)).thenReturn(updatedAddress);
+        when(addressMapper.toResponseDTO(updatedAddress)).thenReturn(responseDTO);
+
+        // When
+        AddressResponseDTO result = addressService.updateAddress(addressId, requestDTO);
+
+        // Then
+        assertNotNull(result);
+        verify(addressRepository).findById(addressId);
+        verify(clientRepository).findById(1L);
+        verify(addressRepository).save(existingAddress);
+    }
+
+    @Test
+    void delete_ShouldInvokeRepositoryDelete() {
+        // Given
+        Long addressId = 1L;
+        Address existingAddress = new Address();
+
+        when(addressRepository.findById(addressId)).thenReturn(Optional.of(existingAddress));
+
+        // When
+        addressService.deleteAddress(addressId);
+
+        // Then
+        verify(addressRepository).findById(addressId);
+        verify(addressRepository).deleteById(addressId);
+    }
+
+    @Test
+    void getById_ShouldReturnResponseDTO() {
+        // Given
+        Long addressId = 1L;
+        Address existingAddress = new Address();
+        AddressResponseDTO responseDTO = new AddressResponseDTO(1L, "Test Street", "City", "State", "12342", "maroc", 1L,"mouad", null, null);
+
+        when(addressRepository.findById(addressId)).thenReturn(Optional.of(existingAddress));
+        when(addressMapper.toResponseDTO(existingAddress)).thenReturn(responseDTO);
+
+        // When
+        AddressResponseDTO result = addressService.getAddressById(addressId);
+
+        // Then
+        assertNotNull(result);
+        verify(addressRepository).findById(addressId);
+    }
+
+}
