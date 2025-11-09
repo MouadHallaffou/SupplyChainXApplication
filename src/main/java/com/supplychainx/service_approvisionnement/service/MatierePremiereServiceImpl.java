@@ -36,14 +36,17 @@ public class MatierePremiereServiceImpl implements MatierePremiereService {
                     .orElseThrow(() -> new ResourceNotFoundException(
                             "Fournisseur not found with id: " + fournisseurId));
             // Vérifier doublon pour ce fournisseur
-            boolean exists = fournisseur.getMatieresPremieres().stream()
-                    .anyMatch(m -> m.getName().equalsIgnoreCase(dto.getName()));
+            boolean exists = fournisseur.getMatieresPremieres() != null &&
+                    fournisseur.getMatieresPremieres().stream()
+                            .anyMatch(m -> m.getName().equalsIgnoreCase(dto.getName()));
             if (exists) {
                 throw new ResourceNotFoundException(
                         "MatierePremiere with name '" + dto.getName() + "' already exists for fournisseur " + fournisseur.getName());
             }
             matiere.getFournisseurs().add(fournisseur);
-            fournisseur.getMatieresPremieres().add(matiere);
+            if (fournisseur.getMatieresPremieres() != null) {
+                fournisseur.getMatieresPremieres().add(matiere);
+            }
             fournisseurRepository.save(fournisseur);
         }
         MatierePremiere saved = matierePremiereRepository.save(matiere);
@@ -70,7 +73,8 @@ public class MatierePremiereServiceImpl implements MatierePremiereService {
                     .orElseThrow(() -> new ResourceNotFoundException(
                             "Fournisseur not found with id: " + fournisseurId));
             existingMatierePremiere.getFournisseurs().add(fournisseur);
-            if (!fournisseur.getMatieresPremieres().contains(existingMatierePremiere)) {
+            if (fournisseur.getMatieresPremieres() != null &&
+                    !fournisseur.getMatieresPremieres().contains(existingMatierePremiere)) {
                 fournisseur.getMatieresPremieres().add(existingMatierePremiere);
             }
             fournisseurRepository.save(fournisseur);
@@ -89,8 +93,8 @@ public class MatierePremiereServiceImpl implements MatierePremiereService {
         // check if matiere not used in any CommandeFournisseur
         boolean isUsedInOrders = commandeFournisseurRepository.findAll().stream()
                 .anyMatch(matierePremiere ->
-                    matierePremiere.getCommandeFournisseurMatieres().stream()
-                    .anyMatch(cmd -> cmd.getMatierePremiere().getMatierePremiereId().equals(id))
+                        matierePremiere.getCommandeFournisseurMatieres().stream()
+                                .anyMatch(cmd -> cmd.getMatierePremiere().getMatierePremiereId().equals(id))
                 );
         System.out.println(isUsedInOrders);
         if (isUsedInOrders) {

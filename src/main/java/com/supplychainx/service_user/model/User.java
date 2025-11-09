@@ -1,15 +1,18 @@
 package com.supplychainx.service_user.model;
 
-import jakarta.annotation.PreDestroy;
+import com.supplychainx.util.BaseEntity;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "users")
-@Data
-public class User {
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,25 +43,6 @@ public class User {
 
     @Column(name = "deleted_at", nullable = true)
     private LocalDateTime deletedAt;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
-
-    @PrePersist
-    private void OnCreate() {
-        LocalDateTime now = LocalDateTime.now();
-        this.createdAt = now;
-        this.updatedAt = now;
-        if (this.isDeleted == null) this.isDeleted = false;
-    }
-
-    @PreUpdate
-    private void OnUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
 
 }
 

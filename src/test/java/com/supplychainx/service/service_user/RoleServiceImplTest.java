@@ -6,6 +6,7 @@ import com.supplychainx.service_user.dto.Response.RoleResponseDTO;
 import com.supplychainx.service_user.mapper.RoleMapper;
 import com.supplychainx.service_user.model.Role;
 import com.supplychainx.service_user.repository.RoleRepository;
+import com.supplychainx.service_user.service.RoleServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,7 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class TestRoleService {
+public class RoleServiceImplTest {
 
     @Mock
     private RoleRepository roleRepository;

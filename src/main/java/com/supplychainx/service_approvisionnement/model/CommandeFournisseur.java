@@ -1,18 +1,24 @@
 package com.supplychainx.service_approvisionnement.model;
 
 import com.supplychainx.service_approvisionnement.model.enums.FournisseurOrderStatus;
+import com.supplychainx.util.BaseEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "commande_fournisseur")
-public class CommandeFournisseur {
+public class CommandeFournisseur extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,12 +37,6 @@ public class CommandeFournisseur {
     private Fournisseur fournisseur;
 
     @OneToMany(mappedBy = "commandeFournisseur", cascade = CascadeType.ALL)
-    private List<CommandeFournisseurMatiere> commandeFournisseurMatieres;
+    private List<CommandeFournisseurMatiere> commandeFournisseurMatieres = new ArrayList<>();
 
-    @PrePersist
-    private void onCreate() {
-        if (this.orderDate == null) {
-            this.orderDate = LocalDate.now();
-        }
-    }
 }

@@ -24,10 +24,10 @@ public class LivraisonServiceImpl implements LivraisonService {
     @Transactional
     public LivraisonResponseDTO createLivraison(LivraisonRequestDTO dto) {
         if (dto.getClientOrderId() == null) {
-            throw new IllegalArgumentException("Client Order ID cannot be null");
+            throw new ResourceNotFoundException("Client Order ID cannot be null");
         }
         if (livraisonRepository.existsById(dto.getClientOrderId())) {
-            throw new IllegalArgumentException("A livraison with the given Client Order ID already exists");
+            throw new ResourceNotFoundException("A livraison with the given Client Order ID already exists");
         }
         Livraison livraison = livraisonMapper.toEntity(dto);
         if (dto.getStatus() == null) {
