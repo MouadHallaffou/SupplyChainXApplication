@@ -33,7 +33,7 @@ public class AddressServiceImpl implements AddressService {
     @Transactional
     public AddressResponseDTO createAddress(AddressRequestDTO addressRequestDTO) {
         if (addressRepository.findByStreetIgnoreCase(addressRequestDTO.getStreet()) != null) {
-            throw new IllegalArgumentException("Address with street: " + addressRequestDTO.getStreet() + " already exists.");
+            throw new ResourceNotFoundException("Address with street: " + addressRequestDTO.getStreet() + " already exists.");
         }
         Client client = clientRepository.findById(addressRequestDTO.getClientId())
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found"));
@@ -50,7 +50,7 @@ public class AddressServiceImpl implements AddressService {
                 new ResourceNotFoundException("Address not found with id: " + addressId));
         if (!existingAddress.getStreet().equalsIgnoreCase(addressRequestDTO.getStreet()) &&
                 addressRepository.findByStreetIgnoreCase(addressRequestDTO.getStreet()) != null) {
-            throw new IllegalArgumentException("Address with street: " + addressRequestDTO.getStreet() + " already exists.");
+            throw new ResourceNotFoundException("Address with street: " + addressRequestDTO.getStreet() + " already exists.");
         }
         if (addressRequestDTO.getClientId() != null) {
             Client client = clientRepository.findById(addressRequestDTO.getClientId())
