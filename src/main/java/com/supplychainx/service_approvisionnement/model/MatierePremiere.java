@@ -1,15 +1,19 @@
 package com.supplychainx.service_approvisionnement.model;
 
+import com.supplychainx.util.BaseEntity;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "matieres_premieres")
-public class MatierePremiere {
+public class MatierePremiere extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

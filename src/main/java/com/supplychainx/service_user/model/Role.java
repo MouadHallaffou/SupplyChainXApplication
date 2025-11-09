@@ -1,16 +1,19 @@
 package com.supplychainx.service_user.model;
 
+import com.supplychainx.util.BaseEntity;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "roles")
-@Data
-public class Role {
+public class Role extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,26 +23,8 @@ public class Role {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
-
     @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
     private List<User> users = new ArrayList<>();
-
-    @PrePersist
-    private void OnCreate() {
-        LocalDateTime now = LocalDateTime.now();
-        this.createdAt = now;
-        this.updatedAt = now;
-    }
-
-    @PreUpdate
-    private void OnUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
 
 }
 

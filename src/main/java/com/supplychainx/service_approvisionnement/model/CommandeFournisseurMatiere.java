@@ -1,5 +1,6 @@
 package com.supplychainx.service_approvisionnement.model;
 
+import com.supplychainx.util.BaseEntity;
 import jakarta.persistence.*;
 
 import lombok.Getter;
@@ -9,7 +10,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "commande_fournisseur_matiere")
-public class CommandeFournisseurMatiere {
+public class CommandeFournisseurMatiere extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

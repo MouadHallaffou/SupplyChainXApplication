@@ -7,7 +7,7 @@ Content-Type: application/json
 
 {
   "fournisseurId": 8,
-  "orderDate": "2024-06-20",
+  "orderDate": "2024-06-20T10:30:00",
   "status": "EN_ATTENTE",
   "commandeFournisseurMatieres": [
     {
@@ -33,7 +33,7 @@ Content-Type: application/json
 
 {
   "fournisseurId": 6,
-  "orderDate": "2024-06-21",
+  "orderDate": "2024-06-21T11:00:00",
   "status": "RECUE",
   "commandeFournisseurMatieres": [
     {

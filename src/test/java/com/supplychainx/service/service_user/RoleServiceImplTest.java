@@ -23,7 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class TestRoleService {
+public class RoleServiceImplTest {
 
     @Mock
     private RoleRepository roleRepository;
@@ -32,7 +32,7 @@ public class TestRoleService {
     private RoleMapper roleMapper;
 
     @InjectMocks
-    private RoleServiceImpl roleService = new RoleServiceImpl(roleRepository, roleMapper);
+    private RoleServiceImpl roleService;
 
     private Role role;
     private RoleRequestDTO roleRequestDTO;
