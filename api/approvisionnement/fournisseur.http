@@ -1,0 +1,42 @@
+### environment
+@baseUrl = http://localhost:8080/api/v1/fournisseurs
+
+###
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "name": "Allianz",
+  "contactEmail": "alz@gmail.com",
+  "phoneNumber": "0612345678",
+  "address": "10 rue de YC, YSF",
+  "isActive": true,
+  "leadTimeDays": 2,
+  "rating": 4.5
+}
+
+###
+GET {{baseUrl}}
+
+###
+GET {{baseUrl}}/6
+
+###
+PUT {{baseUrl}}/4
+Content-Type: application/json
+
+{
+  "name": "Total Updated",
+  "contactEmail": "total@gmail.Com",
+  "phoneNumber": "0612345679",
+  "address": "20 avenue de YC, SAFI",
+  "isActive": true,
+  "leadTimeDays": 3,
+  "rating": 4.9
+}
+
+###
+DELETE {{baseUrl}}/6
+
+### search by name
+GET {{baseUrl}}/search?name=Allianz

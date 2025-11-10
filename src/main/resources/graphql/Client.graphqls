@@ -1,0 +1,40 @@
+type Client {
+    clientId: ID!
+    name: String!
+    email: String!
+    phoneNumber: String!
+    createdAt: String!
+    updatedAt: String!
+}
+
+type ClientPage {
+    content: [Client!]!
+    totalElements: Int!
+    totalPages: Int!
+    number: Int!
+    size: Int!
+    empty: Boolean!
+}
+
+input ClientInput {
+    name: String!
+    email: String!
+    phoneNumber: String!
+}
+
+extend type Query {
+    getAllClients(
+        page: Int = 0,
+        size: Int = 10,
+        sortBy: String = "clientId",
+        sortDir: String = "asc"
+    ): ClientPage!
+
+    getClientById(id: ID!): Client
+}
+
+extend type Mutation {
+    createClient(input: ClientInput!): Client!
+    updateClient(id: ID!, input: ClientInput!): Client!
+    deleteClient(id: ID!): Boolean!
+}

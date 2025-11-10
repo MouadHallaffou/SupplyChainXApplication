@@ -1,0 +1,60 @@
+### environement
+@baseUrl = http://localhost:8080/api/v1/commande-fournisseurs
+
+###
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "fournisseurId": 8,
+  "orderDate": "2024-06-20T10:30:00",
+  "status": "EN_ATTENTE",
+  "commandeFournisseurMatieres": [
+    {
+      "matierePremiereId": 3,
+      "quantite": 100
+    },
+    {
+      "matierePremiereId": 4,
+      "quantite": 150
+    }
+  ]
+}
+
+###
+GET {{baseUrl}}?page=0&size=10
+
+###
+GET {{baseUrl}}/7
+
+###
+PUT {{baseUrl}}/8
+Content-Type: application/json
+
+{
+  "fournisseurId": 6,
+  "orderDate": "2024-06-21T11:00:00",
+  "status": "RECUE",
+  "commandeFournisseurMatieres": [
+    {
+      "matierePremiereId": 3,
+      "quantite": 150
+    },
+    {
+      "matierePremiereId": 4,
+      "quantite": 200
+    }
+  ]
+}
+
+###
+DELETE {{baseUrl}}/7
+
+### start order processing
+PUT {{baseUrl}}/11/start
+
+### complete order processing
+PUT {{baseUrl}}/11/complete
+
+### cancel order
+PUT {{baseUrl}}/11/cancel

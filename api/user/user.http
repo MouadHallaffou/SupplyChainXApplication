@@ -1,0 +1,44 @@
+### environment
+@baseUrl = http://localhost:8080/api/v1/users
+
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "firstName": "jabir",
+  "lastName": "hallaffou",
+  "email": "jabir@gmail.com",
+  "password": "12345678",
+  "isActive": true,
+  "isDeleted": false,
+  "roleId": 1
+}
+
+###
+GET {{baseUrl}}
+
+###
+GET {{baseUrl}}/1
+
+###
+PUT {{baseUrl}}/2
+Content-Type: application/json
+
+{
+  "firstName": "mouad",
+  "lastName": "hallaffou",
+  "email": "mouadhlf@gmail.ma",
+  "password": "00000000",
+  "isActive": true,
+  "isDeleted": false,
+  "roleId": 1
+}
+
+###
+PUT {{baseUrl}}/activate/5
+
+###
+PUT {{baseUrl}}/deactivate/5
+
+###
+PUT {{baseUrl}}/softDelete/2

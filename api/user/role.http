@@ -1,0 +1,29 @@
+### environment
+@baseUrl = http://localhost:8080/api/v1/roles
+
+###
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "name": "PLANIFICATEUR"
+}
+
+###
+GET {{baseUrl}}
+
+
+###
+GET {{baseUrl}}/2
+
+
+###
+PUT {{baseUrl}}/1
+Content-Type: application/json
+
+{
+  "name": "ADMIN"
+}
+
+###
+DELETE {{baseUrl}}/20

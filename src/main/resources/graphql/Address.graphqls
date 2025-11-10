@@ -1,0 +1,46 @@
+type Address {
+    addressId: ID!
+    street: String!
+    city: String!
+    state: String
+    country: String
+    zipCode: String!
+    clientId: ID!
+    createdAt: String!
+    updatedAt: String!
+}
+
+type AddressPage {
+    content: [Address!]!
+    totalElements: Int!
+    totalPages: Int!
+    number: Int!
+    size: Int!
+    empty: Boolean!
+}
+
+input AddressInput {
+    street: String!
+    city: String!
+    state: String
+    country: String
+    zipCode: String!
+    clientId: ID!
+}
+
+extend type Query {
+    getAllAddresses(
+        page: Int = 0,
+        size: Int = 10,
+        sortBy: String = "addressId",
+        sortDir: String = "asc"
+    ): AddressPage!
+
+    getAddressById(id: ID!): Address
+}
+
+extend type Mutation {
+    createAddress(input: AddressInput!): Address!
+    updateAddress(id: ID!, input: AddressInput!): Address!
+    deleteAddress(id: ID!): Boolean!
+}
