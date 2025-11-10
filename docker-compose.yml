@@ -1,5 +1,5 @@
-# Docker Compose configuration for MySQL database for Supply Chain Management System
 services:
+  # MySQL
   mysql-db:
     image: mysql:8.0
     container_name: supplychain-mysql
@@ -16,11 +16,47 @@ services:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot" ]
       timeout: 20s
       retries: 10
       start_period: 40s
 
+  # l'application
+  app:
+    build: .
+    container_name: supplychainx-app
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/supply_chain_db?useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - sonarnet
+
+  # PostgreSQL pour SonarQube
+  sonarqube-db:
+    image: postgres:15
+    container_name: sonarqube-db
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+      POSTGRES_DB: sonar
+    volumes:
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - sonarnet
+
+  # Serveur SonarQube
   sonarqube:
     image: sonarqube:community
     container_name: sonarqube
@@ -39,20 +75,6 @@ services:
     networks:
       - sonarnet
 
-  sonarqube-db:
-    image: postgres:15
-    container_name: sonarqube-db
-    environment:
-      POSTGRES_USER: sonar
-      POSTGRES_PASSWORD: sonar
-      POSTGRES_DB: sonar
-    volumes:
-      - postgresql:/var/lib/postgresql
-      - postgresql_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-    networks:
-      - sonarnet
 volumes:
   mysql_data:
   sonarqube_data:
