@@ -1,10 +1,6 @@
-# Configuration de l'application SupplyChainX
 spring:
-  application:
-    name: SupplyChainX
-
   datasource:
-    url: jdbc:mysql://localhost:3306/supply_chain_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&autoReconnect=true
+    url: jdbc:mysql://mysql-db:3306/supply_chain_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&autoReconnect=true
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
