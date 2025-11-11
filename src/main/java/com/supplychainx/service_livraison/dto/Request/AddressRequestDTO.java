@@ -1,6 +1,7 @@
 package com.supplychainx.service_livraison.dto.Request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
@@ -13,6 +14,6 @@ public class AddressRequestDTO {
     private String country;
     @NotBlank(message = "Zip code is required")
     private String zipCode;
-    @NotBlank(message = "Client ID is required")
+    @NotNull(message = "Client ID is required")
     private Long clientId;
 }
