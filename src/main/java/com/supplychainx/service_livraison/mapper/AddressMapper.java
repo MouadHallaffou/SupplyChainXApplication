@@ -17,6 +17,7 @@ public class AddressMapper {
         address.setStreet(addressRequestDTO.getStreet());
         address.setCity(addressRequestDTO.getCity());
         address.setState(addressRequestDTO.getState());
+        address.setCountry(addressRequestDTO.getCountry());
         address.setZipCode(addressRequestDTO.getZipCode());
         return address;
     }
@@ -47,6 +48,7 @@ public class AddressMapper {
 
         address.setStreet(addressRequestDTO.getStreet());
         address.setCity(addressRequestDTO.getCity());
+        address.setCountry(addressRequestDTO.getCountry());
         address.setState(addressRequestDTO.getState());
         address.setZipCode(addressRequestDTO.getZipCode());
 
