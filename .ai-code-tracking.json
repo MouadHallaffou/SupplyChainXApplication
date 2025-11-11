@@ -1,0 +1,22 @@
+{
+  "version": "1.0",
+  "records": [
+    {
+      "filePath": "C:/Users/Youcode/IdeaProjects/SpringBoot/SupplyChainX/src/main/java/com/supplychainx/service_livraison/mapper/AddressMapper.java",
+      "timestamp": 1762872201951,
+      "startOffset": 645,
+      "endOffset": 1858,
+      "codeContent": "        address.setState(addressRequestDTO.getState());\n        address.setCountry(addressRequestDTO.getCountry());\n        address.setZipCode(addressRequestDTO.getZipCode());\n        return address;\n    }\n\n    public AddressResponseDTO toResponseDTO(Address address) {\n        if (address \u003d\u003d null) {\n            return null;\n        }\n\n        return new AddressResponseDTO(\n                address.getAddressId(),\n                address.getStreet(),\n                address.getCity(),\n                address.getState(),\n                address.getZipCode(),\n                address.getCountry(),\n                address.getClient() !\u003d null ? address.getClient().getClientId() : null,\n                address.getClient() !\u003d null ? address.getClient().getName() : null,\n                address.getCreatedAt(),\n                address.getUpdatedAt()\n        );\n    }\n\n    public void toUpdateEntity(AddressRequestDTO addressRequestDTO, Address address) {\n        if (addressRequestDTO \u003d\u003d null || address \u003d\u003d null) {\n            return;\n        }\n\n        address.setStreet(addressRequestDTO.getStreet());\n        address.setCity(addressRequestDTO.getCity());\n        address.setCountry(addressRequestDTO.getCountr",
+      "aiProbability": 95,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 33
+    }
+  ],
+  "toolStats": {
+    "GitHub Copilot": {
+      "usageCount": 1,
+      "totalLines": 33
+    }
+  }
+}
