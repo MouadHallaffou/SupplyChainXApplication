@@ -54,7 +54,7 @@ DELETE {{baseUrl}}/7
 PUT {{baseUrl}}/11/start
 
 ### complete order processing
-PUT {{baseUrl}}/11/complete
+PUT {{baseUrl}}/6/complete
 
 ### cancel order
 PUT {{baseUrl}}/11/cancel
