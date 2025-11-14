@@ -8,7 +8,7 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: supply_chain_db
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     command:
@@ -23,7 +23,7 @@ services:
     networks:
       - sonarnet
 
-  # l'application
+  # Application Spring Boot
   app:
     build: .
     container_name: supplychainx-app
@@ -77,20 +77,22 @@ services:
     networks:
       - sonarnet
 
+  # Jenkins avec Maven
   jenkins:
-    image: jenkins/jenkins:lts-jdk17
+    build:
+      context: .
+      dockerfile: Dockerfile.Jenkins
     container_name: jenkins
     restart: unless-stopped
     user: root
     ports:
       - "8085:8080"
-      - "50000:50000"
+#      - "50000:50000"
     volumes:
       - jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - sonarnet
-
 
 volumes:
   mysql_data:

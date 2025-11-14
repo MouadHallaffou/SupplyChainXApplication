@@ -26,7 +26,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<Map<String, Object>> createUser(@Valid @RequestBody UserRequestDTO userRequestDTO) {
         UserResponseDTO createdDTO = userService.create(userRequestDTO);
-        return GlobalSuccessHandler.handleSuccessWithData("User created successfully", createdDTO);
+        return GlobalSuccessHandler.handleSuccessWithDataCreated("User created successfully", createdDTO);
     }
 
     @GetMapping("/{id}")

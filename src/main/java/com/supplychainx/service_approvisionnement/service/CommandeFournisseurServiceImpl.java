@@ -7,6 +7,7 @@ import com.supplychainx.service_approvisionnement.mapper.CommandeFournisseurMapp
 import com.supplychainx.service_approvisionnement.mapper.CommandeFournisseurMatiereMapper;
 import com.supplychainx.service_approvisionnement.model.CommandeFournisseur;
 import com.supplychainx.service_approvisionnement.model.CommandeFournisseurMatiere;
+import com.supplychainx.service_approvisionnement.model.MatierePremiere;
 import com.supplychainx.service_approvisionnement.model.enums.FournisseurOrderStatus;
 import com.supplychainx.service_approvisionnement.repository.CommandeFournisseurRepository;
 import lombok.RequiredArgsConstructor;
@@ -104,9 +105,29 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
     public CommandeFournisseurResponseDTO completeProductionOrder(Long id) {
         CommandeFournisseur commandeFournisseur = commandeFournisseurRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Commande not found with id: " + id));
+
         commandeFournisseur.setStatus(FournisseurOrderStatus.RECUE);
+
+        if (commandeFournisseur.getCommandeFournisseurMatieres() != null) {
+            commandeFournisseur.getCommandeFournisseurMatieres().forEach(commandeMatiere -> {
+                MatierePremiere matiere = commandeMatiere.getMatierePremiere();
+                if (matiere != null) {
+                    int nouvelleQuantite = matiere.getStockQuantity() - commandeMatiere.getQuantite();
+                    if (nouvelleQuantite < 0) {
+                        throw new IllegalStateException(
+                                "Stock insuffisant pour la matière " + matiere.getMatierePremiereId() +
+                                        ". Stock actuel: " + matiere.getStockQuantity() +
+                                        ", quantité demandée: " + commandeMatiere.getQuantite()
+                        );
+                    }
+                    matiere.setStockQuantity(nouvelleQuantite);
+                }
+            });
+        }
+
         return commandeFournisseurMapper.toResponseDTO(commandeFournisseurRepository.save(commandeFournisseur));
     }
+
 
     @Override
     @Transactional

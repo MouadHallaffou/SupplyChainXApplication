@@ -37,6 +37,7 @@ public class UserServiceImpl implements UserService {
     public UserResponseDTO getById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+//        user.getRole(); // forcer le chargement du rôle
         return userMapper.toResponseDTO(user);
     }
 
