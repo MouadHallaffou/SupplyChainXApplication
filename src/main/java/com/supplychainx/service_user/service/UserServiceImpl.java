@@ -29,6 +29,9 @@ public class UserServiceImpl implements UserService {
     public UserResponseDTO create(UserRequestDTO userRequestDTO) {
         User user = userMapper.toEntity(userRequestDTO);
         user.setPassword(PasswordUtil.hashPassword(user.getPassword()));
+        Role role = roleRepository.findById(userRequestDTO.getRoleId())
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found with id: " + userRequestDTO.getRoleId()));
+        user.setRole(role);
         User savedUser = userRepository.save(user);
         return userMapper.toResponseDTO(savedUser);
     }
@@ -37,7 +40,6 @@ public class UserServiceImpl implements UserService {
     public UserResponseDTO getById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
-//        user.getRole(); // forcer le chargement du rôle
         return userMapper.toResponseDTO(user);
     }
 

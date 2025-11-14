@@ -5,9 +5,9 @@ POST {{baseUrl}}
 Content-Type: application/json
 
 {
-  "firstName": "jabir",
-  "lastName": "hallaffou",
-  "email": "jabir@gmail.com",
+  "firstName": "test2",
+  "lastName": "test2",
+  "email": "test2@gmail.com",
   "password": "12345678",
   "isActive": true,
   "isDeleted": false,
@@ -35,7 +35,7 @@ Content-Type: application/json
 }
 
 ###
-PUT {{baseUrl}}/activate/5
+PUT {{baseUrl}}/activate/3
 
 ###
 PUT {{baseUrl}}/deactivate/5

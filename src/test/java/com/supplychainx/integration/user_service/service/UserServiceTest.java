@@ -32,7 +32,7 @@ public class UserServiceTest {
     void testCreateUser() {
         RoleRequestDTO role = new RoleRequestDTO();
         role.setName("USER");
-        // save role logic would be here if needed
+
         roleService.create(role);
         UserRequestDTO userRequestDTO = new UserRequestDTO();
         userRequestDTO.setFirstName("mouad");
@@ -55,21 +55,21 @@ public class UserServiceTest {
     void testFindUserById() {
         RoleRequestDTO role = new RoleRequestDTO();
         role.setName("USER");
-        // save role logic would be here if needed
-        roleService.create(role);
+        RoleResponseDTO savedRole = roleService.create(role);
+
         UserRequestDTO userRequestDTO = new UserRequestDTO();
         userRequestDTO.setFirstName("mouad");
         userRequestDTO.setLastName("halaffou");
         userRequestDTO.setEmail("mouad@gmail.com");
         userRequestDTO.setPassword("123456");
-        userRequestDTO.setRoleId(1L);
+        userRequestDTO.setRoleId(savedRole.roleId());
         userRequestDTO.setIsActive(true);
         userRequestDTO.setIsDeleted(false);
 
         UserResponseDTO userResponseDTO = userService.create(userRequestDTO);
         UserResponseDTO findUser = userService.getById(userResponseDTO.userId());
         assert findUser != null;
-        assert findUser.userId().equals(1L);
+        assert findUser.userId().equals(userResponseDTO.userId());
     }
 
 }

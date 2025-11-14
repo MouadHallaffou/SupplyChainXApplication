@@ -76,14 +76,14 @@ public class UserServiceImplTest {
     // CREATE Tests
     @Test
     void createUser_ShouldReturnUserResponseDTO_WhenValidInput() {
-        // Given
+        when(roleRepository.findById(1L))
+                .thenReturn(Optional.of(new Role()));
+
         when(userMapper.toEntity(userRequestDTO)).thenReturn(user);
         when(userRepository.save(any(User.class))).thenReturn(user);
         when(userMapper.toResponseDTO(user)).thenReturn(userResponseDTO);
-
         // When
         UserResponseDTO result = userService.create(userRequestDTO);
-
         // Then
         assertNotNull(result);
         assertEquals(userResponseDTO, result);
@@ -94,6 +94,8 @@ public class UserServiceImplTest {
 
     @Test
     void createUser_ShouldHashPassword_WhenCreatingUser() {
+        when(roleRepository.findById(1L))
+                .thenReturn(Optional.of(new Role()));
         // Given
         String rawPassword = "password123";
         userRequestDTO.setPassword(rawPassword);
