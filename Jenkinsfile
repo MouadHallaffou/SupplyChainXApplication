@@ -1,6 +1,9 @@
 pipeline {
     agent any
-
+    tools{
+    maven 'Maven-3.9.9'
+    jdk 'JDK-17'
+    }
     environment {
         SONARQUBE = credentials('sonar-token')
     }
@@ -8,7 +11,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'dev', url: 'https://github.com/ton-user/ton-repo.git'
+                git branch: 'master', url: 'https://github.com/MouadHallaffou/SupplyChainX-CI-CD.git'
             }
         }
 
