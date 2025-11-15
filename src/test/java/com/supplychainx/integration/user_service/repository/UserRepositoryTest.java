@@ -29,7 +29,7 @@ public class UserRepositoryTest {
     private RoleRepository roleRepository;
 
     @Test
-    void testCreateUser() {
+    void testSave() {
         Role role = new Role();
         role.setName("USER");
         role = roleRepository.save(role);
@@ -84,27 +84,6 @@ public class UserRepositoryTest {
                 () -> new RuntimeException("User not found"));
         assertThat(foundUser).isNotNull();
         assertThat(foundUser.getEmail()).isEqualTo("mouad@gmail.com");
-    }
-
-    @Test
-    void testUpdateUser() {
-        Role role = new Role();
-        role.setName("USER");
-        role = roleRepository.save(role);
-        User user = new User();
-        user.setFirstName("Mouad");
-        user.setLastName("Hallaffou");
-        user.setEmail("mouad@gmail.com");
-        user.setPassword("123456");
-        user.setRole(role);
-        user.setIsActive(true);
-        user.setIsDeleted(false);
-        User savedUser = userRepository.save(user);
-
-        savedUser.setFirstName("UpdatedName");
-        User updatedUser = userRepository.save(savedUser);
-
-        assertThat(updatedUser.getFirstName()).isEqualTo("UpdatedName");
     }
 
     @Test

@@ -144,7 +144,6 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.success").value(false));
     }
 
-
     @Test
     void testActivateUser_Success() throws Exception {
         RoleRequestDTO role = new RoleRequestDTO();
