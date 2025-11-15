@@ -36,7 +36,7 @@ Content-Type: application/json
 }
 
 ###
-DELETE {{baseUrl}}/6
+DELETE {{baseUrl}}/3
 
 ### search by name
 GET {{baseUrl}}/search?name=Allianz

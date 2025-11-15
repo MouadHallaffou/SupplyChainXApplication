@@ -4,6 +4,7 @@ import com.supplychainx.service_user.model.Role;
 import com.supplychainx.service_user.model.User;
 import com.supplychainx.service_user.repository.RoleRepository;
 import com.supplychainx.service_user.repository.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -28,19 +29,35 @@ public class UserRepositoryTest {
     @Autowired
     private RoleRepository roleRepository;
 
-    @Test
-    void testSave() {
+    @BeforeEach
+    public void setUp() {
+        userRepository.deleteAll();
+        roleRepository.deleteAll();
+    }
+
+    private Role createRole(){
         Role role = new Role();
         role.setName("USER");
-        role = roleRepository.save(role);
+        roleRepository.save(role);
+        return role;
+    }
+
+    private User createUser(){
         User user = new User();
         user.setFirstName("Mouad");
         user.setLastName("Hallaffou");
         user.setEmail("mouad@gmail.com");
         user.setPassword("123456");
-        user.setRole(role);
         user.setIsActive(true);
         user.setIsDeleted(false);
+        user.setRole(createRole());
+        userRepository.save(user);
+        return user;
+    }
+
+    @Test
+    void testSave() {
+        User user = createUser();
         User savedUser = userRepository.save(user);
         assertThat(savedUser.getUserId()).isNotNull();
         assertThat(savedUser.getEmail()).isEqualTo("mouad@gmail.com");
@@ -48,17 +65,7 @@ public class UserRepositoryTest {
 
     @Test
     void testFindByEmail() {
-        Role role = new Role();
-        role.setName("USER");
-        role = roleRepository.save(role);
-        User user = new User();
-        user.setFirstName("Mouad");
-        user.setLastName("Hallaffou");
-        user.setEmail("mouad@gmail.com");
-        user.setPassword("123456");
-        user.setRole(role);
-        user.setIsActive(true);
-        user.setIsDeleted(false);
+        User user = createUser();
         User savedUser = userRepository.save(user);
         User foundUser = userRepository.findByEmail("mouad@gmail.com").orElseThrow(
                 () -> new RuntimeException("User not found"));
@@ -68,17 +75,7 @@ public class UserRepositoryTest {
 
     @Test
     void testFindById() {
-        Role role = new Role();
-        role.setName("USER");
-        role = roleRepository.save(role);
-        User user = new User();
-        user.setFirstName("Mouad");
-        user.setLastName("Hallaffou");
-        user.setEmail("mouad@gmail.com");
-        user.setPassword("123456");
-        user.setRole(role);
-        user.setIsActive(true);
-        user.setIsDeleted(false);
+        User user = createUser();
         User savedUser = userRepository.save(user);
         User foundUser = userRepository.findById(savedUser.getUserId()).orElseThrow(
                 () -> new RuntimeException("User not found"));
@@ -88,17 +85,7 @@ public class UserRepositoryTest {
 
     @Test
     void testDeleteUser() {
-        Role role = new Role();
-        role.setName("USER");
-        role = roleRepository.save(role);
-        User user = new User();
-        user.setFirstName("Mouad");
-        user.setLastName("Hallaffou");
-        user.setEmail("mouad@gmail.com");
-        user.setPassword("123456");
-        user.setRole(role);
-        user.setIsActive(true);
-        user.setIsDeleted(false);
+        User user = createUser();
         User savedUser = userRepository.save(user);
         userRepository.delete(savedUser);
         boolean exists = userRepository.findById(savedUser.getUserId()).isPresent();
@@ -107,17 +94,7 @@ public class UserRepositoryTest {
 
     @Test
     void testGetAllUsers() {
-        Role role = new Role();
-        role.setName("USER");
-        role = roleRepository.save(role);
-        User user = new User();
-        user.setFirstName("Mouad");
-        user.setLastName("Hallaffou");
-        user.setEmail("mouad@gmail.com");
-        user.setPassword("123456");
-        user.setRole(role);
-        user.setIsActive(true);
-        user.setIsDeleted(false);
+        User user = createUser();
         User savedUser = userRepository.save(user);
         List<User> users = userRepository.findAll();
         assertThat(users).isNotEmpty();
