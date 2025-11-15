@@ -35,21 +35,21 @@ public class OrderRepositoryTest {
         matierePremiereRepository.deleteAll();
         commandeFournisseurRepository.deleteAll();
     }
-
-    private Fournisseur createFournisseur() {
-        // Implementation of fournisseur creation
-    }
-    private MatierePremiere createMatierePremiere() {
-        // Implementation of matiere premiere creation
-    }
-    private CommandeFournisseur createCommandeFournisseur() {
-        // Implementation of commande fournisseur creation
-    }
-
-    @Test
-    void testSaveOrder() {
-        // Implementation of order saving test
-    }
+//
+//    private Fournisseur createFournisseur() {
+//        // Implementation of fournisseur creation
+//    }
+//    private MatierePremiere createMatierePremiere() {
+//        // Implementation of matiere premiere creation
+//    }
+//    private CommandeFournisseur createCommandeFournisseur() {
+//        // Implementation of commande fournisseur creation
+//    }
+//
+//    @Test
+//    void testSaveOrder() {
+//        // Implementation of order saving test
+//    }
 
     @Test
     void testFindOrderById() {
