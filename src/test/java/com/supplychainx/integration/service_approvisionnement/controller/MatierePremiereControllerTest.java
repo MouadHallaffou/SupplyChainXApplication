@@ -1,3 +1,4 @@
+// java
 package com.supplychainx.integration.service_approvisionnement.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -31,8 +32,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
                 "spring.config.name=application-test"
         }
 )
+public class MatierePremiereControllerTest {
 
-public class MatierePremiereTest {
+    private static final String BASE_URL_MAT = "/api/v1/matieres-premieres";
+    private static final String BASE_URL_FOUR = "/api/v1/fournisseurs";
 
     @Autowired
     private MockMvc mockMvc;
@@ -49,36 +52,62 @@ public class MatierePremiereTest {
         fournisseurRepository.deleteAll();
     }
 
-    @Test
-    void testCreateMatierePremiere() throws Exception {
-        FournisseurRequestDTO fournisseurRequestDTO = new FournisseurRequestDTO();
-        fournisseurRequestDTO.setName("Fournisseur1");
-        fournisseurRequestDTO.setContactEmail("fr@hotmail.go");
-        fournisseurRequestDTO.setPhoneNumber("+1234567890");
-        fournisseurRequestDTO.setAddress("123 Rue Principale, Ville, Pays");
-        fournisseurRequestDTO.setIsActive(true);
-        fournisseurRequestDTO.setLeadTimeDays(7);
-        fournisseurRequestDTO.setRating(4.5);
+    // ---------- Helpers
 
-        MvcResult fournisseurResult = mockMvc.perform(post("/api/v1/fournisseurs")
+    private FournisseurRequestDTO buildFournisseur(String name, boolean active) {
+        FournisseurRequestDTO dto = new FournisseurRequestDTO();
+        dto.setName(name);
+        dto.setContactEmail("fr@hotmail.go");
+        dto.setPhoneNumber("+1234567890");
+        dto.setAddress("123 Rue Principale, Ville, Pays");
+        dto.setIsActive(active);
+        dto.setLeadTimeDays(7);
+        dto.setRating(4.5);
+        return dto;
+    }
+
+    private MatierePremiereRequestDTO buildMatiere(String name, long fournisseurId, int stockQ, int stockMin, String unit) {
+        MatierePremiereRequestDTO dto = new MatierePremiereRequestDTO();
+        dto.setName(name);
+        dto.setStockQuantity(stockQ);
+        dto.setStockMinimum(stockMin);
+        dto.setUnit(unit);
+        dto.setFournisseurIds(Collections.singletonList(fournisseurId));
+        return dto;
+    }
+
+    private JsonNode toJson(MvcResult result) throws Exception {
+        return objectMapper.readTree(result.getResponse().getContentAsString());
+    }
+
+    private long createFournisseurAndGetId(FournisseurRequestDTO dto) throws Exception {
+        MvcResult res = mockMvc.perform(post(BASE_URL_FOUR)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(fournisseurRequestDTO)))
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk())
                 .andReturn();
+        JsonNode json = toJson(res);
+        return json.has("fournisseurId") ? json.get("fournisseurId").asLong() : json.get("id").asLong();
+    }
 
-        JsonNode fournisseurJson = objectMapper.readTree(fournisseurResult.getResponse().getContentAsString());
-        long fournisseurId = fournisseurJson.has("fournisseurId")
-                ? fournisseurJson.get("fournisseurId").asLong()
-                : fournisseurJson.get("id").asLong();
+    private long createMatiereAndGetId(MatierePremiereRequestDTO dto) throws Exception {
+        MvcResult res = mockMvc.perform(post(BASE_URL_MAT)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk())
+                .andReturn();
+        JsonNode data = toJson(res).get("data");
+        return data.has("matierePremiereId") ? data.get("matierePremiereId").asLong() : data.get("id").asLong();
+    }
 
-        MatierePremiereRequestDTO requestDTO = new MatierePremiereRequestDTO();
-        requestDTO.setName("Acier");
-        requestDTO.setStockQuantity(100);
-        requestDTO.setStockMinimum(20);
-        requestDTO.setUnit("kg");
-        requestDTO.setFournisseurIds(Collections.singletonList(fournisseurId));
+    // ---------- Tests
 
-        mockMvc.perform(post("/api/v1/matieres-premieres")
+    @Test
+    void testCreateMatierePremiere() throws Exception {
+        long fournisseurId = createFournisseurAndGetId(buildFournisseur("Fournisseur1", true));
+        MatierePremiereRequestDTO requestDTO = buildMatiere("Acier", fournisseurId, 100, 20, "kg");
+
+        mockMvc.perform(post(BASE_URL_MAT)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isOk())
@@ -90,47 +119,10 @@ public class MatierePremiereTest {
 
     @Test
     void testFindById_Found() throws Exception {
-        FournisseurRequestDTO fournisseurRequestDTO = new FournisseurRequestDTO();
-        fournisseurRequestDTO.setName("Fournisseur1");
-        fournisseurRequestDTO.setContactEmail("fr@hotmail.go");
-        fournisseurRequestDTO.setPhoneNumber("+1234567890");
-        fournisseurRequestDTO.setAddress("123 Rue Principale, Ville, Pays");
-        fournisseurRequestDTO.setIsActive(true);
-        fournisseurRequestDTO.setLeadTimeDays(7);
-        fournisseurRequestDTO.setRating(4.5);
+        long fournisseurId = createFournisseurAndGetId(buildFournisseur("Fournisseur1", true));
+        long matiereId = createMatiereAndGetId(buildMatiere("Acier", fournisseurId, 100, 20, "kg"));
 
-        MvcResult fournisseurResult = mockMvc.perform(post("/api/v1/fournisseurs")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(fournisseurRequestDTO)))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        JsonNode fournisseurJson = objectMapper.readTree(fournisseurResult.getResponse().getContentAsString());
-        long fournisseurId = fournisseurJson.has("fournisseurId")
-                ? fournisseurJson.get("fournisseurId").asLong()
-                : fournisseurJson.get("id").asLong();
-
-        MatierePremiereRequestDTO requestDTO = new MatierePremiereRequestDTO();
-        requestDTO.setName("Acier");
-        requestDTO.setStockQuantity(100);
-        requestDTO.setStockMinimum(20);
-        requestDTO.setUnit("kg");
-        requestDTO.setFournisseurIds(Collections.singletonList(fournisseurId));
-
-        MvcResult matiereResult = mockMvc.perform(post("/api/v1/matieres-premieres")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDTO)))
-                .andExpect(status().isOk())
-                .andReturn();
-        JsonNode matiereJson = objectMapper.readTree(matiereResult.getResponse().getContentAsString());
-        JsonNode dataNode = matiereJson.get("data");
-        long matiereId = dataNode.has("matierePremiereId")
-                ? dataNode.get("matierePremiereId").asLong()
-                : dataNode.get("id").asLong();
-        requestDTO.setMatierePremiereId(matiereId);
-
-        mockMvc.perform(get("/api/v1/matieres-premieres/" + matiereId)
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get(BASE_URL_MAT + "/" + matiereId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Acier"))
                 .andExpect(jsonPath("$.stockQuantity").value(100))
@@ -140,104 +132,29 @@ public class MatierePremiereTest {
 
     @Test
     void testGetAllMatieresPremieres() throws Exception {
-        mockMvc.perform(get("/api/v1/matieres-premieres")
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get(BASE_URL_MAT).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray());
     }
 
     @Test
     void testDeleteMatierePremiere() throws Exception {
-        FournisseurRequestDTO fournisseurRequestDTO = new FournisseurRequestDTO();
-        fournisseurRequestDTO.setName("Fournisseur1");
-        fournisseurRequestDTO.setContactEmail("fr@hotmail.go");
-        fournisseurRequestDTO.setPhoneNumber("+1234567890");
-        fournisseurRequestDTO.setAddress("123 Rue Principale, Ville, Pays");
-        fournisseurRequestDTO.setIsActive(true);
-        fournisseurRequestDTO.setLeadTimeDays(7);
-        fournisseurRequestDTO.setRating(4.5);
+        long fournisseurId = createFournisseurAndGetId(buildFournisseur("Fournisseur1", true));
+        long matiereId = createMatiereAndGetId(buildMatiere("Acier", fournisseurId, 100, 20, "kg"));
 
-        MvcResult fournisseurResult = mockMvc.perform(post("/api/v1/fournisseurs")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(fournisseurRequestDTO)))
+        mockMvc.perform(delete(BASE_URL_MAT + "/" + matiereId))
                 .andExpect(status().isOk())
-                .andReturn();
-
-        JsonNode fournisseurJson = objectMapper.readTree(fournisseurResult.getResponse().getContentAsString());
-        long fournisseurId = fournisseurJson.has("fournisseurId")
-                ? fournisseurJson.get("fournisseurId").asLong()
-                : fournisseurJson.get("id").asLong();
-
-        MatierePremiereRequestDTO requestDTO = new MatierePremiereRequestDTO();
-        requestDTO.setName("Acier");
-        requestDTO.setStockQuantity(100);
-        requestDTO.setStockMinimum(20);
-        requestDTO.setUnit("kg");
-        requestDTO.setFournisseurIds(Collections.singletonList(fournisseurId));
-
-        MvcResult matiereResult = mockMvc.perform(post("/api/v1/matieres-premieres")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDTO)))
-                .andExpect(status().isOk())
-                .andReturn();
-        JsonNode matiereJson = objectMapper.readTree(matiereResult.getResponse().getContentAsString());
-        JsonNode dataNode = matiereJson.get("data");
-        long matiereId = dataNode.has("matierePremiereId")
-                ? dataNode.get("matierePremiereId").asLong()
-                : dataNode.get("id").asLong();
-
-        mockMvc.perform(delete("/api/v1/matieres-premieres/" + matiereId)
-                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true));
     }
 
     @Test
     void testUpdateMatierePremiere() throws Exception {
-        FournisseurRequestDTO fournisseurRequestDTO = new FournisseurRequestDTO();
-        fournisseurRequestDTO.setName("Fournisseur1");
-        fournisseurRequestDTO.setContactEmail("fr@hotmail.go");
-        fournisseurRequestDTO.setPhoneNumber("+1234567890");
-        fournisseurRequestDTO.setAddress("123 Rue Principale, Ville, Pays");
-        fournisseurRequestDTO.setIsActive(true);
-        fournisseurRequestDTO.setLeadTimeDays(7);
-        fournisseurRequestDTO.setRating(4.5);
+        long fournisseurId = createFournisseurAndGetId(buildFournisseur("Fournisseur1", true));
+        long matiereId = createMatiereAndGetId(buildMatiere("Acier", fournisseurId, 100, 20, "kg"));
 
-        MvcResult fournisseurResult = mockMvc.perform(post("/api/v1/fournisseurs")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(fournisseurRequestDTO)))
-                .andExpect(status().isOk())
-                .andReturn();
+        MatierePremiereRequestDTO updateDTO = buildMatiere("Aluminium", fournisseurId, 150, 30, "kg");
 
-        JsonNode fournisseurJson = objectMapper.readTree(fournisseurResult.getResponse().getContentAsString());
-        long fournisseurId = fournisseurJson.has("fournisseurId")
-                ? fournisseurJson.get("fournisseurId").asLong()
-                : fournisseurJson.get("id").asLong();
-
-        MatierePremiereRequestDTO requestDTO = new MatierePremiereRequestDTO();
-        requestDTO.setName("Acier");
-        requestDTO.setStockQuantity(100);
-        requestDTO.setStockMinimum(20);
-        requestDTO.setUnit("kg");
-        requestDTO.setFournisseurIds(Collections.singletonList(fournisseurId));
-
-        MvcResult matiereResult = mockMvc.perform(post("/api/v1/matieres-premieres")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDTO)))
-                .andExpect(status().isOk())
-                .andReturn();
-        JsonNode matiereJson = objectMapper.readTree(matiereResult.getResponse().getContentAsString());
-        JsonNode dataNode = matiereJson.get("data");
-        long matiereId = dataNode.has("matierePremiereId")
-                ? dataNode.get("matierePremiereId").asLong()
-                : dataNode.get("id").asLong();
-
-        MatierePremiereRequestDTO updateDTO = new MatierePremiereRequestDTO();
-        updateDTO.setName("Aluminium");
-        updateDTO.setStockQuantity(150);
-        updateDTO.setStockMinimum(30);
-        updateDTO.setUnit("kg");
-        updateDTO.setFournisseurIds(Collections.singletonList(fournisseurId));
-        mockMvc.perform(put("/api/v1/matieres-premieres/" + matiereId)
+        mockMvc.perform(put(BASE_URL_MAT + "/" + matiereId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDTO)))
                 .andExpect(status().isOk())
@@ -249,13 +166,11 @@ public class MatierePremiereTest {
 
     @Test
     void testFilterByStockMinimum() throws Exception {
-        mockMvc.perform(get("/api/v1/matieres-premieres/filtrer-par-stock-critique")
+        mockMvc.perform(get(BASE_URL_MAT + "/filtrer-par-stock-critique")
                         .param("stockCritique", "50")
                         .param("page", "0")
-                        .param("size", "5")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .param("size", "5"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray());
     }
-
 }
