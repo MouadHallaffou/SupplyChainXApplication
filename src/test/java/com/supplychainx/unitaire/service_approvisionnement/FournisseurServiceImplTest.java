@@ -1,4 +1,4 @@
-package com.supplychainx.service.service_approvisionnement;
+package com.supplychainx.unitaire.service_approvisionnement;
 
 import com.supplychainx.service_approvisionnement.dto.Request.FournisseurRequestDTO;
 import com.supplychainx.service_approvisionnement.dto.Response.FournisseurResponseDTO;

@@ -1,4 +1,4 @@
-package com.supplychainx.service.service_production;
+package com.supplychainx.unitaire.service_production;
 
 import com.supplychainx.exception.ResourceNotFoundException;
 import com.supplychainx.service_production.dto.Request.ProductRequestDTO;

@@ -1,4 +1,4 @@
-package com.supplychainx.service.service_production;
+package com.supplychainx.unitaire.service_production;
 
 import com.supplychainx.service_production.dto.Request.ProductOrderRequestDTO;
 import com.supplychainx.service_production.dto.Response.ProductOrderResponseDTO;

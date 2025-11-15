@@ -1,4 +1,4 @@
-package com.supplychainx.service.service_livraison;
+package com.supplychainx.unitaire.service_livraison;
 
 import com.supplychainx.service_livraison.dto.Request.AddressRequestDTO;
 import com.supplychainx.service_livraison.dto.Response.AddressResponseDTO;

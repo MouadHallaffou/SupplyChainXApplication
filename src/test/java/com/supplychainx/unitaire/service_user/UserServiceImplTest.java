@@ -1,4 +1,4 @@
-package com.supplychainx.service.service_user;
+package com.supplychainx.unitaire.service_user;
 
 import com.supplychainx.exception.ResourceNotFoundException;
 import com.supplychainx.service_user.dto.Request.UserRequestDTO;

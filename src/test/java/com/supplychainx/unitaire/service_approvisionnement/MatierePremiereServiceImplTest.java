@@ -1,4 +1,4 @@
-package com.supplychainx.service.service_approvisionnement;
+package com.supplychainx.unitaire.service_approvisionnement;
 
 import com.supplychainx.exception.ResourceNotFoundException;
 import com.supplychainx.service_approvisionnement.dto.Request.MatierePremiereRequestDTO;
