@@ -30,6 +30,9 @@
         <java.version>17</java.version>
 
         <sonar.exclusions>
+            src/main/java/com/supplychainx/SupplyChainXApplication.java,
+            src/main/java/com/supplychainx/**/model/**,
+            src/main/java/com/supplychainx/**/enums/**,
             src/main/java/com/supplychainx/**/dto/**,
             src/main/java/com/supplychainx/**/mapper/**,
             src/main/java/com/supplychainx/handler/**,
