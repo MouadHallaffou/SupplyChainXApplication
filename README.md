@@ -691,11 +691,11 @@ Ce projet est développé dans un cadre éducatif.
 
 ## 👨‍💻 Auteur
 
-**Développé avec ❤️ par [Votre Nom]**
+**Développé avec ❤️ par Mouad Hallaffou**
 
-- 📧 Email : votre.email@example.com
-- 🔗 LinkedIn : [Votre Profil](https://linkedin.com)
-- 🐙 GitHub : [Votre GitHub](https://github.com)
+- 📧 Email : mouadhallaffou@gmail.com
+- 🔗 LinkedIn : [https://linkedin.com](https://www.linkedin.com/in/hallaffou-mouad/)
+- 🐙 GitHub : [https://github.com](https://github.com/MouadHallaffou/)
 
 ---
 
