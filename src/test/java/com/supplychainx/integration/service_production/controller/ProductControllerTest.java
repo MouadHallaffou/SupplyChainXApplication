@@ -2,15 +2,13 @@ package com.supplychainx.integration.service_production.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.supplychainx.service_approvisionnement.repository.MatierePremiereRepository;
 import com.supplychainx.service_production.dto.Request.ProductRequestDTO;
-import com.supplychainx.service_production.repository.BillOfMaterialRepository;
-import com.supplychainx.service_production.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -28,22 +26,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         }
 )
 public class ProductControllerTest {
-
-    @Autowired
-    private ProductRepository productRepository;
-    @Autowired
-    private MatierePremiereRepository matierePremiereRepository;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    private BillOfMaterialRepository billOfMaterialRepository;
+    private JdbcTemplate jdbcTemplate;
 
     @BeforeEach
     public void setUp() {
-        billOfMaterialRepository.deleteAll();
-        productRepository.deleteAll();
+        jdbcTemplate.execute("DELETE FROM bill_of_materials");
+        jdbcTemplate.execute("DELETE FROM product_orders");
+        jdbcTemplate.execute("DELETE FROM products");
     }
 
     private ProductRequestDTO createProductRequestDTO() {

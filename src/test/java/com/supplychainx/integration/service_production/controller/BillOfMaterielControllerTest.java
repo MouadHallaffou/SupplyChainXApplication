@@ -3,14 +3,11 @@ package com.supplychainx.integration.service_production.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.supplychainx.service_approvisionnement.dto.Request.MatierePremiereRequestDTO;
 import com.supplychainx.service_approvisionnement.dto.Response.MatierePremiereResponseDTO;
-import com.supplychainx.service_approvisionnement.repository.MatierePremiereRepository;
 import com.supplychainx.service_approvisionnement.service.MatierePremiereService;
 import com.supplychainx.service_production.dto.Request.BillOfMaterialRequestDTO;
 import com.supplychainx.service_production.dto.Request.ProductRequestDTO;
 import com.supplychainx.service_production.dto.Response.BillOfMaterialResponseDTO;
 import com.supplychainx.service_production.dto.Response.ProductResponseDTO;
-import com.supplychainx.service_production.repository.BillOfMaterialRepository;
-import com.supplychainx.service_production.repository.ProductRepository;
 import com.supplychainx.service_production.service.BillOfMaterialService;
 import com.supplychainx.service_production.service.ProductService;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -37,8 +35,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class BillOfMaterielControllerTest {
 
     @Autowired
-    private BillOfMaterialRepository billOfMaterialRepository;
-    @Autowired
     private ProductService productService;
     @Autowired
     private MatierePremiereService matierePremiereService;
@@ -47,17 +43,16 @@ public class BillOfMaterielControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    private ProductRepository productRepository;
-    @Autowired
-    private MatierePremiereRepository matierePremiereRepository;
-    @Autowired
     private BillOfMaterialService billOfMaterialService;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @BeforeEach
     public void setUp() {
-        billOfMaterialRepository.deleteAll();
-        productRepository.deleteAll();
-        matierePremiereRepository.deleteAll();
+        jdbcTemplate.execute("DELETE FROM bill_of_materials");
+        jdbcTemplate.execute("DELETE FROM product_orders");
+        jdbcTemplate.execute("DELETE FROM products");
     }
 
     private ProductResponseDTO createProductResponseDTO() {
