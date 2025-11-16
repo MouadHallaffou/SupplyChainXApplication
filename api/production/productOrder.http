@@ -33,3 +33,12 @@ Content-Type: application/json
 
 ### Delete a product order
 DELETE {{baseUrl}}/1
+
+### Start a product order
+PUT {{baseUrl}}/1/start
+
+### Complete a product order
+PUT {{baseUrl}}/1/complete
+
+### Block a product order
+PUT {{baseUrl}}/1/cancel

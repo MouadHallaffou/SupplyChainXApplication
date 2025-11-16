@@ -7,9 +7,11 @@ import com.supplychainx.service_approvisionnement.repository.MatierePremiereRepo
 import com.supplychainx.service_approvisionnement.service.MatierePremiereService;
 import com.supplychainx.service_production.dto.Request.BillOfMaterialRequestDTO;
 import com.supplychainx.service_production.dto.Request.ProductRequestDTO;
+import com.supplychainx.service_production.dto.Response.BillOfMaterialResponseDTO;
 import com.supplychainx.service_production.dto.Response.ProductResponseDTO;
 import com.supplychainx.service_production.repository.BillOfMaterialRepository;
 import com.supplychainx.service_production.repository.ProductRepository;
+import com.supplychainx.service_production.service.BillOfMaterialService;
 import com.supplychainx.service_production.service.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -48,12 +50,14 @@ public class BillOfMaterielControllerTest {
     private ProductRepository productRepository;
     @Autowired
     private MatierePremiereRepository matierePremiereRepository;
+    @Autowired
+    private BillOfMaterialService billOfMaterialService;
 
     @BeforeEach
     public void setUp() {
-        billOfMaterialRepository.deleteAll();   // 1) enfants d’abord
-        productRepository.deleteAll();          // 2) parents ensuite
-        matierePremiereRepository.deleteAll();  // 3) les autres si besoin
+        billOfMaterialRepository.deleteAll();
+        productRepository.deleteAll();
+        matierePremiereRepository.deleteAll();
     }
 
     private ProductResponseDTO createProductResponseDTO() {
@@ -91,6 +95,65 @@ public class BillOfMaterielControllerTest {
                 .andExpect(jsonPath("$.productId").value(product.productId()))
                 .andExpect(jsonPath("$.matierePremiereId").value(matierePremiere.matierePremiereId()))
                 .andExpect(jsonPath("$.quantity").value(20));
+    }
+
+    @Test
+    void testFindById() throws Exception{
+        ProductResponseDTO product = createProductResponseDTO();
+        MatierePremiereResponseDTO matierePremiere = createMatierePremiereResponseDTO();
+        BillOfMaterialRequestDTO billOfMaterialRequestDTO = createBillOfMaterialRequestDTO(product.productId(), matierePremiere.matierePremiereId());
+        BillOfMaterialResponseDTO savedBillOfMaterial = billOfMaterialService.createBillOfMaterial(billOfMaterialRequestDTO);
+
+        mockMvc.perform(get("/api/v1/bill-of-material/" + savedBillOfMaterial.bomId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.bomId").value(savedBillOfMaterial.bomId()))
+                .andExpect(jsonPath("$.productId").value(product.productId()))
+                .andExpect(jsonPath("$.matierePremiereId").value(matierePremiere.matierePremiereId()))
+                .andExpect(jsonPath("$.quantity").value(20));
+    }
+
+    @Test
+    void testUpdateBillOfMaterial() throws Exception{
+        ProductResponseDTO product = createProductResponseDTO();
+        MatierePremiereResponseDTO matierePremiere = createMatierePremiereResponseDTO();
+        BillOfMaterialRequestDTO billOfMaterialRequestDTO = createBillOfMaterialRequestDTO(product.productId(), matierePremiere.matierePremiereId());
+        BillOfMaterialResponseDTO savedBillOfMaterial = billOfMaterialService.createBillOfMaterial(billOfMaterialRequestDTO);
+
+        BillOfMaterialRequestDTO updateDTO = new BillOfMaterialRequestDTO();
+        updateDTO.setProductId(product.productId());
+        updateDTO.setMatierePremiereId(matierePremiere.matierePremiereId());
+        updateDTO.setQuantity(50);
+
+        mockMvc.perform(put("/api/v1/bill-of-material/" + savedBillOfMaterial.bomId())
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(updateDTO)))
+                .andExpect(jsonPath("$.bomId").value(savedBillOfMaterial.bomId()))
+                .andExpect(jsonPath("$.quantity").value(50));
+    }
+
+    @Test
+    void testDeleteBillOfMaterial() throws Exception{
+        ProductResponseDTO product = createProductResponseDTO();
+        MatierePremiereResponseDTO matierePremiere = createMatierePremiereResponseDTO();
+        BillOfMaterialRequestDTO billOfMaterialRequestDTO = createBillOfMaterialRequestDTO(product.productId(), matierePremiere.matierePremiereId());
+        BillOfMaterialResponseDTO savedBillOfMaterial = billOfMaterialService.createBillOfMaterial(billOfMaterialRequestDTO);
+
+        mockMvc.perform(delete("/api/v1/bill-of-material/" + savedBillOfMaterial.bomId()))
+                .andExpect(jsonPath("$.success").value(true));
+    }
+
+    @Test
+    void testGetAllBillOfMaterial() throws Exception{
+        ProductResponseDTO product = createProductResponseDTO();
+        MatierePremiereResponseDTO matierePremiere = createMatierePremiereResponseDTO();
+        BillOfMaterialRequestDTO billOfMaterialRequestDTO = createBillOfMaterialRequestDTO(product.productId(), matierePremiere.matierePremiereId());
+        billOfMaterialService.createBillOfMaterial(billOfMaterialRequestDTO);
+
+        mockMvc.perform(get("/api/v1/bill-of-material?page=0&size=10"))
+                .andExpect(jsonPath("$.content").isArray())
+                .andExpect(jsonPath("$.content[0].productId").value(product.productId()))
+                .andExpect(jsonPath("$.content[0].matierePremiereId").value(matierePremiere.matierePremiereId()))
+                .andExpect(jsonPath("$.content[0].quantity").value(20));
     }
 
 }

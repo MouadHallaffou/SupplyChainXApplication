@@ -46,7 +46,6 @@ public class ProductControllerTest {
         productRepository.deleteAll();
     }
 
-
     private ProductRequestDTO createProductRequestDTO() {
         ProductRequestDTO dto = new ProductRequestDTO();
         dto.setName("Test Product");
