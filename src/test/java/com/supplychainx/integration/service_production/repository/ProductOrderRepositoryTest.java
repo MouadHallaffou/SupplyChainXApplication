@@ -39,7 +39,7 @@ public class ProductOrderRepositoryTest {
     @BeforeEach
     void setUp() {
         productOrderRepository.deleteAll();
-        productRepository.deleteAll();
+        billOfMaterialRepository.deleteAll();
         matierePremiereRepository.deleteAll();
         productRepository.deleteAll();
     }
