@@ -3,11 +3,13 @@ package com.supplychainx.integration.service_production.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.supplychainx.service_approvisionnement.dto.Request.MatierePremiereRequestDTO;
 import com.supplychainx.service_approvisionnement.dto.Response.MatierePremiereResponseDTO;
+import com.supplychainx.service_approvisionnement.repository.MatierePremiereRepository;
 import com.supplychainx.service_approvisionnement.service.MatierePremiereService;
 import com.supplychainx.service_production.dto.Request.BillOfMaterialRequestDTO;
 import com.supplychainx.service_production.dto.Request.ProductRequestDTO;
 import com.supplychainx.service_production.dto.Response.ProductResponseDTO;
 import com.supplychainx.service_production.repository.BillOfMaterialRepository;
+import com.supplychainx.service_production.repository.ProductRepository;
 import com.supplychainx.service_production.service.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,10 +44,16 @@ public class BillOfMaterielControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private MatierePremiereRepository matierePremiereRepository;
 
     @BeforeEach
     public void setUp() {
-        billOfMaterialRepository.deleteAll();
+        billOfMaterialRepository.deleteAll();   // 1) enfants d’abord
+        productRepository.deleteAll();          // 2) parents ensuite
+        matierePremiereRepository.deleteAll();  // 3) les autres si besoin
     }
 
     private ProductResponseDTO createProductResponseDTO() {

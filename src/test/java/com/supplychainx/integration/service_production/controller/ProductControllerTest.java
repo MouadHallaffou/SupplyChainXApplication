@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.supplychainx.service_approvisionnement.repository.MatierePremiereRepository;
 import com.supplychainx.service_production.dto.Request.ProductRequestDTO;
+import com.supplychainx.service_production.repository.BillOfMaterialRepository;
 import com.supplychainx.service_production.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,12 +37,15 @@ public class ProductControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private BillOfMaterialRepository billOfMaterialRepository;
 
     @BeforeEach
     public void setUp() {
+        billOfMaterialRepository.deleteAll();
         productRepository.deleteAll();
-        matierePremiereRepository.deleteAll();
     }
+
 
     private ProductRequestDTO createProductRequestDTO() {
         ProductRequestDTO dto = new ProductRequestDTO();
