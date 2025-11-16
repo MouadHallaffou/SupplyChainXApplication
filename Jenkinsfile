@@ -40,37 +40,64 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh '''
-                # Arrêt et suppression du conteneur précédent si existant
-                echo "🚀 Arrêt de l'application existante..."
-                docker stop supplychainx-app || true
-                docker rm supplychainx-app || true
+                script {
+                    // 1. Créer le réseau
+                    sh '''
+                    echo "🌐 Vérification du réseau Docker..."
+                    docker network ls | grep supplychain-network || docker network create supplychain-network
+                    '''
 
-                # Option A: S'assurer que le réseau "sonarnet" (déclaré dans docker-compose.yml) existe.
-                # -> C'est la meilleure pratique si MySQL et l'app doivent etre sur le meme réseau.
-                echo "🔧 Vérification/creation du réseau sonarnet si nécessaire..."
-                docker network inspect sonarnet > /dev/null 2>&1 || docker network create sonarnet
+                    // 2. Vérifier MySQL
+                    def mysqlRunning = sh(
+                        script: 'docker ps --filter name=supplychain-mysql --format "{{.Names}}"',
+                        returnStdout: true
+                    ).trim()
 
-                # Construire l'image (déjà fait dans stage précédent mais on s'assure ici)
-                echo "🔨 (Re)construction image si besoin..."
-                docker build -t supplychainx-app . || true
+                    if (!mysqlRunning) {
+                        echo "🐬 Démarrage de MySQL..."
+                        sh '''
+                        docker run -d \
+                          --name supplychain-mysql \
+                          --network supplychain-network \
+                          -p 3307:3306 \
+                          -e MYSQL_ROOT_PASSWORD=root \
+                          -e MYSQL_DATABASE=supply_chain_db \
+                          -v mysql_data:/var/lib/mysql \
+                          mysql:8.0 \
+                          --default-authentication-plugin=mysql_native_password
+                        '''
+                        sleep 30
+                    }
 
-                # Déploiement: utiliser le réseau 'sonarnet' pour que le conteneur puisse joindre mysql-db
-                echo "🚀 Déploiement de la nouvelle application sur le réseau 'sonarnet'..."
-                docker run -d \
-                  --name supplychainx-app \
-                  --network sonarnet \                       # <- ici : NETWORK corrected to sonarnet
-                  -p 8080:8080 \
-                  -e SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/supply_chain_db \
-                  -e SPRING_DATASOURCE_USERNAME=root \
-                  -e SPRING_DATASOURCE_PASSWORD=root \
-                  supplychainx-app:latest
+                    // 3. Déployer l'application
+                    sh '''
+                    echo "🚀 Arrêt de l'ancienne application..."
+                    docker stop supplychainx-app || true
+                    docker rm supplychainx-app || true
 
-                # Attendre un petit peu et lister les conteneurs (contrôle basique)
-                echo "📊 Vérification du déploiement..."
-                sleep 15
-                docker ps --filter name=supplychainx-app
-                '''
+                    echo "🚀 Déploiement de la nouvelle application..."
+                    docker run -d \
+                      --name supplychainx-app \
+                      --network supplychain-network \
+                      -p 8080:8080 \
+                      -e SPRING_DATASOURCE_URL=jdbc:mysql://supplychain-mysql:3306/supply_chain_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&autoReconnect=true \
+                      -e SPRING_DATASOURCE_USERNAME=root \
+                      -e SPRING_DATASOURCE_PASSWORD=root \
+                      -e SPRING_JPA_HIBERNATE_DDL_AUTO=update \
+                      supplychainx-app:latest
+                    '''
+
+                    // 4. Vérification
+                    sh '''
+                    echo "📊 Vérification finale..."
+                    sleep 20
+                    echo "=== ÉTAT DES CONTENEURS ==="
+                    docker ps --format "table {{.Names}}\\t{{.Status}}\\t{{.Ports}}"
+
+                    echo "=== LOGS APPLICATION ==="
+                    docker logs supplychainx-app --tail=15
+                    '''
+                }
             }
         }
     }
@@ -86,9 +113,9 @@ pipeline {
             sh '''
             echo "✅ Application déployée avec succès"
             echo "🌐 URL: http://localhost:8080"
-            echo "📦 Image: supplychainx-app"
-            echo "🐳 État des conteneurs:"
-            docker-compose ps
+            echo "🗄️  MySQL: localhost:3307"
+            echo "📊 Conteneurs:"
+            docker ps --filter "name=supplychain" --format "table {{.Names}}\\t{{.Status}}\\t{{.Ports}}"
             '''
         }
     }
