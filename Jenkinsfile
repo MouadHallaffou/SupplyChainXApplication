@@ -41,22 +41,23 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh '''
-                echo "🚀 Vérification des conteneurs existants..."
-                docker-compose ps
-
                 echo "🚀 Arrêt de l'application existante..."
-                docker-compose stop app || true
-                docker-compose rm -f app || true
+                docker stop supplychainx-app || true
+                docker rm supplychainx-app || true
 
                 echo "🚀 Déploiement de la nouvelle application..."
-                docker-compose up -d app
+                docker run -d \
+                  --name supplychainx-app \
+                  --network supplychain-network \
+                  -p 8080:8080 \
+                  -e SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/supply_chain_db \
+                  -e SPRING_DATASOURCE_USERNAME=root \
+                  -e SPRING_DATASOURCE_PASSWORD=root \
+                  supplychainx-app:latest
 
                 echo "📊 Vérification du déploiement..."
                 sleep 15
-                docker-compose ps
-
-                echo "🔍 Vérification des logs de l'application..."
-                docker-compose logs app --tail=20
+                docker ps --filter name=supplychain
                 '''
             }
         }
