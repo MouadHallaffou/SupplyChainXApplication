@@ -25,7 +25,7 @@ services:
 
   # Application Spring Boot
   app:
-    build: .
+    image: supplychainx-app
     container_name: supplychainx-app
     restart: on-failure
     ports:
