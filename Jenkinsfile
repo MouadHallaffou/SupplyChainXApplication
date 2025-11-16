@@ -41,12 +41,22 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh '''
-                echo "🚀 Déploiement de l'application..."
+                echo "🚀 Vérification des conteneurs existants..."
+                docker-compose ps
+
+                echo "🚀 Arrêt de l'application existante..."
+                docker-compose stop app || true
+                docker-compose rm -f app || true
+
+                echo "🚀 Déploiement de la nouvelle application..."
                 docker-compose up -d app
 
-                echo "📊 Vérification des conteneurs..."
-                sleep 10
-                docker ps --filter "name=supplychain"
+                echo "📊 Vérification du déploiement..."
+                sleep 15
+                docker-compose ps
+
+                echo "🔍 Vérification des logs de l'application..."
+                docker-compose logs app --tail=20
                 '''
             }
         }
@@ -64,8 +74,8 @@ pipeline {
             echo "✅ Application déployée avec succès"
             echo "🌐 URL: http://localhost:8080"
             echo "📦 Image: supplychainx-app"
-            echo "🐳 Conteneurs en cours:"
-            docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+            echo "🐳 État des conteneurs:"
+            docker-compose ps
             '''
         }
     }
