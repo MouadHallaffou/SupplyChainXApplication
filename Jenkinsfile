@@ -34,6 +34,18 @@ pipeline {
             }
         }
 
+        stage('Push to DockerHub') {
+            steps {
+                withCredentials([string(credentialsId: 'dockerhub-token', variable: 'DOCKERHUB_TOKEN')]) {
+                    sh """
+                    echo "$DOCKERHUB_TOKEN" | docker login -u mouadhallaffou --password-stdin
+                    docker tag supplychainx-app:latest mouadhallaffou/supplychainx-app:latest
+                    docker push mouadhallaffou/supplychainx-app:latest
+                    """
+                }
+            }
+        }
+
         stage('Deploy') {
             steps {
                 script {
