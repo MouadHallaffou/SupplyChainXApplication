@@ -37,10 +37,8 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    // Créer le réseau si nécessaire
                     sh 'docker network create supplychain-network 2>/dev/null || true'
 
-                    // Déployer l'application
                     sh '''
                     docker stop supplychainx-app 2>/dev/null || true
                     docker rm supplychainx-app 2>/dev/null || true
@@ -56,7 +54,7 @@ pipeline {
                       supplychainx-app:latest
 
                     sleep 30
-                    echo "✅ Application déployée avec succès"
+                    echo "Application déployée avec succès"
                     docker ps --format "table {{.Names}}\\t{{.Status}}\\t{{.Ports}}"
                     '''
                 }
@@ -70,7 +68,7 @@ pipeline {
         }
         success {
             archiveArtifacts 'target/*.jar'
-            echo '🎉 PIPELINE RÉUSSIE! Application déployée sur http://localhost:8080'
+            echo 'PIPELINE RÉUSSIE! Application déployée sur http://localhost:8080'
         }
     }
 }

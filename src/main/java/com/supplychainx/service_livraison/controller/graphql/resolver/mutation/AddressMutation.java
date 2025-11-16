@@ -30,8 +30,13 @@ public class AddressMutation {
     }
 
     @MutationMapping
-    public ResponseEntity<Map<String, Object>> deleteAddress(@Argument Long id) {
+    //    public ResponseEntity<Map<String, Object>> deleteAddress(@Argument Long id) {
+    //        addressService.deleteAddress(id);
+    //        return GlobalSuccessHandler.handleDeleted("Address deleted successfully.");
+    //    }
+    public Boolean deleteAddress(@Argument Long id) {
         addressService.deleteAddress(id);
-        return GlobalSuccessHandler.handleDeleted("Address deleted successfully.");
+        return true;
     }
+
 }

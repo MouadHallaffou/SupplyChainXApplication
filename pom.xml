@@ -124,6 +124,12 @@
             <version>21.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.graphql</groupId>
+            <artifactId>spring-graphql-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Actuator & Devtools -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

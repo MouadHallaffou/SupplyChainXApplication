@@ -1,31 +1,37 @@
 package com.supplychainx.integration.service_livraison.controller;
 
-import com.supplychainx.service_livraison.dto.Request.ClientRequestDTO;
 import com.supplychainx.service_livraison.model.Client;
 import com.supplychainx.service_livraison.repository.ClientRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.graphql.tester.AutoConfigureHttpGraphQlTester;
+import org.springframework.boot.test.autoconfigure.graphql.tester.AutoConfigureGraphQlTester;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.graphql.test.tester.HttpGraphQlTester;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.graphql.test.tester.ExecutionGraphQlServiceTester;
+import org.springframework.test.context.TestPropertySource;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureHttpGraphQlTester
-@ActiveProfiles("test")
+@SpringBootTest
+@AutoConfigureGraphQlTester
+@TestPropertySource(
+        locations = "classpath:application-test.properties",
+        properties = {
+                "spring.config.location=classpath:application-test.properties",
+                "spring.config.name=application-test"
+        }
+)
 class ClientGraphQLIntegrationTest {
-
-    @Autowired
-    private HttpGraphQlTester graphQlTester;
 
     @Autowired
     private ClientRepository clientRepository;
 
     private Client testClient;
+    @Autowired
+    private ExecutionGraphQlServiceTester graphQlTester;
 
     @BeforeEach
     void setUp() {
@@ -46,19 +52,19 @@ class ClientGraphQLIntegrationTest {
     @Test
     void testGetAllClients() {
         String query = """
-            query {
-                getAllClients(page: 0, size: 10, sortBy: "clientId", sortDir: "asc") {
-                    content {
-                        clientId
-                        name
-                        email
-                        phoneNumber
+                    query {
+                        getAllClients(page: 0, size: 10, sortBy: "clientId", sortDir: "asc") {
+                            content {
+                                clientId
+                                name
+                                email
+                                phoneNumber
+                            }
+                            totalElements
+                            totalPages
+                        }
                     }
-                    totalElements
-                    totalPages
-                }
-            }
-        """;
+                """;
 
         graphQlTester.document(query)
                 .execute()
@@ -70,15 +76,15 @@ class ClientGraphQLIntegrationTest {
     @Test
     void testGetClientById() {
         String query = """
-            query($id: ID!) {
-                getClientById(id: $id) {
-                    clientId
-                    name
-                    email
-                    phoneNumber
-                }
-            }
-        """;
+                    query($id: ID!) {
+                        getClientById(id: $id) {
+                            clientId
+                            name
+                            email
+                            phoneNumber
+                        }
+                    }
+                """;
 
         graphQlTester.document(query)
                 .variable("id", testClient.getClientId())
@@ -90,20 +96,21 @@ class ClientGraphQLIntegrationTest {
     @Test
     void testCreateClient() {
         String mutation = """
-            mutation($input: ClientInput!) {
-                createClient(input: $input) {
-                    clientId
-                    name
-                    email
-                    phoneNumber
-                }
-            }
-        """;
+                    mutation($input: ClientInput!) {
+                        createClient(input: $input) {
+                            clientId
+                            name
+                            email
+                            phoneNumber
+                        }
+                    }
+                """;
 
-        ClientRequestDTO input = new ClientRequestDTO();
-        input.setName("New Client");
-        input.setEmail("new@example.com");
-        input.setPhoneNumber("+9876543210");
+        Map<String, Object> input = Map.of(
+                "name", "New Client",
+                "email", "new@example.com",
+                "phoneNumber", "+9876543210"
+        );
 
         graphQlTester.document(mutation)
                 .variable("input", input)
@@ -118,20 +125,21 @@ class ClientGraphQLIntegrationTest {
     @Test
     void testUpdateClient() {
         String mutation = """
-            mutation($id: ID!, $input: ClientInput!) {
-                updateClient(id: $id, input: $input) {
-                    clientId
-                    name
-                    email
-                    phoneNumber
-                }
-            }
-        """;
+                    mutation($id: ID!, $input: ClientInput!) {
+                        updateClient(id: $id, input: $input) {
+                            clientId
+                            name
+                            email
+                            phoneNumber
+                        }
+                    }
+                """;
 
-        ClientRequestDTO input = new ClientRequestDTO();
-        input.setName("Updated Client");
-        input.setEmail("updated@example.com");
-        input.setPhoneNumber("+1111111111");
+        Map<String, Object> input = Map.of(
+                "name", "Updated Client",
+                "email", "updated@example.com",
+                "phoneNumber", "+1111111111"
+        );
 
         graphQlTester.document(mutation)
                 .variable("id", testClient.getClientId())
@@ -147,10 +155,10 @@ class ClientGraphQLIntegrationTest {
     @Test
     void testDeleteClient() {
         String mutation = """
-            mutation($id: ID!) {
-                deleteClient(id: $id)
-            }
-        """;
+                    mutation($id: ID!) {
+                        deleteClient(id: $id)
+                    }
+                """;
 
         graphQlTester.document(mutation)
                 .variable("id", testClient.getClientId())
@@ -163,13 +171,13 @@ class ClientGraphQLIntegrationTest {
     @Test
     void testGetClientById_NotFound() {
         String query = """
-            query($id: ID!) {
-                getClientById(id: $id) {
-                    clientId
-                    name
-                }
-            }
-        """;
+                    query($id: ID!) {
+                        getClientById(id: $id) {
+                            clientId
+                            name
+                        }
+                    }
+                """;
 
         graphQlTester.document(query)
                 .variable("id", 99999L)
@@ -177,4 +185,5 @@ class ClientGraphQLIntegrationTest {
                 .errors()
                 .expect(error -> error.getMessage().contains("Client not found"));
     }
+
 }

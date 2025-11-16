@@ -31,7 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
                 "spring.config.name=application-test"
         }
 )
-@Transactional
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 
 public class FournisseurControllerTest {
