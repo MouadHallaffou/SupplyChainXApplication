@@ -15,7 +15,9 @@ pipeline {
         stage('Build & Test') {
             steps {
                 sh '''
-                mvn clean test -Dspring.datasource.url=jdbc:h2:mem:testdb -Dspring.jpa.database-platform=org.hibernate.dialect.H2Dialect -Dmaven.test.failure.ignore=true
+                mvn clean test -Dspring.datasource.url=jdbc:h2:mem:testdb \
+                               -Dspring.jpa.database-platform=org.hibernate.dialect.H2Dialect \
+                               -Dmaven.test.failure.ignore=true
                 '''
             }
         }
@@ -28,38 +30,33 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh '''
-                docker build -t supplychainx-app .
-                '''
+                sh 'docker build -t supplychainx-app .'
             }
         }
 
         stage('Deploy') {
             steps {
                 script {
+                    // Créer le réseau si nécessaire
+                    sh 'docker network create supplychain-network 2>/dev/null || true'
+
+                    // Déployer l'application
                     sh '''
-                    docker network ls | grep supplychain-network || docker network create supplychain-network
-                    '''
+                    docker stop supplychainx-app 2>/dev/null || true
+                    docker rm supplychainx-app 2>/dev/null || true
 
-                    def mysqlRunning = sh(
-                        script: 'docker ps --filter name=supplychain-mysql --format "{{.Names}}"',
-                        returnStdout: true
-                    ).trim()
+                    docker run -d \
+                      --name supplychainx-app \
+                      --network supplychain-network \
+                      -p 8080:8080 \
+                      -e SPRING_DATASOURCE_URL="jdbc:mysql://supplychain-mysql:3306/supply_chain_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&autoReconnect=true" \
+                      -e SPRING_DATASOURCE_USERNAME=root \
+                      -e SPRING_DATASOURCE_PASSWORD=root \
+                      -e SPRING_JPA_HIBERNATE_DDL_AUTO=update \
+                      supplychainx-app:latest
 
-                    if (!mysqlRunning) {
-                        sh '''
-                        docker run -d --name supplychain-mysql --network supplychain-network -p 3307:3306 -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=supply_chain_db -v mysql_data:/var/lib/mysql mysql:8.0 --default-authentication-plugin=mysql_native_password
-                        '''
-                        sleep 30
-                    }
-
-                    sh '''
-                    docker stop supplychainx-app || true
-                    docker rm supplychainx-app || true
-
-                    docker run -d --name supplychainx-app --network supplychain-network -p 8080:8080 -e SPRING_DATASOURCE_URL="jdbc:mysql://supplychain-mysql:3306/supply_chain_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&autoReconnect=true" -e SPRING_DATASOURCE_USERNAME=root -e SPRING_DATASOURCE_PASSWORD=root -e SPRING_JPA_HIBERNATE_DDL_AUTO=update supplychainx-app:latest
-
-                    sleep 20
+                    sleep 30
+                    echo "✅ Application déployée avec succès"
                     docker ps --format "table {{.Names}}\\t{{.Status}}\\t{{.Ports}}"
                     '''
                 }
@@ -73,7 +70,7 @@ pipeline {
         }
         success {
             archiveArtifacts 'target/*.jar'
-            echo '🎉 PIPELINE RÉUSSIE!'
+            echo '🎉 PIPELINE RÉUSSIE! Application déployée sur http://localhost:8080'
         }
     }
 }
