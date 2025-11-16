@@ -4,6 +4,7 @@ package com.supplychainx.integration.service_approvisionnement.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.supplychainx.service_approvisionnement.dto.Request.FournisseurRequestDTO;
+import com.supplychainx.service_approvisionnement.repository.CommandeFournisseurMatiereRepository;
 import com.supplychainx.service_approvisionnement.repository.FournisseurRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,11 +41,13 @@ public class FournisseurControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private CommandeFournisseurMatiereRepository commandeFournisseurMatiereRepository;
 
     @BeforeEach
-    @Transactional
     public void setUp() {
         fournisseurRepository.deleteAll();
+        commandeFournisseurMatiereRepository.deleteAll();
     }
 
     private FournisseurRequestDTO buildFournisseur(String name, String email, String phone, boolean isActive) {
