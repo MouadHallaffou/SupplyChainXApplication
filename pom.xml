@@ -28,6 +28,15 @@
     </scm>
     <properties>
         <java.version>17</java.version>
+
+        <sonar.exclusions>
+            src/main/java/com/supplychainx/**/dto/**,
+            src/main/java/com/supplychainx/**/mapper/**,
+            src/main/java/com/supplychainx/handler/**,
+            src/main/java/com/supplychainx/exception/**,
+            src/main/java/com/supplychainx/util/**
+        </sonar.exclusions>
+
     </properties>
 
     <dependencies>

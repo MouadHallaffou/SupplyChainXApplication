@@ -30,31 +30,24 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    sh '''
-                    if command -v docker &> /dev/null; then
-                        echo "Building Docker image..."
-                        docker build -t supplychainx-app .
-                    else
-                        echo "Docker n'est pas disponible, skip du build Docker"
-                    fi
-                    '''
-                }
+                sh '''
+                echo "🔨 Construction de l'image Docker..."
+                docker build -t supplychainx-app .
+                echo "✅ Image Docker construite avec succès"
+                '''
             }
         }
 
         stage('Deploy') {
             steps {
-                script {
-                    sh '''
-                    if command -v docker &> /dev/null && [ -f "docker-compose.yml" ]; then
-                        echo "Deploying with Docker Compose..."
-                        docker compose up -d
-                    else
-                        echo "Docker ou docker-compose.yml non disponible, skip du déploiement"
-                    fi
-                    '''
-                }
+                sh '''
+                echo "🚀 Déploiement de l'application..."
+                docker compose up -d app
+
+                echo "📊 Vérification des conteneurs..."
+                sleep 10
+                docker ps --filter "name=supplychain"
+                '''
             }
         }
     }
@@ -64,7 +57,14 @@ pipeline {
             junit 'target/surefire-reports/*.xml'
         }
         success {
+            echo '🎉 PIPELINE RÉUSSIE!'
             archiveArtifacts 'target/*.jar'
+
+            sh '''
+            echo "✅ Application déployée avec succès"
+            echo "🌐 URL: http://localhost:8080"
+            echo "📦 Image: supplychainx-app"
+            '''
         }
     }
 }
