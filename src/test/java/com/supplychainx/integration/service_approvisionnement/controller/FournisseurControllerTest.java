@@ -4,14 +4,14 @@ package com.supplychainx.integration.service_approvisionnement.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.supplychainx.service_approvisionnement.dto.Request.FournisseurRequestDTO;
-import com.supplychainx.service_approvisionnement.repository.CommandeFournisseurMatiereRepository;
-import com.supplychainx.service_approvisionnement.repository.FournisseurRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -31,23 +31,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
                 "spring.config.name=application-test"
         }
 )
+@Transactional
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
+
 public class FournisseurControllerTest {
 
     private static final String BASE_URL = "/api/v1/fournisseurs";
 
     @Autowired
-    private FournisseurRepository fournisseurRepository;
-    @Autowired
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
+
     @Autowired
-    private CommandeFournisseurMatiereRepository commandeFournisseurMatiereRepository;
+    private JdbcTemplate jdbcTemplate;
 
     @BeforeEach
     public void setUp() {
-        fournisseurRepository.deleteAll();
-        commandeFournisseurMatiereRepository.deleteAll();
+        jdbcTemplate.execute("DELETE FROM matiere_fournisseur");
+        jdbcTemplate.execute("DELETE FROM commande_fournisseur_matiere");
+        jdbcTemplate.execute("DELETE FROM commande_fournisseur");
+        jdbcTemplate.execute("DELETE FROM fournisseurs");
     }
 
     private FournisseurRequestDTO buildFournisseur(String name, String email, String phone, boolean isActive) {
