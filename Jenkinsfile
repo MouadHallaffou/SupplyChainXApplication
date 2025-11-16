@@ -42,7 +42,7 @@ pipeline {
             steps {
                 sh '''
                 echo "🚀 Déploiement de l'application..."
-                docker compose up -d app
+                docker-compose up -d app
 
                 echo "📊 Vérification des conteneurs..."
                 sleep 10
@@ -64,6 +64,8 @@ pipeline {
             echo "✅ Application déployée avec succès"
             echo "🌐 URL: http://localhost:8080"
             echo "📦 Image: supplychainx-app"
+            echo "🐳 Conteneurs en cours:"
+            docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
             '''
         }
     }
