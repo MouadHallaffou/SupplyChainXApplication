@@ -53,20 +53,28 @@ public class UserControllerTest {
         roleRepository.deleteAll();
     }
 
+    private RoleResponseDTO createRole(String name) {
+        RoleRequestDTO role = new RoleRequestDTO();
+        role.setName(name);
+        return roleService.create(role);
+    }
+
+    private UserRequestDTO createUser(String firstName, String lastName, String email, String password, Long roleId, Boolean isActive, Boolean isDeleted) {
+        UserRequestDTO user = new UserRequestDTO();
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setEmail(email);
+        user.setPassword(password);
+        user.setRoleId(roleId);
+        user.setIsActive(isActive);
+        user.setIsDeleted(isDeleted);
+        return user;
+    }
+
     @Test
     void testCreateUser_Success() throws Exception {
-        RoleRequestDTO role = new RoleRequestDTO();
-        role.setName("ADMIN");
-        RoleResponseDTO savedRole = roleService.create(role);
-
-        UserRequestDTO user = new UserRequestDTO();
-        user.setFirstName("Mouad");
-        user.setLastName("Hallaffou");
-        user.setEmail("mouad@gmail.com");
-        user.setPassword("123456");
-        user.setRoleId(savedRole.roleId());
-        user.setIsActive(true);
-        user.setIsDeleted(false);
+        RoleResponseDTO role = createRole("ADMIN");
+        UserRequestDTO user = createUser("Mouad", "Hallaffou", "mouad@gmail.com", "123456", role.roleId(), true, false);
 
         mockMvc.perform(post("/api/v1/users")
                         .contentType("application/json")
@@ -79,22 +87,12 @@ public class UserControllerTest {
 
     @Test
     void testFindById_Success() throws Exception {
-        RoleRequestDTO role = new RoleRequestDTO();
-        role.setName("ADMIN");
-        RoleResponseDTO savedRole = roleService.create(role);
+        RoleResponseDTO role = createRole("ADMIN");
+        UserRequestDTO user = createUser("Mouad", "Hallaffou", "mouad@gmail.com", "123456", role.roleId(), true, false);
+        UserResponseDTO savedUser = userService.create(user);
 
-        UserRequestDTO user = new UserRequestDTO();
-        user.setFirstName("Mouad");
-        user.setLastName("Hallaffou");
-        user.setEmail("mouad@gmail.com");
-        user.setPassword("123456");
-        user.setRoleId(savedRole.roleId());
-        user.setIsActive(true);
-        user.setIsDeleted(false);
-
-        UserResponseDTO createdUser = userService.create(user);
-        UserResponseDTO foundUser = userService.getById(createdUser.userId());
-        mockMvc.perform(get("/api/v1/users/" + createdUser.userId()))
+        UserResponseDTO foundUser = userService.getById(savedUser.userId());
+        mockMvc.perform(get("/api/v1/users/" + savedUser.userId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.firstName").value(foundUser.firstName()))
                 .andExpect(jsonPath("$.email").value(foundUser.email()));
@@ -110,14 +108,8 @@ public class UserControllerTest {
 
     @Test
     void testCreateUser_InvalidInput() throws Exception {
-        UserRequestDTO user = new UserRequestDTO();
-        user.setFirstName(""); // Invalid first name
-        user.setLastName("Hallaffou");
-        user.setEmail("invalid-email"); // Invalid email
-        user.setPassword("123456");
-        user.setRoleId(1L);
-        user.setIsActive(true);
-        user.setIsDeleted(false);
+        RoleResponseDTO role = createRole("ADMIN");
+        UserRequestDTO user = createUser("Mouad", "", "test-invalid", "123456", role.roleId(), true, false);
 
         mockMvc.perform(post("/api/v1/users")
                         .contentType("application/json")
@@ -128,14 +120,9 @@ public class UserControllerTest {
 
     @Test
     void testCreateUser_RoleNotFound() throws Exception {
-        UserRequestDTO user = new UserRequestDTO();
-        user.setFirstName("Mouad");
-        user.setLastName("Hallaffou");
-        user.setEmail("mouad@gmail.ma");
-        user.setPassword("123456");
-        user.setRoleId(999L); // Non-existent role ID
-        user.setIsActive(true);
-        user.setIsDeleted(false);
+        RoleResponseDTO role = createRole("ADMIN");
+        UserRequestDTO user = createUser("Mouad", "Hallaffou", "mouad@gmail.com", "123456", 999L, true, false); // Invalid role ID
+
         mockMvc.perform(post("/api/v1/users")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(user)))
@@ -146,19 +133,10 @@ public class UserControllerTest {
 
     @Test
     void testActivateUser_Success() throws Exception {
-        RoleRequestDTO role = new RoleRequestDTO();
-        role.setName("ADMIN");
-        RoleResponseDTO savedRole = roleService.create(role);
-
-        UserRequestDTO user = new UserRequestDTO();
-        user.setFirstName("Mouad");
-        user.setLastName("Hallaffou");
-        user.setEmail("mouad@gmail.com");
-        user.setPassword("123456");
-        user.setRoleId(savedRole.roleId());
-        user.setIsActive(false);
-        user.setIsDeleted(false);
+        RoleResponseDTO role = createRole("ADMIN");
+        UserRequestDTO user = createUser("Mouad", "Hallaffou", "mouad@gmail.com", "123456", role.roleId(), true, false);
         UserResponseDTO createdUser = userService.create(user);
+
         mockMvc.perform(put("/api/v1/users/activate/" + createdUser.userId()))
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("User activated successfully"));
@@ -166,18 +144,8 @@ public class UserControllerTest {
 
     @Test
     void testUpdateUser_Success() throws Exception {
-        RoleRequestDTO role = new RoleRequestDTO();
-        role.setName("ADMIN");
-        RoleResponseDTO savedRole = roleService.create(role);
-
-        UserRequestDTO user = new UserRequestDTO();
-        user.setFirstName("Mouad");
-        user.setLastName("Hallaffou");
-        user.setEmail("mouadup@mail.com");
-        user.setPassword("123456");
-        user.setRoleId(savedRole.roleId());
-        user.setIsActive(true);
-        user.setIsDeleted(false);
+        RoleResponseDTO role = createRole("ADMIN");
+        UserRequestDTO user = createUser("Mouad", "Hallaffou", "mouad@gmail.com", "123456", role.roleId(), true, false);
         UserResponseDTO createdUser = userService.create(user);
         user.setFirstName("UpdatedName");
         mockMvc.perform(put("/api/v1/users/" + createdUser.userId())
@@ -190,19 +158,10 @@ public class UserControllerTest {
 
     @Test
     void testDeactivateUser_Success() throws Exception {
-        RoleRequestDTO role = new RoleRequestDTO();
-        role.setName("ADMIN");
-        RoleResponseDTO savedRole = roleService.create(role);
-
-        UserRequestDTO user = new UserRequestDTO();
-        user.setFirstName("Mouad");
-        user.setLastName("Hallaffou");
-        user.setEmail("mouad@gmai.ma");
-        user.setPassword("123456");
-        user.setRoleId(savedRole.roleId());
-        user.setIsActive(true);
-        user.setIsDeleted(false);
+        RoleResponseDTO role = createRole("ADMIN");
+        UserRequestDTO user = createUser("Mouad", "Hallaffou", "mouad@gmail.com", "123456", role.roleId(), true, false);
         UserResponseDTO createdUser = userService.create(user);
+
         mockMvc.perform(put("/api/v1/users/deactivate/" + createdUser.userId()))
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("User deactivated successfully"));
@@ -210,19 +169,10 @@ public class UserControllerTest {
 
     @Test
     void testSoftDeleteUser_Success() throws Exception {
-        RoleRequestDTO role = new RoleRequestDTO();
-        role.setName("ADMIN");
-        RoleResponseDTO savedRole = roleService.create(role);
-
-        UserRequestDTO user = new UserRequestDTO();
-        user.setFirstName("Mouad");
-        user.setLastName("Hallaffou");
-        user.setEmail("mouad@gmail.com");
-        user.setPassword("123456");
-        user.setRoleId(savedRole.roleId());
-        user.setIsActive(true);
-        user.setIsDeleted(false);
+        RoleResponseDTO role = createRole("ADMIN");
+        UserRequestDTO user = createUser("Mouad", "Hallaffou", "mouad@gmail.com", "123456", role.roleId(), true, false);
         UserResponseDTO createdUser = userService.create(user);
+
         mockMvc.perform(put("/api/v1/users/softDelete/" + createdUser.userId()))
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("User deleted successfully"));

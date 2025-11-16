@@ -15,6 +15,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -41,6 +42,7 @@ public class FournisseurControllerTest {
     private ObjectMapper objectMapper;
 
     @BeforeEach
+    @Transactional
     public void setUp() {
         fournisseurRepository.deleteAll();
     }
@@ -133,4 +135,5 @@ public class FournisseurControllerTest {
                 .andExpect(jsonPath("$.name").value("Fournisseur A"))
                 .andExpect(jsonPath("$.contactEmail").value("fr@gmail.com"));
     }
+
 }

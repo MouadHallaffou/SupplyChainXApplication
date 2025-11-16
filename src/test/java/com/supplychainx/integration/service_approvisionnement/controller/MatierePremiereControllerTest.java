@@ -52,8 +52,6 @@ public class MatierePremiereControllerTest {
         fournisseurRepository.deleteAll();
     }
 
-    // ---------- Helpers
-
     private FournisseurRequestDTO buildFournisseur(String name, boolean active) {
         FournisseurRequestDTO dto = new FournisseurRequestDTO();
         dto.setName(name);
@@ -99,8 +97,6 @@ public class MatierePremiereControllerTest {
         JsonNode data = toJson(res).get("data");
         return data.has("matierePremiereId") ? data.get("matierePremiereId").asLong() : data.get("id").asLong();
     }
-
-    // ---------- Tests
 
     @Test
     void testCreateMatierePremiere() throws Exception {
@@ -173,4 +169,5 @@ public class MatierePremiereControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray());
     }
+
 }

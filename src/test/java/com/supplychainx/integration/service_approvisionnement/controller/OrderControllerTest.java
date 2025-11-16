@@ -202,4 +202,5 @@ public class OrderControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.status").value(FournisseurOrderStatus.ANNULEE.name()));
     }
+
 }
