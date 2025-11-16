@@ -1,6 +1,7 @@
 package com.supplychainx.integration.service_production.repository;
 
 import com.supplychainx.service_production.model.Product;
+import com.supplychainx.service_production.repository.ProductOrderRepository;
 import com.supplychainx.service_production.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,9 +22,12 @@ public class ProductRepositoryTest {
 
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private ProductOrderRepository productOrderRepository;
 
     @BeforeEach
     void setUp() {
+        productOrderRepository.deleteAll();
         productRepository.deleteAll();
     }
 
