@@ -5,6 +5,7 @@ POST {{baseUrl}}
 Content-Type: application/json
 
 {
+<<<<<<< HEAD
   "firstName": "jabir",
   "lastName": "hallaffou",
   "email": "jabir@gmail.com",
@@ -12,13 +13,26 @@ Content-Type: application/json
   "isActive": true,
   "isDeleted": false,
   "roleId": 2
+=======
+  "firstName": "test2",
+  "lastName": "test2",
+  "email": "test2@gmail.com",
+  "password": "12345678",
+  "isActive": true,
+  "isDeleted": false,
+  "roleId": 1
+>>>>>>> cicd/master
 }
 
 ###
 GET {{baseUrl}}
 
 ###
+<<<<<<< HEAD
 GET {{baseUrl}}/2
+=======
+GET {{baseUrl}}/1
+>>>>>>> cicd/master
 
 ###
 PUT {{baseUrl}}/2
@@ -35,7 +49,11 @@ Content-Type: application/json
 }
 
 ###
+<<<<<<< HEAD
 PUT {{baseUrl}}/activate/5
+=======
+PUT {{baseUrl}}/activate/3
+>>>>>>> cicd/master
 
 ###
 PUT {{baseUrl}}/deactivate/5

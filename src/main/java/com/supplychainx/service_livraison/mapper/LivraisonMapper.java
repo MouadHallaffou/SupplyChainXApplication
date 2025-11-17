@@ -66,7 +66,7 @@ public class LivraisonMapper {
             );
         } catch (Exception e) {
             log.error("Error mapping Livraison to ResponseDTO: {}", e.getMessage(), e);
-            throw new RuntimeException("Error mapping livraison: " + e.getMessage());
+            throw new ResourceNotFoundException("Error mapping livraison: " + e.getMessage());
         }
     }
 

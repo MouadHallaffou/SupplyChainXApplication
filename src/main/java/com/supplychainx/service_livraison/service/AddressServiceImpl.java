@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AddressServiceImpl implements AddressService {
     private final AddressMapper addressMapper;
     private final AddressRepository addressRepository;

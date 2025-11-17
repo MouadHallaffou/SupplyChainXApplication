@@ -22,6 +22,9 @@ public class RoleServiceImpl implements RoleService {
     @Transactional
     public RoleResponseDTO create(RoleRequestDTO roleRequestDTO) {
         Role role = roleMapper.toEntity(roleRequestDTO);
+        if (roleRepository.existsRolesByName(role.getName())) {
+            throw new ResourceNotFoundException("Role with name " + role.getName() + " already exists.");
+        }
         Role savedRole = roleRepository.save(role);
         return roleMapper.toDTO(savedRole);
     }

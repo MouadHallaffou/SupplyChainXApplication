@@ -4,7 +4,6 @@ import com.supplychainx.handler.GlobalSuccessHandler;
 import com.supplychainx.service_user.dto.Request.UserRequestDTO;
 import com.supplychainx.service_user.dto.Response.UserResponseDTO;
 import com.supplychainx.service_user.service.UserService;
-import com.supplychainx.util.AuthUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +17,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-    private final AuthUtil authUtil;
 
     @GetMapping
     public List<UserResponseDTO> getAllUsers() {
@@ -26,53 +24,36 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<Map<String, Object>> createUser(@RequestHeader("email") String email,
-                                                          @RequestHeader("password") String password,
-                                                          @Valid @RequestBody UserRequestDTO userRequestDTO) {
-        authUtil.verifyAccess(email, password, "ADMIN");
+    public ResponseEntity<Map<String, Object>> createUser(@Valid @RequestBody UserRequestDTO userRequestDTO) {
         UserResponseDTO createdDTO = userService.create(userRequestDTO);
-        return GlobalSuccessHandler.handleSuccessWithData("User created successfully", createdDTO);
+        return GlobalSuccessHandler.handleSuccessWithDataCreated("User created successfully", createdDTO);
     }
 
     @GetMapping("/{id}")
-    public UserResponseDTO getUserById(@RequestHeader("email") String email,
-                                       @RequestHeader("password") String password,
-                                       @PathVariable("id") Long id) {
-        authUtil.verifyAccess(email, password, "ADMIN");
+    public UserResponseDTO getUserById(@PathVariable("id") Long id) {
         return userService.getById(id);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> updateUser(@RequestHeader("email") String email, @RequestHeader("password") String password,
-                                                          @PathVariable("id") Long id, @Valid @RequestBody UserRequestDTO userRequestDTO) {
-        authUtil.verifyAccess(email, password, "ADMIN");
+    public ResponseEntity<Map<String, Object>> updateUser(@PathVariable("id") Long id, @Valid @RequestBody UserRequestDTO userRequestDTO) {
         UserResponseDTO updatedDTO = userService.update(id, userRequestDTO);
         return GlobalSuccessHandler.handleSuccessWithData("User updated successfully", updatedDTO);
     }
 
     @PutMapping("/softDelete/{id}")
-    public ResponseEntity<Map<String, Object>> deleteUser(@RequestHeader("email") String email,
-                                                          @RequestHeader("password") String password,
-                                                          @PathVariable("id") Long id) {
-        authUtil.verifyAccess(email, password, "ADMIN");
+    public ResponseEntity<Map<String, Object>> deleteUser(@PathVariable("id") Long id) {
         userService.softDelete(id);
         return GlobalSuccessHandler.handleDeleted("User deleted successfully");
     }
 
     @PutMapping("/deactivate/{id}")
-    public ResponseEntity<Map<String, Object>> deactivateUser(@RequestHeader("email") String email,
-                                                              @RequestHeader("password") String password,
-                                                              @PathVariable("id") Long id) {
-        authUtil.verifyAccess(email, password, "ADMIN");
+    public ResponseEntity<Map<String, Object>> deactivateUser(@PathVariable("id") Long id) {
         userService.deactivate(id);
         return GlobalSuccessHandler.handleDeleted("User deactivated successfully");
     }
 
     @PutMapping("/activate/{id}")
-    public ResponseEntity<Map<String, Object>> activateUser(@RequestHeader("email") String email,
-                                                            @RequestHeader("password") String password,
-                                                            @PathVariable("id") Long id) {
-        authUtil.verifyAccess(email, password, "ADMIN");
+    public ResponseEntity<Map<String, Object>> activateUser(@PathVariable("id") Long id) {
         userService.activate(id);
         return GlobalSuccessHandler.handleActivate("User activated successfully");
     }

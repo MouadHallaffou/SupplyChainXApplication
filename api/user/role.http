@@ -4,15 +4,22 @@
 ###
 POST {{baseUrl}}
 Content-Type: application/json
+<<<<<<< HEAD
 email: mouadhlf@gmail.ma
 password: 0000000011
 
 {
   "name": "SUPERVISEUR_LIVRAISONS"
+=======
+
+{
+  "name": "PLANIFICATEUR"
+>>>>>>> cicd/master
 }
 
 ###
 GET {{baseUrl}}
+<<<<<<< HEAD
 Content-Type: application/json
 email: mouadhlf@gmail.ma
 password: 00000000
@@ -28,13 +35,28 @@ PUT {{baseUrl}}/11
 Content-Type: application/json
 email: mouadhlf@gmail.ma
 password: 00000000
+=======
+
+
+###
+GET {{baseUrl}}/2
+
+
+###
+PUT {{baseUrl}}/1
+Content-Type: application/json
+>>>>>>> cicd/master
 
 {
   "name": "ADMIN"
 }
 
 ###
+<<<<<<< HEAD
 DELETE {{baseUrl}}/20
 Content-Type: application/json
 email: mouadhlf@gmail.ma
 password: 00000011
+=======
+DELETE {{baseUrl}}/2
+>>>>>>> cicd/master
