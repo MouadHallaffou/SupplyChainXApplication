@@ -1,4 +1,4 @@
-package com.supplychainx.service.service_production;
+package com.supplychainx.unitaire.service_production;
 
 import com.supplychainx.service_approvisionnement.model.MatierePremiere;
 import com.supplychainx.service_approvisionnement.repository.MatierePremiereRepository;

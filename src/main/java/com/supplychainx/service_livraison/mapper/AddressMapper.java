@@ -12,6 +12,7 @@ public class AddressMapper {
         if (addressRequestDTO == null) {
             return null;
         }
+
         Address address = new Address();
         address.setStreet(addressRequestDTO.getStreet());
         address.setCity(addressRequestDTO.getCity());

@@ -4,8 +4,6 @@
 ###
 POST {{baseUrl}}
 Content-Type: application/json
-email: mouadhlf@gmail.ma
-password: 0000000011
 
 {
   "name": "SUPERVISEUR_LIVRAISONS"
@@ -13,21 +11,13 @@ password: 0000000011
 
 ###
 GET {{baseUrl}}
-Content-Type: application/json
-email: mouadhlf@gmail.ma
-password: 00000000
 
 ###
 GET {{baseUrl}}/2
-Content-Type: application/json
-email: mouadhlf@gmail.ma
-password: 0000000011
 
 ###
-PUT {{baseUrl}}/11
+PUT {{baseUrl}}/1
 Content-Type: application/json
-email: mouadhlf@gmail.ma
-password: 00000000
 
 {
   "name": "ADMIN"
@@ -35,6 +25,3 @@ password: 00000000
 
 ###
 DELETE {{baseUrl}}/20
-Content-Type: application/json
-email: mouadhlf@gmail.ma
-password: 00000011

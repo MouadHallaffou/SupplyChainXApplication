@@ -11,8 +11,8 @@ Content-Type: application/json
   "stockQuantity": 500,
   "unit": "kg",
   "fournisseurIds": [
-    6,
-    8
+    2,
+    4
   ]
 }
 

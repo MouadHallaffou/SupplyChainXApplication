@@ -18,6 +18,8 @@ public class BillOfMaterialController {
     private final BillOfMaterialService billOfMaterialService;
 
     @PostMapping
+
+//    @ResponseStatus(HttpStatus.CREATED)
     public BillOfMaterialResponseDTO createBillOfMaterial(@Valid @RequestBody BillOfMaterialRequestDTO billOfMaterialRequestDTO){
         return billOfMaterialService.createBillOfMaterial(billOfMaterialRequestDTO);
     }

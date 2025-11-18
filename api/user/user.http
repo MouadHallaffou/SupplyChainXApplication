@@ -37,6 +37,7 @@ Content-Type: application/json
 ###
 PUT {{baseUrl}}/activate/5
 
+
 ###
 PUT {{baseUrl}}/deactivate/5
 

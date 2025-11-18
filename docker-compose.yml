@@ -1,5 +1,5 @@
-# Docker Compose configuration for MySQL database for Supply Chain Management System
 services:
+  # MySQL
   mysql-db:
     image: mysql:8.0
     container_name: supplychain-mysql
@@ -8,7 +8,7 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: supply_chain_db
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     command:
@@ -16,10 +16,93 @@ services:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot" ]
       timeout: 20s
       retries: 10
       start_period: 40s
+    networks:
+      - sonarnet
+
+  # Application Spring Boot
+  app:
+    image: supplychainx-app
+    container_name: supplychainx-app
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/supply_chain_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&autoReconnect=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - sonarnet
+
+  # PostgreSQL pour SonarQube
+  sonarqube-db:
+    image: postgres:15
+    container_name: sonarqube-db
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+      POSTGRES_DB: sonar
+    volumes:
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - sonarnet
+
+  # Serveur SonarQube
+  sonarqube:
+    image: sonarqube:community
+    container_name: sonarqube
+    depends_on:
+      - sonarqube-db
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://sonarqube-db:5432/sonar
+      SONAR_JDBC_USERNAME: sonar
+      SONAR_JDBC_PASSWORD: sonar
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+    ports:
+      - "9001:9000"
+    networks:
+      - sonarnet
+
+  # Jenkins avec Maven
+  jenkins:
+    build:
+      context: .
+      dockerfile: Dockerfile.Jenkins
+    container_name: jenkins
+    restart: unless-stopped
+    user: root
+    ports:
+      - "8085:8080"
+    #      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - sonarnet
 
 volumes:
   mysql_data:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
+  postgresql:
+  postgresql_data:
+  jenkins_home:
+
+networks:
+  sonarnet:
+    driver: bridge
