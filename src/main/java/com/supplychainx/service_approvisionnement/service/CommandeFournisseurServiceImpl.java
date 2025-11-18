@@ -60,17 +60,22 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
         return commandeFournisseurMapper.toResponseDTO(commandeFournisseurRepository.save(existingCommande));
     }
 
-    private void handleCommandeMatieresSafely(CommandeFournisseurRequestDTO dto, CommandeFournisseur commande) {
+    private void handleCommandeMatieresSafely(CommandeFournisseurRequestDTO dto,
+                                              CommandeFournisseur commande) {
+
+        commande.getCommandeFournisseurMatieres().clear();
+
         List<CommandeFournisseurMatiere> matieres =
                 Optional.ofNullable(dto.getCommandeFournisseurMatieres())
                         .orElse(Collections.emptyList())
                         .stream()
                         .map(commandeFournisseurMatiereMapper::toEntity)
                         .peek(m -> m.setCommandeFournisseur(commande))
-                        .collect(Collectors.toList());
+                        .toList();
 
-        commande.setCommandeFournisseurMatieres(matieres);
+        commande.getCommandeFournisseurMatieres().addAll(matieres);
     }
+
 
     @Override
     @Transactional
