@@ -54,11 +54,7 @@ DELETE {{baseUrl}}/7
 PUT {{baseUrl}}/11/start
 
 ### complete order processing
-<<<<<<< HEAD
 PUT {{baseUrl}}/6/complete
-=======
-PUT {{baseUrl}}/11/complete
->>>>>>> cicd/master
 
 ### cancel order
 PUT {{baseUrl}}/11/cancel

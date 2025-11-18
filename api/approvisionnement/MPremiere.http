@@ -11,12 +11,8 @@ Content-Type: application/json
   "stockQuantity": 500,
   "unit": "kg",
   "fournisseurIds": [
-<<<<<<< HEAD
-    6,
-    8
-=======
-    1
->>>>>>> cicd/master
+    2,
+    4
   ]
 }
 
@@ -25,11 +21,7 @@ Content-Type: application/json
 GET {{baseUrl}}?page=0&size=10
 
 ###
-<<<<<<< HEAD
 GET {{baseUrl}}/3
-=======
-GET {{baseUrl}}/30
->>>>>>> cicd/master
 
 ###
 PUT {{baseUrl}}/3
@@ -46,11 +38,7 @@ Content-Type: application/json
 }
 
 ###
-<<<<<<< HEAD
 DELETE {{baseUrl}}/5
-=======
-DELETE {{baseUrl}}/2
->>>>>>> cicd/master
 
 ### filter par stock minimum
 GET {{baseUrl}}/filtrer-par-stock-critique?stockCritique=150&page=0&size=5

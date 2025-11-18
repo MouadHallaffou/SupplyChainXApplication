@@ -77,7 +77,7 @@ public class UserServiceImplTest {
     @Test
     void createUser_ShouldReturnUserResponseDTO_WhenValidInput() {
         when(roleRepository.findById(1L))
-                .thenReturn(Optional.of(new Role()));
+                .thenReturn(Optional.of(role));
 
         when(userMapper.toEntity(userRequestDTO)).thenReturn(user);
         when(userRepository.save(any(User.class))).thenReturn(user);
@@ -95,7 +95,7 @@ public class UserServiceImplTest {
     @Test
     void createUser_ShouldHashPassword_WhenCreatingUser() {
         when(roleRepository.findById(1L))
-                .thenReturn(Optional.of(new Role()));
+                .thenReturn(Optional.of(role));
         // Given
         String rawPassword = "password123";
         userRequestDTO.setPassword(rawPassword);
