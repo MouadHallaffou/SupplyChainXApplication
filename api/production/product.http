@@ -6,10 +6,10 @@ POST {{baseUrl}}
 Content-Type: application/json
 
 {
-  "name": "Product C",
+  "name": "Product test",
   "productionTimeHours": 48,
   "costPerUnit": 119.99,
-  "stock": 200
+  "stock": 0
 }
 
 ### Get all products

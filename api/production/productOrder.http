@@ -6,8 +6,8 @@ POST {{baseUrl}}
 Content-Type: application/json
 
 {
-  "productId": 1,
-  "quantity": 10,
+  "productId": 4,
+  "quantity": 2,
   "status": "EN_ATTENTE",
   "startDate": "2024-07-01T10:00:00Z",
   "endDate": "2024-07-10T10:00:00Z"
@@ -35,10 +35,11 @@ Content-Type: application/json
 DELETE {{baseUrl}}/1
 
 ### Start a product order
-PUT {{baseUrl}}/1/start
+PUT {{baseUrl}}/2/start
 
 ### Complete a product order
 PUT {{baseUrl}}/1/complete
 
 ### Block a product order
 PUT {{baseUrl}}/1/cancel
+

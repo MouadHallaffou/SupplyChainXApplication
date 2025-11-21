@@ -6,9 +6,9 @@ POST {{baseUrl}}
 Content-Type: application/json
 
 {
-  "quantity": 20,
-  "productId": 1,
-  "matierePremiereId": 5
+  "quantity": 10,
+  "productId": 4,
+  "matierePremiereId": 7
 }
 
 ### get by id

@@ -6,13 +6,12 @@ POST {{baseUrl}}
 Content-Type: application/json
 
 {
-  "name": "Chocolat",
-  "stockMinimum": 150,
-  "stockQuantity": 500,
+  "name": "outil dev",
+  "stockMinimum": 100,
+  "stockQuantity": 200,
   "unit": "kg",
   "fournisseurIds": [
-    6,
-    8
+    9
   ]
 }
 

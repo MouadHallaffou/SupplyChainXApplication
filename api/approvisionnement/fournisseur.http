@@ -6,8 +6,8 @@ POST {{baseUrl}}
 Content-Type: application/json
 
 {
-  "name": "Allianz",
-  "contactEmail": "alz@gmail.com",
+  "name": "Oussama",
+  "contactEmail": "oussama@gmail.com",
   "phoneNumber": "0612345678",
   "address": "10 rue de YC, YSF",
   "isActive": true,

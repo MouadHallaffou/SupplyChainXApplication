@@ -6,17 +6,13 @@ POST {{baseUrl}}
 Content-Type: application/json
 
 {
-  "fournisseurId": 8,
-  "orderDate": "2024-07-20T10:30:00",
+  "fournisseurId": 9,
+  "orderDate": "2024-10-20T10:30:00",
   "status": "EN_ATTENTE",
   "commandeFournisseurMatieres": [
     {
-      "matierePremiereId": 3,
-      "quantite": 100
-    },
-    {
-      "matierePremiereId": 4,
-      "quantite": 150
+      "matierePremiereId": 7,
+      "quantite": 3
     }
   ]
 }
@@ -47,10 +43,10 @@ Content-Type: application/json
 DELETE {{baseUrl}}/7
 
 ### start order processing
-PUT {{baseUrl}}/11/start
+PUT {{baseUrl}}/15/start
 
 ### complete order processing
-PUT {{baseUrl}}/13/complete
+PUT {{baseUrl}}/15/complete
 
 ### cancel order
 PUT {{baseUrl}}/11/cancel
