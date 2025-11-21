@@ -36,7 +36,7 @@ public class CommandeFournisseur extends BaseEntity {
     @JoinColumn(name = "fournisseur_id", nullable = false)
     private Fournisseur fournisseur;
 
-    @OneToMany(mappedBy = "commandeFournisseur", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "commandeFournisseur", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommandeFournisseurMatiere> commandeFournisseurMatieres = new ArrayList<>();
 
 }
