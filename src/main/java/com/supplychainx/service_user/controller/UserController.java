@@ -7,6 +7,7 @@ import com.supplychainx.service_user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,10 +20,12 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
+    @PreAuthorize("hasRole('PLANIFICATEUR')")
     public List<UserResponseDTO> getAllUsers() {
         return userService.getAll();
     }
 
+    @PreAuthorize("hasRole('PLANIFICATEUR')")
     @PostMapping
     public ResponseEntity<Map<String, Object>> createUser(@Valid @RequestBody UserRequestDTO userRequestDTO) {
         UserResponseDTO createdDTO = userService.create(userRequestDTO);

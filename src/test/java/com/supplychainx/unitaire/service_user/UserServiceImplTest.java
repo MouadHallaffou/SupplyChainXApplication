@@ -15,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,6 +37,9 @@ public class UserServiceImplTest {
     @Mock
     private RoleRepository roleRepository;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     @InjectMocks
     private UserServiceImpl userService;
 
@@ -55,7 +59,7 @@ public class UserServiceImplTest {
         user.setFirstName("mouad");
         user.setLastName("hallaffou");
         user.setEmail("mouadhallaff@gmail.com");
-        user.setPassword("hashedPassword");
+        user.setPassword("password123");
         user.setRole(role);
         user.setIsActive(true);
         user.setIsDeleted(false);
@@ -107,9 +111,7 @@ public class UserServiceImplTest {
         userService.create(userRequestDTO);
 
         // Then
-        verify(userRepository).save(argThat(savedUser ->
-                savedUser.getPassword().startsWith("$2a$") // Vérifie que le mot de passe est hashé
-        ));
+        verify(passwordEncoder, times(1)).encode(rawPassword);
     }
 
     // GET BY ID Tests
