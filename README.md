@@ -2,6 +2,16 @@
 
 ![Java](https://img.shields.io/badge/Java-17-orange?style=flat&logo=java)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.7-brightgreen?style=flat&logo=spring)
+![Spring Security](https://img.shields.io/badge/Spring%20Security-6.1.7-brightgreen?style=flat&logo=spring)
+![Spring Data JPA](https://img.shields.io/badge/Spring%20Data%20JPA-6.1.7-brightgreen?style=flat&logo=spring)
+![Spring Web](https://img.shields.io/badge/Spring%20Web-6.1.7-brightgreen?style=flat&logo=spring)
+![SpringDoc OpenAPI](https://img.shields.io/badge/SpringDoc%20OpenAPI-2.8.13-brightgreen?style=flat&logo=swagger)
+![JUnit 5](https://img.shields.io/badge/JUnit%205-25A162?style=flat&logo=junit5&logoColor=white)
+![Mockito](https://img.shields.io/badge/Mockito-2B2B2B?style=flat&logo=mockito&logoColor=white)
+![Hibernate](https://img.shields.io/badge/Hibernate-59666C?style=flat&logo=hibernate)
+![Lombok](https://img.shields.io/badge/Lombok-D32F2F?style=flat&logo=lombok&logoColor=white)
+![MapStruct](https://img.shields.io/badge/MapStruct-FF5722?style=flat&logo=mapstruct&logoColor=white)
+![Spring GraphQL](https://img.shields.io/badge/Spring%20GraphQL-6.1.7-brightgreen?style=flat&logo=spring)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0-blue?style=flat&logo=mysql)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=flat&logo=postgresql)
 ![H2](https://img.shields.io/badge/H2-Database-blue?style=flat)
@@ -27,9 +37,9 @@ cd SupplyChainX-CI-CD
 docker-compose up -d
 
 # 3. Accéder à l'application
-# API: http://localhost:8080
+# API REST: http://localhost:8080
 # Swagger: http://localhost:8080/swagger-ui.html
-# GraphQL: http://localhost:8080/graphiql
+# GraphiQL: http://localhost:8080/graphiql?path=/graphql
 ```
 
 **Ou en mode développement :**
@@ -60,6 +70,8 @@ mvn clean test jacoco:report
 - [Installation](#-installation)
 - [Configuration](#-configuration)
 - [Utilisation](#-utilisation)
+  - [API REST](#-api-rest-modules-approvisionnement-production-utilisateurs)
+  - [API GraphQL](#-api-graphql-module-livraison)
 - [Tests](#-tests)
 - [CI/CD avec Jenkins](#-cicd-avec-jenkins)
 - [Qualité du Code](#-qualité-du-code)
@@ -115,10 +127,21 @@ Le projet suit une **architecture monolithique multi-couches** basée sur le pat
 
 L'application est organisée en **services séparés par package** :
 
-- 📦 `service_approvisionnement` - Gestion des fournisseurs et matières premières
-- 🏭 `service_production` - Gestion de la production et des ordres
-- 🚚 `service_livraison` - Gestion des livraisons (**GraphQL**)
-- 👥 `service_user` - Gestion des utilisateurs et rôles
+- 📦 `service_approvisionnement` - Gestion des fournisseurs et matières premières **(API REST)**
+- 🏭 `service_production` - Gestion de la production et des ordres **(API REST)**
+- 🚚 `service_livraison` - Gestion des livraisons **(API GraphQL)** ⚡
+- 👥 `service_user` - Gestion des utilisateurs et rôles **(API REST)**
+
+### 🔄 REST vs GraphQL
+
+| Aspect | Modules REST | Module Livraison (GraphQL) |
+|--------|--------------|----------------------------|
+| **API Style** | REST (HTTP verbs) | GraphQL (Query/Mutation) |
+| **Endpoint** | Multiple endpoints | Un seul endpoint `/graphql` |
+| **Documentation** | Swagger UI | GraphiQL Interface |
+| **Requêtes** | Fixes (retourne tous les champs) | Flexibles (choisissez les champs) |
+| **Performance** | Peut nécessiter plusieurs requêtes | Une requête pour plusieurs ressources |
+| **Exemple** | `GET /api/v1/fournisseurs` | `query { getAllClients { ... } }` |
 
 ---
 
@@ -128,8 +151,9 @@ L'application est organisée en **services séparés par package** :
 - **Java 17**
 - **Spring Boot 3.5.7**
 - **Spring Data JPA** - Persistence des données
-- **Spring Web** - API REST
-- **Spring GraphQL** - API GraphQL (Module Livraison)
+- **Spring Web** - API REST (modules Approvisionnement, Production, Utilisateurs)
+- **Spring GraphQL** - API GraphQL (Module Livraison) ⚡
+- **GraphiQL** - Interface interactive pour tester les requêtes GraphQL
 - **Hibernate** - ORM
 
 ### Base de Données
@@ -209,24 +233,43 @@ L'application est organisée en **services séparés par package** :
 
 ### 🔵 Module 3 : Livraison & Distribution (**GraphQL**)
 
-> ⚡ **Ce module utilise GraphQL** au lieu de REST
+> ⚡ **Ce module utilise GraphQL** au lieu de REST pour offrir une API plus flexible et performante
+
+#### 🌐 Interface GraphiQL
+Accédez à l'interface interactive GraphiQL pour tester les requêtes :
+- **URL** : http://localhost:8080/graphiql?path=/graphql
+- **Endpoint API** : http://localhost:8080/graphql
 
 #### Gestion des Clients
-- ✅ CRUD complet via GraphQL
-- ✅ Gestion des adresses
-- ✅ Recherche et pagination
-- ✅ Suppression conditionnelle
+- ✅ **Créer un client** - Mutation `createClient`
+- ✅ **Lister les clients** - Query `getAllClients` avec pagination
+- ✅ **Rechercher un client** - Query `getClientById`
+- ✅ **Modifier un client** - Mutation `updateClient`
+- ✅ **Supprimer un client** - Mutation `deleteClient`
+- ✅ Gestion des adresses associées
+
+#### Gestion des Adresses
+- ✅ **Créer une adresse** - Mutation `createAddress`
+- ✅ **Association client ↔ adresse** avec clé étrangère
+- ✅ Validation des données (ville, rue, code postal, pays)
 
 #### Gestion des Commandes Clients
-- ✅ Création et suivi des commandes
-- ✅ États : `EN_PREPARATION`, `EN_ROUTE`, `LIVREE`
-- ✅ Association client ↔ produits
+- ✅ **Créer une commande** - Mutation `createClientOrder`
+- ✅ **Lister les commandes** - Query `getAllClientOrders` avec pagination
+- ✅ **Modifier une commande** - Mutation `updateClientOrder`
+- ✅ **États** : `EN_PREPARATION`, `EN_COURS`, `LIVREE`, `ANNULEE`
+- ✅ Association client ↔ produits avec quantités
+- ✅ Calcul automatique du montant total
+- ✅ Suivi temporel (createdAt, updatedAt)
 
 #### Gestion des Livraisons
-- ✅ Planification des livraisons
-- ✅ Affectation véhicule/chauffeur
-- ✅ Calcul des coûts
-- ✅ Suivi en temps réel
+- ✅ **Créer une livraison** - Mutation `createLivraison`
+- ✅ **Planification** avec date de livraison prévue
+- ✅ **Affectation** du véhicule et du chauffeur
+- ✅ **Calcul des coûts** de livraison
+- ✅ **États** : `EN_ATTENTE`, `EN_COURS`, `LIVREE`, `RETOURNEE`
+- ✅ Association commande client ↔ livraison
+- ✅ Suivi en temps réel du statut
 
 ---
 
@@ -323,11 +366,29 @@ spring.jpa.show-sql=true
 
 ### GraphQL
 
+Le module **Livraison** utilise Spring GraphQL pour offrir une API flexible :
+
 ```properties
+# Activer l'interface GraphiQL
 spring.graphql.graphiql.enabled=true
 spring.graphql.graphiql.path=/graphiql
-spring.graphql.http.path=/graphql
+
+# Endpoint GraphQL
+spring.graphql.path=/graphql
+
+# Schémas GraphQL (.graphqls)
+# Localisation : src/main/resources/graphql/
 ```
+
+**Accès :**
+- **Interface interactive** : http://localhost:8080/graphiql?path=/graphql
+- **Endpoint API** : http://localhost:8080/graphql
+
+**Avantages de GraphQL pour le module Livraison :**
+- 🎯 Requêtes précises - récupérez uniquement les données nécessaires
+- 🚀 Performances optimisées - une seule requête pour plusieurs ressources
+- 📊 Introspection - documentation automatique du schéma
+- 🔄 Évolution flexible - ajout de champs sans breaking changes
 
 ### Serveur
 
@@ -405,70 +466,118 @@ Les schémas sont définis dans `src/main/resources/graphql/` :
 - `Address.graphqls` - Adresses
 - `schema.graphqls` - Schéma principal
 
-#### Exemples de Requêtes
+#### Exemples de Requêtes GraphQL
 
-**Créer un client :**
+> 📁 **Documentation complète** : Consultez `api/livraison/description.md` pour plus d'exemples
 
-```graphqli
-mutation {
-  createClient(input: {
-    nom: "Entreprise XYZ"
-    email: "contact@xyz.com"
-    telephone: "+212698765432"
-    address: {
-      rue: "123 Avenue Mohammed V"
-      ville: "Casablanca"
-      codePostal: "20000"
-      pays: "Maroc"
+**Lister tous les clients avec pagination :**
+
+```graphql
+query getAllClients {
+  getAllClients(page: 0, size: 10) {
+    totalElements
+    totalPages
+    number
+    size
+    content {          
+      clientId
+      name
+      email
+      phoneNumber
     }
-  }) {
-    id
-    nom
-    email
-    createdAt
   }
 }
 ```
 
-**Lister tous les clients :**
+**Créer une adresse pour un client :**
 
-```graphqli
-query {
-  allClients(page: 0, size: 10) {
+```graphql
+mutation CreateAdress {
+  createAddress(input: {
+    city: "casa"
+    state: "ca"
+    street: "1111"
+    country: "maroc"
+    zipCode: "12221"
+    clientId: 3
+  }) {
+    country
+    zipCode
+  }
+}
+```
+
+**Lister toutes les commandes clients :**
+
+```graphql
+query GetAllclientorders {
+  getAllClientOrders(page: 0, size: 10) {
     content {
-      id
-      nom
-      email
-      telephone
-      address {
-        ville
-        pays
+      orderId
+      orderNumber
+      status
+      createdAt
+      updatedAt
+      client {
+        name
+        phoneNumber
+        email
       }
     }
-    totalElements
     totalPages
+  }
+}
+```
+
+**Modifier une commande client :**
+
+```graphql
+mutation UpdateClientOrder {
+  updateClientOrder(
+    orderId: 8
+    input: {
+      clientId: 4
+      items: [
+        { productId: 1, quantity: 40 }
+        { productId: 2, quantity: 30 }
+        { productId: 3, quantity: 20 }
+      ]
+    }
+  ) {
+    orderId
+    orderNumber
+    totalAmount
+    items {
+      productName
+      quantity
+    }
   }
 }
 ```
 
 **Créer une livraison :**
 
-```graphqli
-mutation {
+```graphql
+mutation CreateLivraison {
   createLivraison(input: {
-    commandeClientId: 1
-    vehicule: "Camion A-123"
-    chauffeur: "Ahmed Bennani"
-    datePrevue: "2025-12-01"
-    cout: 500.0
+    clientOrderId: 6
+    cost: 100
+    deliveryDate: "2025-11-10T10:10:22"
+    vehicule: "Van"
+    driverName: "John Doe"
+    status: EN_COURS
   }) {
-    id
-    statut
-    datePrevue
-    cout
+    status
+    livraisonId
+    clientOrderId
+    deliveryDate
+    driverName
+    vehicule
   }
 }
 ```
+
+> 📚 **Documentation GraphQL complète** : Pour plus d'exemples et de détails sur l'utilisation de GraphQL, consultez le [Guide GraphQL](docs/GraphQL.md)
 
 ---
 

@@ -16,6 +16,7 @@ Content-Type: application/json
 
 ###
 GET {{baseUrl}}
+Authorization: admin admin123
 
 ###
 GET {{baseUrl}}/2
