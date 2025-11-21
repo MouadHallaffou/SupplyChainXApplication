@@ -6,7 +6,7 @@ POST {{baseUrl}}
 Content-Type: application/json
 
 {
-  "name": "SUPERVISEUR_LIVRAISONS"
+  "name": "ADMIN"
 }
 
 ###

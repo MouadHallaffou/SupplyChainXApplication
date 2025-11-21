@@ -10,6 +10,8 @@ import org.springframework.graphql.execution.DataFetcherExceptionResolverAdapter
 import org.springframework.graphql.execution.ErrorType;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 @Slf4j
 @Component
 public class GraphQLExceptionHandler extends DataFetcherExceptionResolverAdapter {
@@ -36,7 +38,7 @@ public class GraphQLExceptionHandler extends DataFetcherExceptionResolverAdapter
 
             // Ajouter le code d'erreur comme extension
             if (businessEx.getErrorCode() != null) {
-                errorBuilder.extensions(java.util.Map.of("errorCode", businessEx.getErrorCode()));
+                errorBuilder.extensions(Map.of("errorCode", businessEx.getErrorCode()));
             }
 
             return errorBuilder.build();
