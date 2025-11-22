@@ -40,21 +40,21 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // static users for testing ::
-//    @Bean
-//    public InMemoryUserDetailsManager userDetailsService() {
-//        UserDetails admin = User.builder()
-//                .username("admin")
-//                .password(passwordEncoder().encode("admin123"))
-//                .roles("ADMIN")
-//                .build();
-//        UserDetails user = User.builder()
-//                .username("user")
-//                .password(passwordEncoder().encode("user123"))
-//                .roles("USER")
-//                .build();
-//
-//        return new InMemoryUserDetailsManager(admin,user);
-//    }
+    // static users for testing using in-memory authentication:
+    //    @Bean
+    //    public InMemoryUserDetailsManager userDetailsService() {
+    //        UserDetails admin = User.builder()
+    //                .username("admin")
+    //                .password(passwordEncoder().encode("admin123"))
+    //                .roles("ADMIN")
+    //                .build();
+    //        UserDetails user = User.builder()
+    //                .username("user")
+    //                .password(passwordEncoder().encode("user123"))
+    //                .roles("USER")
+    //                .build();
+    //
+    //        return new InMemoryUserDetailsManager(admin,user);
+    //    }
 
 }
