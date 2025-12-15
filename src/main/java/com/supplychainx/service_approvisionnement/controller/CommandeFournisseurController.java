@@ -19,6 +19,7 @@ import java.util.Map;
 public class CommandeFournisseurController {
     private final CommandeFournisseurService commandeFournisseurService;
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('APPROVISIONNEMENT_MANAGER')")
     @PostMapping
     public ResponseEntity<CommandeFournisseurResponseDTO> createCommandeFournisseur(@Valid @RequestBody CommandeFournisseurRequestDTO commandeFournisseurRequestDTO) {
         CommandeFournisseurResponseDTO responseDTO = commandeFournisseurService.create(commandeFournisseurRequestDTO);

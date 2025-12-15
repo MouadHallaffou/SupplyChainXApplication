@@ -58,21 +58,29 @@ Ajouter les annotations `@PreAuthorize` dans **tous les controllers** avec gesti
 // UserController.java
 @PreAuthorize("hasRole('ADMIN')")
 @DeleteMapping("/{id}")
-public ResponseEntity<Void> deleteUser(@PathVariable Long id) { ... }
+public ResponseEntity<Void> deleteUser(@PathVariable Long id) { 
+    // 
+}
 
 @PreAuthorize("hasAnyRole('ADMIN', 'PLANIFICATEUR')")
 @GetMapping
-public ResponseEntity<List<UserDTO>> getAllUsers() { ... }
+public ResponseEntity<List<UserDTO>> getAllUsers() { 
+    // 
+}
 
 // ProductionController.java
 @PreAuthorize("hasAnyRole('ADMIN', 'PLANIFICATEUR')")
 @PostMapping
-public ResponseEntity<ProductionDTO> createProduction(@RequestBody ProductionRequestDTO dto) { ... }
+public ResponseEntity<ProductionDTO> createProduction(@RequestBody ProductionRequestDTO dto) { 
+    // 
+}
 
 // ApprovisionnementController.java
 @PreAuthorize("hasRole('ADMIN')")
 @PutMapping("/{id}/cancel")
-public ResponseEntity<Void> cancelOrder(@PathVariable Long id) { ... }
+public ResponseEntity<Void> cancelOrder(@PathVariable Long id) { 
+    // 
+}
 ```
 
 #### **Rôles à gérer** :
@@ -143,9 +151,3 @@ void testGetUsers_WithBasicAuth() throws Exception {
         .andExpect(status().isOk());
 }
 ````
-
-- add endponit to postman using swagger docs with ai structuration!!
-- doc jwt security and implementation steps 
-- def stetful and stateless session management with spring security
-- what is keycloak and how to integrate it with spring security
-- implement oauth2 with spring security and document steps
