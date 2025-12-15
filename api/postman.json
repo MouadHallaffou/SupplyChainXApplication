@@ -1,0 +1,800 @@
+{
+  "info": {
+    "name": "supply-chain",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "User Service",
+      "item": [
+        {
+          "name": "Users Entity",
+          "item": [
+            {
+              "name": "Get All Users",
+              "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/v1/users",
+                "description": "Retrieve all users"
+              }
+            },
+            {
+              "name": "Create User",
+              "request": {
+                "method": "POST",
+                "url": "{{baseUrl}}/api/v1/users",
+                "description": "Create a new user",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstName\": \"string\",\n  \"lastName\": \"string\",\n  \"email\": \"string\",\n  \"password\": \"string\",\n  \"isActive\": true,\n  \"isDeleted\": false,\n  \"roleId\": 0\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "Get User by ID",
+              "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/v1/users/{{userId}}",
+                "description": "Retrieve user by ID"
+              }
+            },
+            {
+              "name": "Update User",
+              "request": {
+                "method": "PUT",
+                "url": "{{baseUrl}}/api/v1/users/{{userId}}",
+                "description": "Update user information",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstName\": \"string\",\n  \"lastName\": \"string\",\n  \"email\": \"string\",\n  \"password\": \"string\",\n  \"isActive\": true,\n  \"isDeleted\": false,\n  \"roleId\": 0\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "Soft Delete User",
+              "request": {
+                "method": "PUT",
+                "url": "{{baseUrl}}/api/v1/users/softDelete/{{userId}}",
+                "description": "Soft delete a user"
+              }
+            },
+            {
+              "name": "Deactivate User",
+              "request": {
+                "method": "PUT",
+                "url": "{{baseUrl}}/api/v1/users/deactivate/{{userId}}",
+                "description": "Deactivate a user"
+              }
+            },
+            {
+              "name": "Activate User",
+              "request": {
+                "method": "PUT",
+                "url": "{{baseUrl}}/api/v1/users/activate/{{userId}}",
+                "description": "Activate a user"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Role Service",
+      "item": [
+        {
+          "name": "Roles Entity",
+          "item": [
+            {
+              "name": "Get All Roles",
+              "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/v1/roles",
+                "description": "Retrieve all roles"
+              }
+            },
+            {
+              "name": "Create Role",
+              "request": {
+                "method": "POST",
+                "url": "{{baseUrl}}/api/v1/roles",
+                "description": "Create a new role",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"string\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "Get Role by ID",
+              "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/v1/roles/{{roleId}}",
+                "description": "Retrieve role by ID"
+              }
+            },
+            {
+              "name": "Update Role",
+              "request": {
+                "method": "PUT",
+                "url": "{{baseUrl}}/api/v1/roles/{{roleId}}",
+                "description": "Update role information",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"string\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "Delete Role",
+              "request": {
+                "method": "DELETE",
+                "url": "{{baseUrl}}/api/v1/roles/{{roleId}}",
+                "description": "Delete a role"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Product Service",
+      "item": [
+        {
+          "name": "Products Entity",
+          "item": [
+            {
+              "name": "Get All Products",
+              "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/v1/products",
+                "description": "Retrieve all products with pagination",
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/products?page=0&size=10",
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "10"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Create Product",
+              "request": {
+                "method": "POST",
+                "url": "{{baseUrl}}/api/v1/products",
+                "description": "Create a new product",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"string\",\n  \"productionTimeHours\": 0,\n  \"costPerUnit\": 0,\n  \"stock\": 0\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "Search Product by Name",
+              "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/v1/products/search",
+                "description": "Search product by name",
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/products/search?name=productName",
+                  "query": [
+                    {
+                      "key": "name",
+                      "value": "productName"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Get Product by ID",
+              "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/v1/products/{{productId}}",
+                "description": "Retrieve product by ID"
+              }
+            },
+            {
+              "name": "Update Product",
+              "request": {
+                "method": "PUT",
+                "url": "{{baseUrl}}/api/v1/products/{{productId}}",
+                "description": "Update product information",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"string\",\n  \"productionTimeHours\": 0,\n  \"costPerUnit\": 0,\n  \"stock\": 0\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "Delete Product",
+              "request": {
+                "method": "DELETE",
+                "url": "{{baseUrl}}/api/v1/products/{{productId}}",
+                "description": "Delete a product"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Product Order Service",
+      "item": [
+        {
+          "name": "Product Orders Entity",
+          "item": [
+            {
+              "name": "Get All Product Orders",
+              "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/v1/products-orders",
+                "description": "Retrieve all product orders with pagination",
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/products-orders?page=0&size=10",
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "10"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Create Product Order",
+              "request": {
+                "method": "POST",
+                "url": "{{baseUrl}}/api/v1/products-orders",
+                "description": "Create a new product order",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"quantity\": 0,\n  \"status\": \"EN_ATTENTE\",\n  \"productId\": 0,\n  \"startDate\": \"2023-01-01T00:00:00Z\",\n  \"endDate\": \"2023-01-01T00:00:00Z\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "Get Product Order by ID",
+              "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/v1/products-orders/{{productOrderId}}",
+                "description": "Retrieve product order by ID"
+              }
+            },
+            {
+              "name": "Update Product Order",
+              "request": {
+                "method": "PUT",
+                "url": "{{baseUrl}}/api/v1/products-orders/{{productOrderId}}",
+                "description": "Update product order information",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"quantity\": 0,\n  \"status\": \"EN_ATTENTE\",\n  \"productId\": 0,\n  \"startDate\": \"2023-01-01T00:00:00Z\",\n  \"endDate\": \"2023-01-01T00:00:00Z\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "Delete Product Order",
+              "request": {
+                "method": "DELETE",
+                "url": "{{baseUrl}}/api/v1/products-orders/{{productOrderId}}",
+                "description": "Delete a product order"
+              }
+            },
+            {
+              "name": "Start Production",
+              "request": {
+                "method": "PUT",
+                "url": "{{baseUrl}}/api/v1/products-orders/{{productOrderId}}/start",
+                "description": "Start production for a product order"
+              }
+            },
+            {
+              "name": "Complete Production",
+              "request": {
+                "method": "PUT",
+                "url": "{{baseUrl}}/api/v1/products-orders/{{productOrderId}}/complete",
+                "description": "Complete production for a product order"
+              }
+            },
+            {
+              "name": "Cancel Production",
+              "request": {
+                "method": "PUT",
+                "url": "{{baseUrl}}/api/v1/products-orders/{{productOrderId}}/cancel",
+                "description": "Cancel production for a product order"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Matière Première Service",
+      "item": [
+        {
+          "name": "Matières Premières Entity",
+          "item": [
+            {
+              "name": "Get All Matières Premières",
+              "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/v1/matieres-premieres",
+                "description": "Retrieve all matières premières with pagination",
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/matieres-premieres?page=0&size=10",
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "10"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Create Matière Première",
+              "request": {
+                "method": "POST",
+                "url": "{{baseUrl}}/api/v1/matieres-premieres",
+                "description": "Create a new matière première",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"string\",\n  \"stockQuantity\": 0,\n  \"stockMinimum\": 0,\n  \"unit\": \"string\",\n  \"fournisseurIds\": [0]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "Filter by Critical Stock",
+              "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/v1/matieres-premieres/filtrer-par-stock-critique",
+                "description": "Filter matières premières by critical stock",
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/matieres-premieres/filtrer-par-stock-critique?stockCritique=10&page=0&size=10",
+                  "query": [
+                    {
+                      "key": "stockCritique",
+                      "value": "10"
+                    },
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "10"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Get Matière Première by ID",
+              "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/v1/matieres-premieres/{{matierePremiereId}}",
+                "description": "Retrieve matière première by ID"
+              }
+            },
+            {
+              "name": "Update Matière Première",
+              "request": {
+                "method": "PUT",
+                "url": "{{baseUrl}}/api/v1/matieres-premieres/{{matierePremiereId}}",
+                "description": "Update matière première information",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"string\",\n  \"stockQuantity\": 0,\n  \"stockMinimum\": 0,\n  \"unit\": \"string\",\n  \"fournisseurIds\": [0]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "Delete Matière Première",
+              "request": {
+                "method": "DELETE",
+                "url": "{{baseUrl}}/api/v1/matieres-premieres/{{matierePremiereId}}",
+                "description": "Delete a matière première"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Fournisseur Service",
+      "item": [
+        {
+          "name": "Fournisseurs Entity",
+          "item": [
+            {
+              "name": "Get All Fournisseurs",
+              "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/v1/fournisseurs",
+                "description": "Retrieve all fournisseurs"
+              }
+            },
+            {
+              "name": "Create Fournisseur",
+              "request": {
+                "method": "POST",
+                "url": "{{baseUrl}}/api/v1/fournisseurs",
+                "description": "Create a new fournisseur",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"string\",\n  \"contactEmail\": \"string\",\n  \"phoneNumber\": \"string\",\n  \"address\": \"string\",\n  \"rating\": 0,\n  \"leadTimeDays\": 0,\n  \"isActive\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "Search Fournisseur by Name",
+              "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/v1/fournisseurs/search",
+                "description": "Search fournisseur by name",
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/fournisseurs/search?name=fournisseurName",
+                  "query": [
+                    {
+                      "key": "name",
+                      "value": "fournisseurName"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Get Fournisseur by ID",
+              "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/v1/fournisseurs/{{fournisseurId}}",
+                "description": "Retrieve fournisseur by ID"
+              }
+            },
+            {
+              "name": "Update Fournisseur",
+              "request": {
+                "method": "PUT",
+                "url": "{{baseUrl}}/api/v1/fournisseurs/{{fournisseurId}}",
+                "description": "Update fournisseur information",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"string\",\n  \"contactEmail\": \"string\",\n  \"phoneNumber\": \"string\",\n  \"address\": \"string\",\n  \"rating\": 0,\n  \"leadTimeDays\": 0,\n  \"isActive\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "Delete Fournisseur",
+              "request": {
+                "method": "DELETE",
+                "url": "{{baseUrl}}/api/v1/fournisseurs/{{fournisseurId}}",
+                "description": "Delete a fournisseur"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Commande Fournisseur Service",
+      "item": [
+        {
+          "name": "Commandes Fournisseurs Entity",
+          "item": [
+            {
+              "name": "Get All Commandes Fournisseurs",
+              "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/v1/commande-fournisseurs",
+                "description": "Retrieve all commandes fournisseurs with pagination",
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/commande-fournisseurs?page=0&size=10",
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "10"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Create Commande Fournisseur",
+              "request": {
+                "method": "POST",
+                "url": "{{baseUrl}}/api/v1/commande-fournisseurs",
+                "description": "Create a new commande fournisseur",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fournisseurId\": 0,\n  \"orderDate\": \"2023-01-01\",\n  \"status\": \"EN_ATTENTE\",\n  \"commandeFournisseurMatieres\": [\n    {\n      \"matierePremiereId\": 0,\n      \"quantite\": 0\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "Get Commande Fournisseur by ID",
+              "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/v1/commande-fournisseurs/{{commandeFournisseurId}}",
+                "description": "Retrieve commande fournisseur by ID"
+              }
+            },
+            {
+              "name": "Update Commande Fournisseur",
+              "request": {
+                "method": "PUT",
+                "url": "{{baseUrl}}/api/v1/commande-fournisseurs/{{commandeFournisseurId}}",
+                "description": "Update commande fournisseur information",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fournisseurId\": 0,\n  \"orderDate\": \"2023-01-01\",\n  \"status\": \"EN_ATTENTE\",\n  \"commandeFournisseurMatieres\": [\n    {\n      \"matierePremiereId\": 0,\n      \"quantite\": 0\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "Delete Commande Fournisseur",
+              "request": {
+                "method": "DELETE",
+                "url": "{{baseUrl}}/api/v1/commande-fournisseurs/{{commandeFournisseurId}}",
+                "description": "Delete a commande fournisseur"
+              }
+            },
+            {
+              "name": "Start Commande Fournisseur",
+              "request": {
+                "method": "PUT",
+                "url": "{{baseUrl}}/api/v1/commande-fournisseurs/{{commandeFournisseurId}}/start",
+                "description": "Start a commande fournisseur"
+              }
+            },
+            {
+              "name": "Complete Commande Fournisseur",
+              "request": {
+                "method": "PUT",
+                "url": "{{baseUrl}}/api/v1/commande-fournisseurs/{{commandeFournisseurId}}/complete",
+                "description": "Complete a commande fournisseur"
+              }
+            },
+            {
+              "name": "Cancel Commande Fournisseur",
+              "request": {
+                "method": "PUT",
+                "url": "{{baseUrl}}/api/v1/commande-fournisseurs/{{commandeFournisseurId}}/cancel",
+                "description": "Cancel a commande fournisseur"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Bill of Material Service",
+      "item": [
+        {
+          "name": "Bills of Material Entity",
+          "item": [
+            {
+              "name": "Get All Bills of Material",
+              "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/v1/bill-of-material",
+                "description": "Retrieve all bills of material with pagination",
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/bill-of-material?page=0&size=10",
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "10"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Create Bill of Material",
+              "request": {
+                "method": "POST",
+                "url": "{{baseUrl}}/api/v1/bill-of-material",
+                "description": "Create a new bill of material",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"quantity\": 1,\n  \"productId\": 0,\n  \"matierePremiereId\": 0\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "Get Bill of Material by ID",
+              "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/v1/bill-of-material/{{bomId}}",
+                "description": "Retrieve bill of material by ID"
+              }
+            },
+            {
+              "name": "Update Bill of Material",
+              "request": {
+                "method": "PUT",
+                "url": "{{baseUrl}}/api/v1/bill-of-material/{{bomId}}",
+                "description": "Update bill of material information",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"quantity\": 1,\n  \"productId\": 0,\n  \"matierePremiereId\": 0\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "Delete Bill of Material",
+              "request": {
+                "method": "DELETE",
+                "url": "{{baseUrl}}/api/v1/bill-of-material/{{bomId}}",
+                "description": "Delete a bill of material"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "General",
+      "item": [
+        {
+          "name": "Home",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/",
+            "description": "Home endpoint"
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "1",
+      "type": "number"
+    },
+    {
+      "key": "roleId",
+      "value": "1",
+      "type": "number"
+    },
+    {
+      "key": "productId",
+      "value": "1",
+      "type": "number"
+    },
+    {
+      "key": "productOrderId",
+      "value": "1",
+      "type": "number"
+    },
+    {
+      "key": "matierePremiereId",
+      "value": "1",
+      "type": "number"
+    },
+    {
+      "key": "fournisseurId",
+      "value": "1",
+      "type": "number"
+    },
+    {
+      "key": "commandeFournisseurId",
+      "value": "1",
+      "type": "number"
+    },
+    {
+      "key": "bomId",
+      "value": "1",
+      "type": "number"
+    }
+  ]
+}
