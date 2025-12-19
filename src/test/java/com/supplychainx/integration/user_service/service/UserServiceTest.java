@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,9 @@ import java.util.Optional;
 @TestPropertySource(
         locations = "classpath:application-test.properties",
         properties = {
+                "jwt.secret=TEST_SECRET_KEY_256_BITS_MINIMUM_FOR_JJWT",
+                "jwt.expiration-ms=3600000",
+                "jwt.refresh-expiration-ms=86400000",
                 "spring.config.location=classpath:application-test.properties",
                 "spring.config.name=application-test"
         }
@@ -37,6 +41,8 @@ public class UserServiceTest {
     private UserRepository userRepository;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void setUp() {
@@ -56,7 +62,7 @@ public class UserServiceTest {
         userRequestDTO.setFirstName("mouad");
         userRequestDTO.setLastName("halaffou");
         userRequestDTO.setEmail("mouad@gmail.com");
-        userRequestDTO.setPassword("123456");
+        userRequestDTO.setPassword(passwordEncoder.encode("password123"));
         userRequestDTO.setRoleId(role.roleId());
         userRequestDTO.setIsActive(true);
         userRequestDTO.setIsDeleted(false);

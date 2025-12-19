@@ -2,6 +2,7 @@ package com.supplychainx.integration.service_approvisionnement.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.supplychainx.security.auth.dto.LoginRequestDto;
 import com.supplychainx.service_approvisionnement.dto.Request.CommandeFournisseurMatiereRequestDTO;
 import com.supplychainx.service_approvisionnement.dto.Request.CommandeFournisseurRequestDTO;
 import com.supplychainx.service_approvisionnement.dto.Request.FournisseurRequestDTO;
@@ -10,12 +11,17 @@ import com.supplychainx.service_approvisionnement.model.enums.FournisseurOrderSt
 import com.supplychainx.service_approvisionnement.repository.CommandeFournisseurRepository;
 import com.supplychainx.service_approvisionnement.repository.FournisseurRepository;
 import com.supplychainx.service_approvisionnement.repository.MatierePremiereRepository;
+import com.supplychainx.service_user.model.Role;
+import com.supplychainx.service_user.model.User;
+import com.supplychainx.service_user.repository.RoleRepository;
+import com.supplychainx.service_user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -33,6 +39,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(
         locations = "classpath:application-test.properties",
         properties = {
+                "jwt.secret=TEST_SECRET_KEY_256_BITS_MINIMUM_FOR_JJWT",
+                "jwt.expiration-ms=3600000",
+                "jwt.refresh-expiration-ms=86400000",
                 "spring.config.location=classpath:application-test.properties",
                 "spring.config.name=application-test"
         }
@@ -49,12 +58,50 @@ public class OrderControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private RoleRepository roleRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     public void setUp() {
         matierePremiereRepository.deleteAll();
         fournisseurRepository.deleteAll();
         commandeFournisseurRepository.deleteAll();
+        userRepository.deleteAll();
+        roleRepository.deleteAll();
+        Role adminRole = new Role();
+        adminRole.setName("ADMIN");
+        adminRole = roleRepository.save(adminRole);
+
+        User admin = new User();
+        admin.setEmail("admin@gmail.com");
+        admin.setPassword(passwordEncoder.encode("admin123"));
+        admin.setFirstName("Admin");
+        admin.setLastName("Test");
+        admin.setRole(adminRole);
+        admin.setIsActive(true);
+        userRepository.save(admin);
+    }
+
+    private String loginAndGetToken() throws Exception {
+        LoginRequestDto login = LoginRequestDto.builder()
+                .email("admin@gmail.com")
+                .password("admin123")
+                .build();
+
+        MvcResult result = mockMvc.perform(
+                        post("/api/v1/auth/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(login))
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String response = result.getResponse().getContentAsString();
+        return objectMapper.readTree(response).get("accessToken").asText();
     }
 
     private CommandeFournisseurMatiereRequestDTO createCommandeFournisseurMatiere(long matiereId, int quantite) {
@@ -76,6 +123,7 @@ public class OrderControllerTest {
 
         MvcResult result = mockMvc.perform(
                         post("/api/v1/fournisseurs")
+                                .header("Authorization", "Bearer " + loginAndGetToken())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(fournisseurRequestDTO)))
                 .andExpect(status().isOk())
@@ -95,6 +143,7 @@ public class OrderControllerTest {
 
         MvcResult result = mockMvc.perform(
                         post("/api/v1/matieres-premieres")
+                                .header("Authorization", "Bearer " + loginAndGetToken())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isOk())
@@ -116,6 +165,7 @@ public class OrderControllerTest {
 
         MvcResult result = mockMvc.perform(
                         post("/api/v1/commande-fournisseurs")
+                                .header("Authorization", "Bearer " + loginAndGetToken())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(orderRequestDTO)))
                 .andExpect(status().isOk())
@@ -133,7 +183,8 @@ public class OrderControllerTest {
         long matiereId = createMatiere(fournisseurId);
         long orderId = createOrder(fournisseurId, matiereId);
 
-        mockMvc.perform(get("/api/v1/commande-fournisseurs/" + orderId))
+        mockMvc.perform(get("/api/v1/commande-fournisseurs/" + orderId)
+                        .header("Authorization", "Bearer " + loginAndGetToken()))
                 .andExpect(status().isOk());
     }
 
@@ -143,13 +194,15 @@ public class OrderControllerTest {
         long matiereId = createMatiere(fournisseurId);
         long orderId = createOrder(fournisseurId, matiereId);
 
-        mockMvc.perform(get("/api/v1/commande-fournisseurs/" + orderId))
+        mockMvc.perform(get("/api/v1/commande-fournisseurs/" + orderId)
+                        .header("Authorization", "Bearer " + loginAndGetToken()))
                 .andExpect(status().isOk());
     }
 
     @Test
     void testGetAllOrders() throws Exception {
         mockMvc.perform(get("/api/v1/commande-fournisseurs")
+                        .header("Authorization", "Bearer " + loginAndGetToken())
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
@@ -162,7 +215,8 @@ public class OrderControllerTest {
         long matiereId = createMatiere(fournisseurId);
         long orderId = createOrder(fournisseurId, matiereId);
 
-        mockMvc.perform(delete("/api/v1/commande-fournisseurs/" + orderId))
+        mockMvc.perform(delete("/api/v1/commande-fournisseurs/" + orderId)
+                        .header("Authorization", "Bearer " + loginAndGetToken()))
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(status().isOk());
     }
@@ -174,7 +228,8 @@ public class OrderControllerTest {
         long matiereId = createMatiere(fournisseurId);
         long orderId = createOrder(fournisseurId, matiereId);
 
-        mockMvc.perform(put("/api/v1/commande-fournisseurs/" + orderId + "/start"))
+        mockMvc.perform(put("/api/v1/commande-fournisseurs/" + orderId + "/start")
+                        .header("Authorization", "Bearer " + loginAndGetToken()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.status").value(FournisseurOrderStatus.EN_COURS.name()));
     }
@@ -186,7 +241,8 @@ public class OrderControllerTest {
         long matiereId = createMatiere(fournisseurId);
         long orderId = createOrder(fournisseurId, matiereId);
 
-        mockMvc.perform(put("/api/v1/commande-fournisseurs/" + orderId + "/complete"))
+        mockMvc.perform(put("/api/v1/commande-fournisseurs/" + orderId + "/complete")
+                        .header("Authorization", "Bearer " + loginAndGetToken()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.status").value(FournisseurOrderStatus.RECUE.name()));
     }
@@ -198,7 +254,8 @@ public class OrderControllerTest {
         long matiereId = createMatiere(fournisseurId);
         long orderId = createOrder(fournisseurId, matiereId);
 
-        mockMvc.perform(put("/api/v1/commande-fournisseurs/" + orderId + "/cancel"))
+        mockMvc.perform(put("/api/v1/commande-fournisseurs/" + orderId + "/cancel")
+                        .header("Authorization", "Bearer " + loginAndGetToken()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.status").value(FournisseurOrderStatus.ANNULEE.name()));
     }
