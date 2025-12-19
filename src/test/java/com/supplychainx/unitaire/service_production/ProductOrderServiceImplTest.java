@@ -3,8 +3,10 @@ package com.supplychainx.unitaire.service_production;
 import com.supplychainx.service_production.dto.Request.ProductOrderRequestDTO;
 import com.supplychainx.service_production.dto.Response.ProductOrderResponseDTO;
 import com.supplychainx.service_production.mapper.ProductOrderMapper;
+import com.supplychainx.service_production.model.Product;
 import com.supplychainx.service_production.model.ProductOrder;
 import com.supplychainx.service_production.model.enums.ProductionOrderStatus;
+import com.supplychainx.service_production.repository.BillOfMaterialRepository;
 import com.supplychainx.service_production.repository.ProductOrderRepository;
 import com.supplychainx.service_production.service.ProductOrderServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -24,6 +26,7 @@ import static org.mockito.Mockito.*;
 class ProductOrderServiceImplTest {
 
     @Mock private ProductOrderRepository productOrderRepository;
+    @Mock private BillOfMaterialRepository billOfMaterialRepository;
     @Mock private ProductOrderMapper productOrderMapper;
     @InjectMocks private ProductOrderServiceImpl productOrderService;
 
@@ -88,18 +91,44 @@ class ProductOrderServiceImplTest {
         assertFalse(result.getContent().isEmpty());
     }
 
-    @Test void startProduction_ShouldUpdateStatusToEnProduction() {
+    @Test
+    void startProduction_ShouldUpdateStatusToEnProduction() {
+        Product product = new Product();
+        product.setProductId(1L);
+
         ProductOrder order = new ProductOrder();
-        ProductOrderResponseDTO response = new ProductOrderResponseDTO(1L, null, ProductionOrderStatus.EN_PRODUCTION, 1L, null, null);
+        order.setProduct(product);
+        order.setQuantity(1);
 
-        when(productOrderRepository.findById(1L)).thenReturn(Optional.of(order));
-        when(productOrderRepository.save(order)).thenReturn(order);
-        when(productOrderMapper.toResponseDTO(order)).thenReturn(response);
+        ProductOrderResponseDTO response =
+                new ProductOrderResponseDTO(
+                        1L,
+                        10,
+                        ProductionOrderStatus.EN_PRODUCTION,
+                        product.getProductId(),
+                        null,
+                        null
+                );
 
-        ProductOrderResponseDTO result = productOrderService.startProduction(1L);
+        when(productOrderRepository.findById(1L))
+                .thenReturn(Optional.of(order));
+
+        when(billOfMaterialRepository
+                .findBillOfMaterialsByProduct_ProductId(1L))
+                .thenReturn(List.of());
+
+        when(productOrderRepository.save(order))
+                .thenReturn(order);
+
+        when(productOrderMapper.toResponseDTO(order))
+                .thenReturn(response);
+
+        ProductOrderResponseDTO result =
+                productOrderService.startProduction(1L);
 
         assertEquals(ProductionOrderStatus.EN_PRODUCTION, result.status());
     }
+
 
     @Test void completeProduction_ShouldUpdateStatusToTermine() {
         ProductOrder order = new ProductOrder();
