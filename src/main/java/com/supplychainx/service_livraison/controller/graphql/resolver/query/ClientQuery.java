@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 
 @Controller
@@ -15,6 +16,7 @@ public class ClientQuery {
     private final ClientService clientService;
 
     @QueryMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISEUR_LIVRAISONS', 'RESPONSABLE_LOGISTIQUE', 'GESTIONNAIRE_COMMERCIAL')")
     public Page<ClientResponseDTO> getAllClients(
             @Argument Integer page,
             @Argument Integer size,
@@ -24,6 +26,7 @@ public class ClientQuery {
     }
 
     @QueryMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISEUR_LIVRAISONS', 'RESPONSABLE_LOGISTIQUE', 'GESTIONNAIRE_COMMERCIAL')")
     public ClientResponseDTO getClientById(@Argument Long id) {
         return clientService.getClientById(id);
     }
