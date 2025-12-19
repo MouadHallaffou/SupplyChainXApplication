@@ -1,4 +1,4 @@
-package com.supplychainx.security.auth;
+package com.supplychainx.security.auth.model;
 
 import jakarta.persistence.*;
 import lombok.*;

@@ -1,4 +1,4 @@
-package com.supplychainx.security.auth;
+package com.supplychainx.security.auth.dto;
 
 public record JwtResponseDto (
         String accessToken,

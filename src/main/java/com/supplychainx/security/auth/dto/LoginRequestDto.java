@@ -1,4 +1,4 @@
-package com.supplychainx.security.auth;
+package com.supplychainx.security.auth.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

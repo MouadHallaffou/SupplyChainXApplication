@@ -1,5 +1,6 @@
-package com.supplychainx.security.auth;
+package com.supplychainx.security.auth.repository;
 
+import com.supplychainx.security.auth.model.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

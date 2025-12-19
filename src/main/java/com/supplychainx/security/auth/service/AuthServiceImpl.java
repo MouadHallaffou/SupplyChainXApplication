@@ -1,5 +1,9 @@
-package com.supplychainx.security.auth;
+package com.supplychainx.security.auth.service;
 
+import com.supplychainx.security.auth.dto.JwtResponseDto;
+import com.supplychainx.security.auth.dto.LoginRequestDto;
+import com.supplychainx.security.auth.dto.LoginResponse;
+import com.supplychainx.security.auth.model.RefreshToken;
 import com.supplychainx.security.jwt.JwtService;
 import com.supplychainx.service_user.model.User;
 import com.supplychainx.service_user.repository.UserRepository;
@@ -18,7 +22,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
-    private final RefreshTokenService refreshTokenService;
+    private final RefreshTokenServiceImpl refreshTokenService;
 
     @Override
     public LoginResponse login(LoginRequestDto loginRequest) {
