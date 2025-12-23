@@ -2,6 +2,7 @@ package com.supplychainx;
 
 import com.supplychainx.service_user.model.Role;
 import com.supplychainx.service_user.model.User;
+import com.supplychainx.service_user.repository.RoleRepository;
 import com.supplychainx.service_user.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -24,25 +25,33 @@ public class SupplyChainXApplication {
     public String home() {
         return "Welcome to SupplyChainX Application!";
     }
-//
-//    @Bean
-//    CommandLineRunner start(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-//        return args -> {
-//            if (userRepository.findByEmail("admin@gmail.com").isEmpty()) {
-//                User user = new User();
-//                user.setFirstName("Admin");
-//                user.setLastName("Admin");
-//                user.setEmail("admin@gmail.com");
-//                user.setPassword(passwordEncoder.encode("admin123"));
-//                user.setIsActive(true);
-//                user.setIsDeleted(false);
-//                Role role = new Role();
-//                role.setRoleId(1L);
-//                role.setName("ADMIN");
-//                user.setRole(role);
+
+    @Bean
+    CommandLineRunner start(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
+        return args -> {
+            Role adminRole = roleRepository.existsRolesByName("ADMIN") ?
+                    roleRepository.findById(1L).get() : null;
+            if (adminRole == null) {
+                Role role = new Role();
+                role.setName("ADMIN");
+//                roleRepository.save(role);
+            }
+
+            if (userRepository.findByEmail("admin@gmail.com").isEmpty()) {
+                User user = new User();
+                user.setFirstName("Admin");
+                user.setLastName("Admin");
+                user.setEmail("admin@gmail.com");
+                user.setPassword(passwordEncoder.encode("admin123"));
+                user.setIsActive(true);
+                user.setIsDeleted(false);
+                Role role = new Role();
+                role.setRoleId(1L);
+                role.setName("ADMIN");
+                user.setRole(role);
 //                userRepository.save(user);
-//            }
-//        };
-//    }
+            }
+        };
+    }
 
 }

@@ -1,5 +1,6 @@
 package com.supplychainx.security.auth.service;
 
+import com.supplychainx.exception.ResourceNotFoundException;
 import com.supplychainx.security.auth.dto.JwtResponseDto;
 import com.supplychainx.security.auth.dto.LoginRequestDto;
 import com.supplychainx.security.auth.dto.LoginResponse;
@@ -35,7 +36,11 @@ public class AuthServiceImpl implements AuthService {
         );
 
         User user = userRepository.findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+                .orElseThrow(() -> new ResourceNotFoundException("Utilisateur non trouvé"));
+        // check if user is active and not deleted
+        if (!user.getIsActive() || user.getIsDeleted()) {
+            throw new ResourceNotFoundException("Utilisateur inactif ou supprimé");
+        }
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String accessToken = jwtService.generateJwtToken(userDetails);
