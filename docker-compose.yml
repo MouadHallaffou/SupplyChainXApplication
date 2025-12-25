@@ -89,7 +89,6 @@ services:
     user: root
     ports:
       - "8085:8080"
-      # - "50000:50000"
     volumes:
       - jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
@@ -119,12 +118,6 @@ services:
       - "9200:9200"
     networks:
       - sonarnet
-    healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1" ]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
 
   # ELK Stack - Logstash
   logstash:
@@ -140,15 +133,6 @@ services:
       - "5044:5044"
     networks:
       - sonarnet
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
-    healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:9600/_node/stats || exit 1" ]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
 
   # ELK Stack - Kibana
   kibana:
@@ -163,15 +147,6 @@ services:
       - "5601:5601"
     networks:
       - sonarnet
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
-    healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:5601/api/status || exit 1" ]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
 
 volumes:
   mysql_data:

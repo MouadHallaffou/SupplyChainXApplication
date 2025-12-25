@@ -4,6 +4,7 @@ import com.supplychainx.service_user.model.Role;
 import com.supplychainx.service_user.model.User;
 import com.supplychainx.service_user.repository.RoleRepository;
 import com.supplychainx.service_user.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @SpringBootApplication
 @RestController
 public class SupplyChainXApplication {
@@ -23,6 +25,7 @@ public class SupplyChainXApplication {
 
     @GetMapping("/")
     public String home() {
+        log.info("Home endpoint accessed");
         return "Welcome to SupplyChainX Application!";
     }
 
