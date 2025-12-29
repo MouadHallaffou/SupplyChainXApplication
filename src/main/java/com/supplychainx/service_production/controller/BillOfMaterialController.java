@@ -6,6 +6,7 @@ import com.supplychainx.service_production.dto.Response.BillOfMaterialResponseDT
 import com.supplychainx.service_production.service.BillOfMaterialService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,9 +20,8 @@ public class BillOfMaterialController {
 
     @PostMapping
 
-//    @ResponseStatus(HttpStatus.CREATED)
     public BillOfMaterialResponseDTO createBillOfMaterial(@Valid @RequestBody BillOfMaterialRequestDTO billOfMaterialRequestDTO){
-        return billOfMaterialService.createBillOfMaterial(billOfMaterialRequestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(billOfMaterialService.createBillOfMaterial(billOfMaterialRequestDTO)).getBody();
     }
 
     @GetMapping("/{bomId}")

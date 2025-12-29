@@ -8,7 +8,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -19,7 +18,6 @@ import java.util.Map;
 public class CommandeFournisseurController {
     private final CommandeFournisseurService commandeFournisseurService;
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('APPROVISIONNEMENT_MANAGER')")
     @PostMapping
     public ResponseEntity<CommandeFournisseurResponseDTO> createCommandeFournisseur(@Valid @RequestBody CommandeFournisseurRequestDTO commandeFournisseurRequestDTO) {
         CommandeFournisseurResponseDTO responseDTO = commandeFournisseurService.create(commandeFournisseurRequestDTO);
