@@ -8,7 +8,7 @@ import com.supplychainx.service_user.model.Role;
 import com.supplychainx.service_user.model.User;
 import com.supplychainx.service_user.repository.RoleRepository;
 import com.supplychainx.service_user.repository.UserRepository;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import com.supplychainx.util.PasswordUtil;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,13 +23,12 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final RoleRepository roleRepository;
-    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
     public UserResponseDTO create(UserRequestDTO userRequestDTO) {
         User user = userMapper.toEntity(userRequestDTO);
-        user.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
+        user.setPassword(PasswordUtil.hashPassword(user.getPassword()));
         Role role = roleRepository.findById(userRequestDTO.getRoleId())
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found with id: " + userRequestDTO.getRoleId()));
         user.setRole(role);
@@ -50,7 +49,7 @@ public class UserServiceImpl implements UserService {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
         userMapper.updateEntityFromDTO(userRequestDTO, existingUser);
-        existingUser.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
+        existingUser.setPassword(PasswordUtil.hashPassword(existingUser.getPassword()));
         Role role = roleRepository.findById(userRequestDTO.getRoleId())
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found with id: " + userRequestDTO.getRoleId()));
         existingUser.setRole(role);

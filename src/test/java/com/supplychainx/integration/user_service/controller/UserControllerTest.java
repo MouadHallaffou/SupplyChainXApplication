@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -73,7 +72,6 @@ public class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin@gmail.com", roles = {"ADMIN"})
     void testCreateUser_Success() throws Exception {
         RoleResponseDTO role = createRole("ADMIN");
         UserRequestDTO user = createUser("Mouad", "Hallaffou", "mouad@gmail.com", "123456", role.roleId(), true, false);
@@ -88,7 +86,6 @@ public class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin@gmail.com", roles = {"ADMIN"})
     void testFindById_Success() throws Exception {
         RoleResponseDTO role = createRole("ADMIN");
         UserRequestDTO user = createUser("Mouad", "Hallaffou", "mouad@gmail.com", "123456", role.roleId(), true, false);
@@ -102,7 +99,6 @@ public class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin@gmail.com", roles = {"ADMIN"})
     void testFindById_NotFound() throws Exception {
         mockMvc.perform(get("/api/v1/users/999"))
                 .andExpect(status().isNotFound())
@@ -111,7 +107,6 @@ public class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin@gmail.com", roles = {"ADMIN"})
     void testCreateUser_InvalidInput() throws Exception {
         RoleResponseDTO role = createRole("ADMIN");
         UserRequestDTO user = createUser("Mouad", "", "test-invalid", "123456", role.roleId(), true, false);
@@ -124,7 +119,6 @@ public class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin@gmail.com", roles = {"ADMIN"})
     void testCreateUser_RoleNotFound() throws Exception {
         RoleResponseDTO role = createRole("ADMIN");
         UserRequestDTO user = createUser("Mouad", "Hallaffou", "mouad@gmail.com", "123456", 999L, true, false); // Invalid role ID
@@ -138,7 +132,6 @@ public class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin@gmail.com", roles = {"ADMIN"})
     void testActivateUser_Success() throws Exception {
         RoleResponseDTO role = createRole("ADMIN");
         UserRequestDTO user = createUser("Mouad", "Hallaffou", "mouad@gmail.com", "123456", role.roleId(), true, false);
@@ -150,7 +143,6 @@ public class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin@gmail.com", roles = {"ADMIN"})
     void testUpdateUser_Success() throws Exception {
         RoleResponseDTO role = createRole("ADMIN");
         UserRequestDTO user = createUser("Mouad", "Hallaffou", "mouad@gmail.com", "123456", role.roleId(), true, false);
@@ -165,7 +157,6 @@ public class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin@gmail.com", roles = {"ADMIN"})
     void testDeactivateUser_Success() throws Exception {
         RoleResponseDTO role = createRole("ADMIN");
         UserRequestDTO user = createUser("Mouad", "Hallaffou", "mouad@gmail.com", "123456", role.roleId(), true, false);
@@ -177,7 +168,6 @@ public class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin@gmail.com", roles = {"ADMIN"})
     void testSoftDeleteUser_Success() throws Exception {
         RoleResponseDTO role = createRole("ADMIN");
         UserRequestDTO user = createUser("Mouad", "Hallaffou", "mouad@gmail.com", "123456", role.roleId(), true, false);
