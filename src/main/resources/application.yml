@@ -34,3 +34,8 @@ server:
 #    org.hibernate.SQL: DEBUG
 #    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 #    org.springframework.security: DEBUG
+
+jwt:
+  secret: mySuperSecretKeyForJWTsThatIsAtLeast32CharactersLong
+  expiration-ms: 3600000  # 1 heure
+  refresh-expiration-ms: 86400000

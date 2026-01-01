@@ -1,5 +1,4 @@
-package com.supplychainx.security;
-
+package com.supplychainx.security.user;
 
 import com.supplychainx.service_user.model.User;
 import com.supplychainx.service_user.repository.UserRepository;
@@ -25,7 +24,6 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .password(user.getPassword())
                 .roles(roleName)
                 .build();
-
     }
 
 }

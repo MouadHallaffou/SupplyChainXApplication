@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 
 @Controller
@@ -18,6 +19,7 @@ public class ClientOrderQuery {
     private final ClientOrderService clientOrderService;
 
     @QueryMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISEUR_LIVRAISONS', 'RESPONSABLE_LOGISTIQUE', 'GESTIONNAIRE_COMMERCIAL')")
     public Page<ClientOrderResponseDTO> getAllClientOrders(
             @Argument Integer page,
             @Argument Integer size,
@@ -33,11 +35,13 @@ public class ClientOrderQuery {
     }
 
     @QueryMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISEUR_LIVRAISONS', 'RESPONSABLE_LOGISTIQUE', 'GESTIONNAIRE_COMMERCIAL')")
     public ClientOrderResponseDTO getClientOrderById(@Argument Long orderId) {
         return clientOrderService.getClientOrderById(orderId);
     }
 
     @QueryMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISEUR_LIVRAISONS', 'RESPONSABLE_LOGISTIQUE', 'GESTIONNAIRE_COMMERCIAL')")
     public Page<ClientOrderResponseDTO> getClientOrdersByStatus(
             @Argument String status,
             @Argument Integer page,

@@ -3,16 +3,22 @@ package com.supplychainx.integration.service_approvisionnement.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.supplychainx.security.auth.dto.LoginRequestDto;
 import com.supplychainx.service_approvisionnement.dto.Request.FournisseurRequestDTO;
 import com.supplychainx.service_approvisionnement.dto.Request.MatierePremiereRequestDTO;
 import com.supplychainx.service_approvisionnement.repository.FournisseurRepository;
 import com.supplychainx.service_approvisionnement.repository.MatierePremiereRepository;
+import com.supplychainx.service_user.model.Role;
+import com.supplychainx.service_user.model.User;
+import com.supplychainx.service_user.repository.RoleRepository;
+import com.supplychainx.service_user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -28,6 +34,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(
         locations = "classpath:application-test.properties",
         properties = {
+                "jwt.secret=TEST_SECRET_KEY_256_BITS_MINIMUM_FOR_JJWT",
+                "jwt.expiration-ms=3600000",
+                "jwt.refresh-expiration-ms=86400000",
                 "spring.config.location=classpath:application-test.properties",
                 "spring.config.name=application-test"
         }
@@ -45,11 +54,49 @@ public class MatierePremiereControllerTest {
     private MatierePremiereRepository matierePremiereRepository;
     @Autowired
     private FournisseurRepository fournisseurRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private RoleRepository roleRepository;
 
     @BeforeEach
     void setUp() {
         matierePremiereRepository.deleteAll();
         fournisseurRepository.deleteAll();
+        userRepository.deleteAll();
+        roleRepository.deleteAll();
+        Role adminRole = new Role();
+        adminRole.setName("ADMIN");
+        adminRole = roleRepository.save(adminRole);
+
+        User admin = new User();
+        admin.setEmail("admin@gmail.com");
+        admin.setPassword(passwordEncoder.encode("admin123"));
+        admin.setFirstName("Admin");
+        admin.setLastName("Test");
+        admin.setRole(adminRole);
+        admin.setIsActive(true);
+        userRepository.save(admin);
+    }
+
+    private String loginAndGetToken() throws Exception {
+        LoginRequestDto login = LoginRequestDto.builder()
+                .email("admin@gmail.com")
+                .password("admin123")
+                .build();
+
+        MvcResult result = mockMvc.perform(
+                        post("/api/v1/auth/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(login))
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String response = result.getResponse().getContentAsString();
+        return objectMapper.readTree(response).get("accessToken").asText();
     }
 
     private FournisseurRequestDTO buildFournisseur(String name, boolean active) {
@@ -80,6 +127,7 @@ public class MatierePremiereControllerTest {
 
     private long createFournisseurAndGetId(FournisseurRequestDTO dto) throws Exception {
         MvcResult res = mockMvc.perform(post(BASE_URL_FOUR)
+                        .header("Authorization", "Bearer " + loginAndGetToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk())
@@ -90,6 +138,7 @@ public class MatierePremiereControllerTest {
 
     private long createMatiereAndGetId(MatierePremiereRequestDTO dto) throws Exception {
         MvcResult res = mockMvc.perform(post(BASE_URL_MAT)
+                        .header("Authorization", "Bearer " + loginAndGetToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk())
@@ -104,6 +153,7 @@ public class MatierePremiereControllerTest {
         MatierePremiereRequestDTO requestDTO = buildMatiere("Acier", fournisseurId, 100, 20, "kg");
 
         mockMvc.perform(post(BASE_URL_MAT)
+                        .header("Authorization", "Bearer " + loginAndGetToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isOk())
@@ -118,7 +168,9 @@ public class MatierePremiereControllerTest {
         long fournisseurId = createFournisseurAndGetId(buildFournisseur("Fournisseur1", true));
         long matiereId = createMatiereAndGetId(buildMatiere("Acier", fournisseurId, 100, 20, "kg"));
 
-        mockMvc.perform(get(BASE_URL_MAT + "/" + matiereId))
+        mockMvc.perform(get(BASE_URL_MAT + "/" + matiereId)
+                        .header("Authorization", "Bearer " + loginAndGetToken())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Acier"))
                 .andExpect(jsonPath("$.stockQuantity").value(100))
@@ -128,7 +180,9 @@ public class MatierePremiereControllerTest {
 
     @Test
     void testGetAllMatieresPremieres() throws Exception {
-        mockMvc.perform(get(BASE_URL_MAT).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get(BASE_URL_MAT)
+                        .header("Authorization", "Bearer " + loginAndGetToken())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray());
     }
@@ -138,7 +192,9 @@ public class MatierePremiereControllerTest {
         long fournisseurId = createFournisseurAndGetId(buildFournisseur("Fournisseur1", true));
         long matiereId = createMatiereAndGetId(buildMatiere("Acier", fournisseurId, 100, 20, "kg"));
 
-        mockMvc.perform(delete(BASE_URL_MAT + "/" + matiereId))
+        mockMvc.perform(delete(BASE_URL_MAT + "/" + matiereId)
+                        .header("Authorization", "Bearer " + loginAndGetToken())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true));
     }
@@ -151,6 +207,7 @@ public class MatierePremiereControllerTest {
         MatierePremiereRequestDTO updateDTO = buildMatiere("Aluminium", fournisseurId, 150, 30, "kg");
 
         mockMvc.perform(put(BASE_URL_MAT + "/" + matiereId)
+                        .header("Authorization", "Bearer " + loginAndGetToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDTO)))
                 .andExpect(status().isOk())
@@ -163,6 +220,7 @@ public class MatierePremiereControllerTest {
     @Test
     void testFilterByStockMinimum() throws Exception {
         mockMvc.perform(get(BASE_URL_MAT + "/filtrer-par-stock-critique")
+                        .header("Authorization", "Bearer " + loginAndGetToken())
                         .param("stockCritique", "50")
                         .param("page", "0")
                         .param("size", "5"))

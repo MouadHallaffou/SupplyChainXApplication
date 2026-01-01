@@ -2,6 +2,10 @@ package com.supplychainx.integration.service_livraison.controller;
 
 import com.supplychainx.service_livraison.model.Client;
 import com.supplychainx.service_livraison.repository.ClientRepository;
+import com.supplychainx.service_user.model.Role;
+import com.supplychainx.service_user.model.User;
+import com.supplychainx.service_user.repository.RoleRepository;
+import com.supplychainx.service_user.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.graphql.tester.AutoConfigureGraphQlTester;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.graphql.test.tester.ExecutionGraphQlServiceTester;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.Map;
@@ -20,6 +26,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestPropertySource(
         locations = "classpath:application-test.properties",
         properties = {
+                "jwt.secret=TEST_SECRET_KEY_256_BITS_MINIMUM_FOR_JJWT",
+                "jwt.expiration-ms=3600000",
+                "jwt.refresh-expiration-ms=86400000",
                 "spring.config.location=classpath:application-test.properties",
                 "spring.config.name=application-test"
         }
@@ -30,26 +39,43 @@ class ClientGraphQLIntegrationTest {
     private ClientRepository clientRepository;
 
     private Client testClient;
+
     @Autowired
     private ExecutionGraphQlServiceTester graphQlTester;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private RoleRepository roleRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void setUp() {
         clientRepository.deleteAll();
-
         testClient = new Client();
         testClient.setName("Test Client");
         testClient.setEmail("test@example.com");
         testClient.setPhoneNumber("+1234567890");
         testClient = clientRepository.save(testClient);
-    }
+        userRepository.deleteAll();
+        roleRepository.deleteAll();
 
-    @AfterEach
-    void tearDown() {
-        clientRepository.deleteAll();
+        Role adminRole = new Role();
+        adminRole.setName("ADMIN");
+        adminRole = roleRepository.save(adminRole);
+
+        User admin = new User();
+        admin.setEmail("admin@gmail.com");
+        admin.setPassword(passwordEncoder.encode("admin123"));
+        admin.setFirstName("Admin");
+        admin.setLastName("Test");
+        admin.setRole(adminRole);
+        admin.setIsActive(true);
+        userRepository.save(admin);
     }
 
     @Test
+    @WithMockUser(username = "admin@gmail.com", roles = {"ADMIN"})
     void testGetAllClients() {
         String query = """
                     query {
@@ -74,6 +100,7 @@ class ClientGraphQLIntegrationTest {
     }
 
     @Test
+    @WithMockUser(username = "admin@gmail.com", roles = {"ADMIN"})
     void testGetClientById() {
         String query = """
                     query($id: ID!) {
@@ -94,6 +121,7 @@ class ClientGraphQLIntegrationTest {
     }
 
     @Test
+    @WithMockUser(username = "admin@gmail.com", roles = {"ADMIN"})
     void testCreateClient() {
         String mutation = """
                     mutation($input: ClientInput!) {
@@ -123,6 +151,7 @@ class ClientGraphQLIntegrationTest {
     }
 
     @Test
+    @WithMockUser(username = "admin@gmail.com", roles = {"ADMIN"})
     void testUpdateClient() {
         String mutation = """
                     mutation($id: ID!, $input: ClientInput!) {
@@ -153,6 +182,7 @@ class ClientGraphQLIntegrationTest {
     }
 
     @Test
+    @WithMockUser(username = "admin@gmail.com", roles = {"ADMIN"})
     void testDeleteClient() {
         String mutation = """
                     mutation($id: ID!) {
@@ -169,6 +199,7 @@ class ClientGraphQLIntegrationTest {
     }
 
     @Test
+    @WithMockUser(username = "admin@gmail.com", roles = {"ADMIN"})
     void testGetClientById_NotFound() {
         String query = """
                     query($id: ID!) {
