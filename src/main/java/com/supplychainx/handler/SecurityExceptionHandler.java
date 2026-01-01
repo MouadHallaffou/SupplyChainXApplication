@@ -1,6 +1,5 @@
 package com.supplychainx.handler;
 
-
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -107,4 +106,5 @@ public class SecurityExceptionHandler {
 
         return ResponseEntity.status(401).body(error);
     }
+
 }

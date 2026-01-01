@@ -13,6 +13,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
+import com.supplychainx.handler.ErrorResponse;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
