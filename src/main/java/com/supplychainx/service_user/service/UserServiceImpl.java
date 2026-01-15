@@ -68,6 +68,7 @@ public class UserServiceImpl implements UserService {
             return;
         }
         user.setIsDeleted(true);
+        user.setIsActive(false);
         user.setDeletedAt(LocalDateTime.now());
         userRepository.save(user);
     }
@@ -104,6 +105,7 @@ public class UserServiceImpl implements UserService {
         }
         return users.stream()
                 .map(userMapper::toResponseDTO)
+                .filter(userResponseDTO -> !userResponseDTO.isDeleted())
                 .toList();
     }
 

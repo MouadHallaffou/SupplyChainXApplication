@@ -20,8 +20,8 @@ public class UserRequestDTO {
     @Email(message = "Email should be valid")
     private String email;
 
-    @Size(min = 6, max = 100, message = "PasswordUtil must be between 6 and 100 characters")
-    @NotBlank(message = "PasswordUtil is required")
+    @Size(min = 6, max = 100, message = "Password must be between 6 and 100 characters")
+    @NotBlank(message = "Password is required")
     private String password;
 
     @NotNull(message = "Active status is required")

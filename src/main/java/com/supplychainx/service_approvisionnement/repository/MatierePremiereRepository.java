@@ -1,6 +1,7 @@
 package com.supplychainx.service_approvisionnement.repository;
 
 import com.supplychainx.service_approvisionnement.model.MatierePremiere;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +15,6 @@ public interface MatierePremiereRepository extends JpaRepository<MatierePremiere
     @Query("SELECT m FROM MatierePremiere m WHERE m.stockMinimum <= :stockCritique")
     Page<MatierePremiere> findByStockMinimumLessOrEqual(int stockCritique,
                                                         Pageable pageable);
+
+    boolean existsByNameIgnoreCase (String name);
 }

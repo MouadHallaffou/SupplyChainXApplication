@@ -11,8 +11,7 @@ Content-Type: application/json
   "stockQuantity": 500,
   "unit": "kg",
   "fournisseurIds": [
-    2,
-    4
+    2
   ]
 }
 
@@ -33,7 +32,7 @@ Content-Type: application/json
   "stockQuantity": 450,
   "unit": "kg",
     "fournisseurIds": [
-        8
+        2
     ]
 }
 
