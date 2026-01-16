@@ -117,7 +117,7 @@ public class CommandeFournisseurServiceImpl implements CommandeFournisseurServic
             commandeFournisseur.getCommandeFournisseurMatieres().forEach(commandeMatiere -> {
                 MatierePremiere matiere = commandeMatiere.getMatierePremiere();
                 if (matiere != null) {
-                    int nouvelleQuantite = matiere.getStockQuantity() + commandeMatiere.getQuantite();
+                    int nouvelleQuantite = matiere.getStockQuantity() - commandeMatiere.getQuantite();
                     if (nouvelleQuantite < 0) {
                         throw new IllegalStateException(
                                 "Stock insuffisant pour la matière " + matiere.getMatierePremiereId() +
