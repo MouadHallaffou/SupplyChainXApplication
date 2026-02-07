@@ -1,10 +1,12 @@
 package com.supplychainx.service_approvisionnement.repository;
 
 import com.supplychainx.service_approvisionnement.model.MatierePremiere;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,4 +16,11 @@ public interface MatierePremiereRepository extends JpaRepository<MatierePremiere
     @Query("SELECT m FROM MatierePremiere m WHERE m.stockMinimum <= :stockCritique")
     Page<MatierePremiere> findByStockMinimumLessOrEqual(int stockCritique,
                                                         Pageable pageable);
+
+    boolean existsByNameIgnoreCase(@NotBlank(message = "Le nom de la matière première est obligatoire") String name);
+
+    @Query("SELECT DISTINCT mp FROM MatierePremiere mp " +
+            "JOIN mp.fournisseurs f " +
+            "WHERE f.fournisseurId = :fournisseurId")
+    List<MatierePremiere> findByFournisseurId(@Param("fournisseurId") Long fournisseurId);
 }

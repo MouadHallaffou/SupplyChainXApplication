@@ -23,6 +23,7 @@ public class SupplyChainXApplication {
         SpringApplication.run(SupplyChainXApplication.class, args);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/")
     public String home() {
         log.info("Home endpoint accessed");

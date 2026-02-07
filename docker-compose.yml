@@ -27,7 +27,7 @@ services:
   app:
     image: supplychainx-app
     container_name: supplychainx-app
-    restart: on-failure
+    restart: unless-stopped
     ports:
       - "8080:8080"
     environment:
@@ -148,6 +148,42 @@ services:
     networks:
       - sonarnet
 
+  # Keycloak
+  keycloak-supply:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak-supplychain
+    command: start-dev
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak
+
+    depends_on:
+      - postgres
+    ports:
+      - "8082:8080"
+    networks:
+      - sonarnet
+
+  # PostgresSQL pour Keycloak
+  postgres:
+    image: postgres:16
+    container_name: keycloak-db-supplychain
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - sonarnet
+
 volumes:
   mysql_data:
     driver: local
@@ -164,6 +200,8 @@ volumes:
   jenkins_home:
     driver: local
   es_data:
+    driver: local
+  postgres_data:
     driver: local
 
 networks:

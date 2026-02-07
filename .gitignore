@@ -31,5 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
-/logs/
-/logs/*.log
+/src/main/resources/application.yml
+/docs/
+docs/*

@@ -154,7 +154,7 @@ mutation CreateLivraison {
 
 Pour plus d'exemples et de détails :
 - 📖 [Guide GraphQL Complet](../../docs/GraphQL.md)
-- 💡 [Exemples Pratiques](../../docs/GraphQL-Examples.md)
+- 💡 [Exemples Pratiques](../../docs/GraphQL-ex.md)
 - 🤔 [Pourquoi GraphQL ?](../../docs/GraphQL-Why.md)
 - 🏠 [README Principal](../../README.md)
 

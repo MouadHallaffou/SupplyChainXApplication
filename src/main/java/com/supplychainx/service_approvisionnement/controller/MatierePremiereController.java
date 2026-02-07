@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -60,6 +61,14 @@ public class MatierePremiereController {
                                                                     @RequestParam(defaultValue = "0") int page,
                                                                     @RequestParam(defaultValue = "10") int size) {
         return matierePremiereService.filtrerParStockCritique(stockCritique, page, size);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISEUR_LOGISTIQUE', 'GRESPONSABLE_ACHATS', 'GESTIONNAIRE_APPROVISIONNEMENT')")
+    @GetMapping("/by-fournisseur/{fournisseurId}")
+    public ResponseEntity<List<MatierePremiereResponseDTO>> getMatieresByFournisseurId(
+            @PathVariable("fournisseurId") Long fournisseurId) {
+        List<MatierePremiereResponseDTO> matieres = matierePremiereService.getMatieresByFournisseurId(fournisseurId);
+        return ResponseEntity.ok(matieres);
     }
 
 }

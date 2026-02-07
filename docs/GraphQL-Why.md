@@ -367,7 +367,7 @@ Notre choix d'architecture hybride combine le meilleur des deux mondes :
 ## 🎓 Pour Aller Plus Loin
 
 - 📖 [Guide GraphQL Complet](GraphQL.md)
-- 💡 [Exemples Pratiques](GraphQL-Examples.md)
+- 💡 [Exemples Pratiques](GraphQL-ex.md)
 - 📝 [API Documentation](../api/livraison/description.md)
 - 🏠 [README Principal](../README.md)
 

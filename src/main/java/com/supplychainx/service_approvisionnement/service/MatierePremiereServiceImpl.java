@@ -16,6 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class MatierePremiereServiceImpl implements MatierePremiereService {
@@ -28,28 +31,25 @@ public class MatierePremiereServiceImpl implements MatierePremiereService {
     @Transactional
     public MatierePremiereResponseDTO create(MatierePremiereRequestDTO dto) {
         if (dto == null) {
-            throw new ResourceNotFoundException("MatierePremiereRequestDTO object is null");
+            throw new ResourceNotFoundException("MatierePremiereRequestDTO cannot be null");
         }
+
+        if (matierePremiereRepository.existsByNameIgnoreCase(dto.getName())) {
+            throw new ResourceNotFoundException("MatierePremiere with name '" + dto.getName() + "' already exists");
+        }
+
+        List<Fournisseur> fournisseurs = fournisseurRepository.findAllById(dto.getFournisseurIds());
+
+        if (fournisseurs.size() != dto.getFournisseurIds().size()) {
+            throw new ResourceNotFoundException("One or more fournisseurs not found");
+        }
+
         MatierePremiere matiere = matierePremiereMapper.toEntity(dto);
-        for (Long fournisseurId : dto.getFournisseurIds()) {
-            Fournisseur fournisseur = fournisseurRepository.findById(fournisseurId)
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            "Fournisseur not found with id: " + fournisseurId));
-            // Vérifier doublon pour ce fournisseur
-            boolean exists = fournisseur.getMatieresPremieres() != null &&
-                    fournisseur.getMatieresPremieres().stream()
-                            .anyMatch(m -> m.getName().equalsIgnoreCase(dto.getName()));
-            if (exists) {
-                throw new ResourceNotFoundException(
-                        "MatierePremiere with name '" + dto.getName() + "' already exists for fournisseur " + fournisseur.getName());
-            }
-            matiere.getFournisseurs().add(fournisseur);
-            if (fournisseur.getMatieresPremieres() != null) {
-                fournisseur.getMatieresPremieres().add(matiere);
-            }
-            fournisseurRepository.save(fournisseur);
-        }
+
+        matiere.setFournisseurs(fournisseurs);
+
         MatierePremiere saved = matierePremiereRepository.save(matiere);
+
         return matierePremiereMapper.toResponseDTO(saved);
     }
 
@@ -115,6 +115,14 @@ public class MatierePremiereServiceImpl implements MatierePremiereService {
         Pageable pageable = PageRequest.of(page, size);
         Page<MatierePremiere> matierePremierePage = matierePremiereRepository.findByStockMinimumLessOrEqual(stockCritique, pageable);
         return matierePremierePage.map(matierePremiereMapper::toResponseDTO);
+    }
+
+    @Override
+    public List<MatierePremiereResponseDTO> getMatieresByFournisseurId(Long fournisseurId) {
+        List<MatierePremiere> matieres = matierePremiereRepository.findByFournisseurId(fournisseurId);
+        return matieres.stream()
+                .map(matierePremiereMapper::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
 }
