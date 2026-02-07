@@ -11,6 +11,7 @@
     <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
         <!-- Logstash host and port -->
         <!-- localhost:5044 is for local development-->
+        <!-- In production, this should point to the Logstash service address -->
         <destination>localhost:5044</destination>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>

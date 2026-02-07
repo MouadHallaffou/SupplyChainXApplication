@@ -1,4 +1,4 @@
-    # 🔐 Documentation Spring Security - SupplyChainX
+# 🔐 Documentation Spring Security - SupplyChainX
 
 ## 📖 Introduction
 
@@ -1152,7 +1152,358 @@ public class User {
 
 ---
 
-## 🔗 Voir Aussi
+## 🔐 Intégration Keycloak dans SupplyChainX
+
+### Vue d'Ensemble
+
+**Keycloak** est utilisé dans SupplyChainX comme serveur d'authentification et d'autorisation centralisé. Il offre une solution complète d'Identity and Access Management (IAM) basée sur les standards **OAuth 2.0** et **OpenID Connect**.
+
+### Pourquoi Keycloak ?
+
+| Avantage | Description |
+|----------|-------------|
+| 🔒 **Sécurité Renforcée** | Authentification multi-facteurs, protection contre les attaques |
+| 🎯 **Centralisé** | Un seul point de gestion pour tous les utilisateurs |
+| 🚀 **Standards** | OAuth 2.0, OpenID Connect, SAML 2.0 |
+| 🔄 **SSO** | Single Sign-On entre applications |
+| 📊 **Administration** | Console d'administration complète |
+| 🔌 **Intégration** | Compatible avec LDAP, Active Directory, etc. |
+
+### Architecture avec Keycloak
+
+```
+┌─────────────────┐
+│   Frontend      │
+│   Application   │
+└────────┬────────┘
+         │ 1. Demande authentification
+         ▼
+┌─────────────────┐
+│    Keycloak     │◄───── 2. Login utilisateur
+│   Auth Server   │
+└────────┬────────┘
+         │ 3. Retourne JWT Token
+         ▼
+┌─────────────────┐
+│  SupplyChainX   │
+│   Backend API   │◄───── 4. Requête API avec token
+│  (Spring Boot)  │
+└─────────────────┘
+         │ 5. Valide le token
+         ▼
+    ✅ Accès autorisé
+```
+
+### Configuration dans SupplyChainX
+
+#### 1. Dépendances Maven
+
+```xml
+<!-- Spring Security OAuth2 Resource Server -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+</dependency>
+
+<!-- Keycloak Spring Boot Starter -->
+<dependency>
+    <groupId>org.keycloak</groupId>
+    <artifactId>keycloak-spring-boot-starter</artifactId>
+    <version>23.0.0</version>
+</dependency>
+```
+
+#### 2. Configuration application.yml
+
+```yaml
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # URL de l'émetteur du token JWT
+          issuer-uri: http://localhost:8180/realms/supplychainx
+          # URL des certificats publics pour valider les signatures
+          jwk-set-uri: http://localhost:8180/realms/supplychainx/protocol/openid-connect/certs
+
+keycloak:
+  # Nom du realm Keycloak
+  realm: supplychainx
+  # URL du serveur Keycloak
+  auth-server-url: http://localhost:8180
+  # ID du client Keycloak
+  resource: supplychainx-client
+  # Credentials du client
+  credentials:
+    secret: ${KEYCLOAK_CLIENT_SECRET}
+  # Mode bearer-only (pour les API)
+  bearer-only: true
+  # SSL requis (external = uniquement pour les connexions externes)
+  ssl-required: external
+```
+
+#### 3. Configuration Spring Security
+
+```java
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .authorizeHttpRequests(authorize -> authorize
+                // Endpoints publics
+                .requestMatchers("/actuator/health", "/actuator/info").permitAll()
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                
+                // Module Approvisionnement
+                .requestMatchers("/api/v1/fournisseurs/**")
+                    .hasAnyRole("GESTIONNAIRE_APPROVISIONNEMENT", "RESPONSABLE_ACHATS", "ADMIN")
+                .requestMatchers("/api/v1/matieres-premieres/**")
+                    .hasAnyRole("GESTIONNAIRE_APPROVISIONNEMENT", "ADMIN")
+                
+                // Module Production
+                .requestMatchers("/api/v1/produits/**")
+                    .hasAnyRole("CHEF_PRODUCTION", "PLANIFICATEUR", "ADMIN")
+                .requestMatchers("/api/v1/ordres-production/**")
+                    .hasAnyRole("CHEF_PRODUCTION", "PLANIFICATEUR", "ADMIN")
+                
+                // Module Livraison (GraphQL)
+                .requestMatchers("/graphql/**", "/graphiql/**")
+                    .hasAnyRole("GESTIONNAIRE_COMMERCIAL", "RESPONSABLE_LOGISTIQUE", "ADMIN")
+                
+                // Module Utilisateurs (Admin uniquement)
+                .requestMatchers("/api/v1/users/**", "/api/v1/roles/**")
+                    .hasRole("ADMIN")
+                
+                // Tous les autres endpoints nécessitent une authentification
+                .anyRequest().authenticated()
+            )
+            // Configuration OAuth2 Resource Server avec JWT
+            .oauth2ResourceServer(oauth2 -> oauth2
+                .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+            )
+            // Désactiver CSRF pour les API REST
+            .csrf(csrf -> csrf.disable())
+            // Configuration CORS
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()));
+
+        return http.build();
+    }
+
+    /**
+     * Convertit les rôles du JWT en authorities Spring Security
+     */
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        
+        // Préfixe "ROLE_" pour les rôles Spring Security
+        grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+        
+        // Nom du claim dans le JWT contenant les rôles
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
+
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+        
+        return jwtAuthenticationConverter;
+    }
+
+    /**
+     * Configuration CORS pour permettre les requêtes cross-origin
+     */
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:4200"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
+        
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+}
+```
+
+### Rôles et Permissions
+
+#### Rôles Définis dans Keycloak
+
+| Rôle | Module | Permissions |
+|------|--------|-------------|
+| `ADMIN` | Tous | Accès complet à toutes les fonctionnalités |
+| `GESTIONNAIRE_APPROVISIONNEMENT` | Approvisionnement | CRUD fournisseurs, matières premières, commandes |
+| `RESPONSABLE_ACHATS` | Approvisionnement | Validation et gestion des commandes d'achat |
+| `SUPERVISEUR_LOGISTIQUE` | Approvisionnement | Supervision de la logistique |
+| `CHEF_PRODUCTION` | Production | CRUD produits, ordres de production, BOM |
+| `PLANIFICATEUR` | Production | Planification et ordonnancement de la production |
+| `SUPERVISEUR_PRODUCTION` | Production | Supervision de la production |
+| `GESTIONNAIRE_COMMERCIAL` | Livraison | Gestion des clients et commandes (GraphQL) |
+| `RESPONSABLE_LOGISTIQUE` | Livraison | Coordination et suivi des livraisons |
+| `SUPERVISEUR_LIVRAISONS` | Livraison | Supervision des livraisons |
+
+### Flux d'Authentification
+
+#### 1. Obtenir un Token
+
+```bash
+curl -X POST http://localhost:8180/realms/supplychainx/protocol/openid-connect/token \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "client_id=supplychainx-client" \
+  -d "client_secret=YOUR_CLIENT_SECRET" \
+  -d "username=admin" \
+  -d "password=admin123" \
+  -d "grant_type=password"
+```
+
+**Réponse** :
+```json
+{
+  "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "expires_in": 300,
+  "refresh_expires_in": 1800,
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "Bearer"
+}
+```
+
+#### 2. Structure du JWT Token
+
+```json
+{
+  "header": {
+    "alg": "RS256",
+    "typ": "JWT",
+    "kid": "..."
+  },
+  "payload": {
+    "exp": 1735841234,
+    "iat": 1735840934,
+    "jti": "...",
+    "iss": "http://localhost:8180/realms/supplychainx",
+    "sub": "user-uuid",
+    "typ": "Bearer",
+    "azp": "supplychainx-client",
+    "preferred_username": "admin",
+    "email": "admin@supplychainx.com",
+    "roles": [
+      "ADMIN",
+      "GESTIONNAIRE_APPROVISIONNEMENT"
+    ],
+    "scope": "profile email"
+  }
+}
+```
+
+#### 3. Utiliser le Token dans les Requêtes
+
+```bash
+# API REST
+curl -X GET http://localhost:8080/api/v1/fournisseurs \
+  -H "Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+# API GraphQL
+curl -X POST http://localhost:8080/graphql \
+  -H "Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{"query": "{ getAllClients { content { name } } }"}'
+```
+
+### Validation du Token
+
+Spring Security valide automatiquement le token JWT :
+
+1. **Vérification de la signature** : Utilise les certificats publics de Keycloak (JWK Set)
+2. **Vérification de l'expiration** : Vérifie que le token n'est pas expiré (`exp` claim)
+3. **Vérification de l'émetteur** : Vérifie que l'`iss` correspond à `issuer-uri`
+4. **Extraction des rôles** : Extrait les rôles du claim `roles`
+5. **Création du SecurityContext** : Crée un `Authentication` object avec les rôles
+
+### Gestion des Erreurs
+
+#### 401 Unauthorized - Token Manquant ou Invalide
+
+```json
+{
+  "timestamp": "2026-01-02T10:30:00.000+00:00",
+  "status": 401,
+  "error": "Unauthorized",
+  "message": "Full authentication is required to access this resource",
+  "path": "/api/v1/fournisseurs"
+}
+```
+
+**Solutions** :
+- Vérifier que le header `Authorization: Bearer <token>` est présent
+- Obtenir un nouveau token si expiré
+
+#### 403 Forbidden - Permissions Insuffisantes
+
+```json
+{
+  "timestamp": "2026-01-02T10:30:00.000+00:00",
+  "status": 403,
+  "error": "Forbidden",
+  "message": "Access Denied",
+  "path": "/api/v1/users"
+}
+```
+
+**Solutions** :
+- Vérifier que l'utilisateur a le rôle requis
+- Contacter l'administrateur pour obtenir les permissions
+
+### Tests de Sécurité
+
+#### Test Unitaire avec Mock JWT
+
+```java
+@SpringBootTest
+@AutoConfigureMockMvc
+class SecurityTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void testAdminAccess() throws Exception {
+        mockMvc.perform(get("/api/v1/users"))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "GESTIONNAIRE_APPROVISIONNEMENT")
+    void testGestionnaireAccess() throws Exception {
+        mockMvc.perform(get("/api/v1/fournisseurs"))
+            .andExpect(status().isOk());
+        
+        mockMvc.perform(get("/api/v1/users"))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void testUnauthorizedAccess() throws Exception {
+        mockMvc.perform(get("/api/v1/fournisseurs"))
+            .andExpect(status().isUnauthorized());
+    }
+}
+```
+
+### Ressources Keycloak
+
+- 📖 **Guide de Configuration** : [docs/Keycloak-Setup.md](Keycloak-Setup.md)
+- 🚀 **Exemples d'API** : [api/Keycloak-API-Examples.md](../api/Keycloak-API-Examples.md)
+- 🌐 **Documentation Officielle** : https://www.keycloak.org/documentation
+- 🔗 **Console Admin** : http://localhost:8180
+
+---
+
+## 📚 Ressources Supplémentaires
 
 - [README Principal](../README.md)
 - [Guide GraphQL](GraphQL.md)

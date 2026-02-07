@@ -3,6 +3,7 @@
 ![Java](https://img.shields.io/badge/Java-17-orange?style=flat&logo=java)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.7-brightgreen?style=flat&logo=spring)
 ![Spring Security](https://img.shields.io/badge/Spring%20Security-6.1.7-brightgreen?style=flat&logo=spring)
+![Keycloak](https://img.shields.io/badge/Keycloak-23.0-blue?style=flat&logo=keycloak)
 ![Spring Data JPA](https://img.shields.io/badge/Spring%20Data%20JPA-6.1.7-brightgreen?style=flat&logo=spring)
 ![Spring Web](https://img.shields.io/badge/Spring%20Web-6.1.7-brightgreen?style=flat&logo=spring)
 ![SpringDoc OpenAPI](https://img.shields.io/badge/SpringDoc%20OpenAPI-2.8.13-brightgreen?style=flat&logo=swagger)
@@ -40,6 +41,7 @@ docker-compose up -d
 # API REST: http://localhost:8080
 # Swagger: http://localhost:8080/swagger-ui.html
 # GraphiQL: http://localhost:8080/graphiql?path=/graphql
+# Keycloak: http://localhost:8180 (admin/admin)
 ```
 
 **Ou en mode développement :**
@@ -69,6 +71,7 @@ mvn clean test jacoco:report
 - [Prérequis](#-prérequis)
 - [Installation](#-installation)
 - [Configuration](#-configuration)
+  - [Sécurité & Authentification avec Keycloak](#-sécurité--authentification-avec-keycloak)
 - [Utilisation](#-utilisation)
   - [API REST](#-api-rest-modules-approvisionnement-production-utilisateurs)
   - [API GraphQL](#-api-graphql-module-livraison)
@@ -150,6 +153,8 @@ L'application est organisée en **services séparés par package** :
 ### Backend
 - **Java 17**
 - **Spring Boot 3.5.7**
+- **Spring Security 6.1.7** - Sécurisation des endpoints
+- **Keycloak** - Gestion de l'authentification et des autorisations (OAuth 2.0 / OpenID Connect)
 - **Spring Data JPA** - Persistence des données
 - **Spring Web** - API REST (modules Approvisionnement, Production, Utilisateurs)
 - **Spring GraphQL** - API GraphQL (Module Livraison) ⚡
@@ -306,6 +311,8 @@ Avant de commencer, assurez-vous d'avoir installé :
 - 📦 **Maven 3.6+**
 - 🔧 **Git**
 - 💻 **IntelliJ IDEA** (recommandé) ou un IDE Java
+- 🐳 **Docker & Docker Compose** (pour Keycloak et containerisation)
+- 🔐 **Keycloak 23.0+** (pour l'authentification)
 
 ---
 
@@ -396,6 +403,138 @@ spring.graphql.path=/graphql
 server.port=8080
 spring.application.name=SupplyChainX
 ```
+
+### 🔐 Sécurité & Authentification avec Keycloak
+
+L'application utilise **Keycloak** comme serveur d'authentification et d'autorisation, offrant une gestion centralisée et sécurisée des utilisateurs avec **OAuth 2.0** et **OpenID Connect**.
+
+#### Configuration Keycloak
+
+```properties
+# Keycloak Configuration
+spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:8180/realms/supplychainx
+spring.security.oauth2.resourceserver.jwt.jwk-set-uri=http://localhost:8180/realms/supplychainx/protocol/openid-connect/certs
+
+# Keycloak Client Configuration
+keycloak.realm=supplychainx
+keycloak.auth-server-url=http://localhost:8180
+keycloak.resource=supplychainx-client
+keycloak.public-client=false
+keycloak.bearer-only=true
+```
+
+#### Architecture de Sécurité
+
+```
+┌──────────────┐      ┌──────────────┐      ┌──────────────┐
+│   Client     │─────▶│   Keycloak   │─────▶│ SupplyChainX │
+│ Application  │ Auth  │   Server     │ JWT  │   Backend    │
+└──────────────┘      └──────────────┘      └──────────────┘
+```
+
+#### Fonctionnalités de Sécurité
+
+✅ **Authentification OAuth 2.0 / OpenID Connect**
+- Connexion centralisée via Keycloak
+- Support du Single Sign-On (SSO)
+- Tokens JWT signés et validés
+
+✅ **Gestion des Rôles et Permissions**
+- Rôles définis dans Keycloak
+- Mapping automatique des rôles vers Spring Security
+- Contrôle d'accès basé sur les rôles (RBAC)
+
+✅ **Endpoints Sécurisés**
+- Tous les endpoints API nécessitent un token JWT valide
+- Validation automatique des tokens
+- Vérification des permissions par rôle
+
+#### Démarrage de Keycloak avec Docker
+
+```bash
+# Démarrer Keycloak en standalone
+docker run -d \
+  --name keycloak \
+  -p 8180:8080 \
+  -e KEYCLOAK_ADMIN=admin \
+  -e KEYCLOAK_ADMIN_PASSWORD=admin \
+  quay.io/keycloak/keycloak:23.0 \
+  start-dev
+
+# Accéder à la console d'administration
+# URL: http://localhost:8180
+# User: admin
+# Password: admin
+```
+
+#### Configuration du Realm SupplyChainX
+
+1. **Créer le Realm** : `supplychainx`
+2. **Créer le Client** : `supplychainx-client`
+   - Client Protocol: `openid-connect`
+   - Access Type: `confidential`
+   - Valid Redirect URIs: `http://localhost:8080/*`
+3. **Configurer les Rôles** :
+   - `ADMIN`
+   - `GESTIONNAIRE_APPROVISIONNEMENT`
+   - `RESPONSABLE_ACHATS`
+   - `CHEF_PRODUCTION`
+   - `PLANIFICATEUR`
+   - `GESTIONNAIRE_COMMERCIAL`
+   - `RESPONSABLE_LOGISTIQUE`
+
+#### Obtenir un Token JWT
+
+```bash
+# Authentification et récupération du token
+curl -X POST http://localhost:8180/realms/supplychainx/protocol/openid-connect/token \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "client_id=supplychainx-client" \
+  -d "client_secret=YOUR_CLIENT_SECRET" \
+  -d "username=admin" \
+  -d "password=admin123" \
+  -d "grant_type=password"
+```
+
+#### Utilisation du Token dans les Requêtes API
+
+```bash
+# REST API
+curl -X GET http://localhost:8080/api/v1/fournisseurs \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+
+# GraphQL API
+curl -X POST http://localhost:8080/graphql \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"query": "{ getAllClients { content { name } } }"}'
+```
+
+#### Sécurité des Endpoints
+
+| Module | Endpoint | Rôles Requis |
+|--------|----------|--------------|
+| **Approvisionnement** | `/api/v1/fournisseurs/**` | `GESTIONNAIRE_APPROVISIONNEMENT`, `RESPONSABLE_ACHATS` |
+| **Production** | `/api/v1/produits/**` | `CHEF_PRODUCTION`, `PLANIFICATEUR` |
+| **Livraison (GraphQL)** | `/graphql` | `GESTIONNAIRE_COMMERCIAL`, `RESPONSABLE_LOGISTIQUE` |
+| **Utilisateurs** | `/api/v1/users/**` | `ADMIN` |
+
+#### Avantages de Keycloak
+
+🔒 **Sécurité Renforcée**
+- Gestion centralisée des identités
+- Authentification multi-facteurs (MFA) disponible
+- Protection contre les attaques CSRF et XSS
+
+🚀 **Évolutivité**
+- Support de milliers d'utilisateurs
+- Réplication et haute disponibilité
+- Intégration avec LDAP/Active Directory
+
+⚡ **Facilité d'Intégration**
+- Configuration Spring Security simplifiée
+- Support natif OAuth 2.0 / OpenID Connect
+- Pas de gestion manuelle des mots de passe
 
 ---
 
@@ -1324,16 +1463,39 @@ services:
     networks:
       - supplychainx-network
 
+  # Keycloak - Serveur d'authentification
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0
+    container_name: supplychainx-keycloak
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: mysql
+      KC_DB_URL: jdbc:mysql://mysql:3306/keycloak_db
+      KC_DB_USERNAME: root
+      KC_DB_PASSWORD: root
+      KC_HOSTNAME: localhost
+      KC_HTTP_PORT: 8180
+    ports:
+      - "8180:8080"
+    depends_on:
+      - mysql
+    command: start-dev
+    networks:
+      - supplychainx-network
+
   # Application Spring Boot
   app:
     build: .
     container_name: supplychainx-app
     depends_on:
       - mysql
+      - keycloak
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/supply_chain_db
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/supplychainx
     ports:
       - "8080:8080"
     networks:
@@ -1371,11 +1533,14 @@ docker images | grep supplychainx
 #### Lancer avec Docker Compose
 
 ```bash
-# Démarrer tous les services
+# Démarrer tous les services (MySQL + Keycloak + App + SonarQube)
 docker-compose up -d
 
-# Voir les logs
+# Voir les logs de l'application
 docker-compose logs -f app
+
+# Voir les logs de Keycloak
+docker-compose logs -f keycloak
 
 # Arrêter les services
 docker-compose down
@@ -1383,6 +1548,19 @@ docker-compose down
 # Arrêter et supprimer les volumes
 docker-compose down -v
 ```
+
+#### Services Disponibles
+
+Après le démarrage avec Docker Compose :
+
+| Service | URL | Credentials |
+|---------|-----|-------------|
+| **Application** | http://localhost:8080 | - |
+| **Swagger UI** | http://localhost:8080/swagger-ui.html | - |
+| **GraphiQL** | http://localhost:8080/graphiql | - |
+| **Keycloak Admin** | http://localhost:8180 | admin / admin |
+| **SonarQube** | http://localhost:9000 | admin / admin |
+| **MySQL** | localhost:3306 | root / root |
 
 #### Lancer uniquement l'application
 
@@ -1701,6 +1879,7 @@ Merci aux équipes et communautés suivantes pour leurs excellents outils :
 - [SonarQube Documentation](https://docs.sonarqube.org/)
 - [Docker Documentation](https://docs.docker.com/)
 - [JaCoCo Documentation](https://www.jacoco.org/jacoco/trunk/doc/)
+- 
 
 ---
 

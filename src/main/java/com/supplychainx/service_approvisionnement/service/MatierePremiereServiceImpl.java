@@ -116,4 +116,12 @@ public class MatierePremiereServiceImpl implements MatierePremiereService {
         return matierePremierePage.map(matierePremiereMapper::toResponseDTO);
     }
 
+    @Override
+    public List<MatierePremiereResponseDTO> getMatieresByFournisseurId(Long fournisseurId) {
+        List<MatierePremiere> matieres = matierePremiereRepository.findByFournisseurId(fournisseurId);
+        return matieres.stream()
+                .map(matierePremiereMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
 }
