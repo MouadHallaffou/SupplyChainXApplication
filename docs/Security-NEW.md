@@ -1,4 +1,4 @@
-    # 🔐 Documentation Spring Security - SupplyChainX
+# 🔐 Documentation Spring Security - SupplyChainX
 
 ## 📖 Introduction
 
