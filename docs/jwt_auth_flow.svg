@@ -1,0 +1,241 @@
+<svg viewBox="0 0 1200 1400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Styles -->
+  <defs>
+    <style>
+      .title { font-family: Arial, sans-serif; font-size: 24px; font-weight: bold; fill: #2c3e50; }
+      .subtitle { font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; fill: #34495e; }
+      .text { font-family: Arial, sans-serif; font-size: 14px; fill: #2c3e50; }
+      .small-text { font-family: Arial, sans-serif; font-size: 12px; fill: #555; }
+      .box { fill: #ecf0f1; stroke: #34495e; stroke-width: 2; }
+      .client-box { fill: #3498db; stroke: #2980b9; stroke-width: 2; }
+      .server-box { fill: #e74c3c; stroke: #c0392b; stroke-width: 2; }
+      .db-box { fill: #f39c12; stroke: #d68910; stroke-width: 2; }
+      .success-box { fill: #2ecc71; stroke: #27ae60; stroke-width: 2; }
+      .arrow { fill: none; stroke: #34495e; stroke-width: 2; marker-end: url(#arrowhead); }
+      .arrow-text { font-family: Arial, sans-serif; font-size: 12px; fill: #e74c3c; font-weight: bold; }
+      .white-text { fill: white; font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#34495e" />
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="600" y="40" text-anchor="middle" class="title">Processus d'Authentification JWT - Spring Boot</text>
+
+  <!-- Phase 1: LOGIN -->
+  <text x="50" y="80" class="subtitle">📝 PHASE 1: LOGIN (Première connexion)</text>
+  
+  <!-- Client -->
+  <rect x="50" y="100" width="200" height="60" class="client-box" rx="5"/>
+  <text x="150" y="135" text-anchor="middle" class="white-text">Client (Browser/App)</text>
+  
+  <!-- Arrow 1 -->
+  <path d="M 250 130 L 450 130" class="arrow"/>
+  <text x="300" y="120" class="arrow-text">1. POST /api/v1/auth/login</text>
+  <text x="300" y="145" class="small-text">{email, password}</text>
+  
+  <!-- AuthController -->
+  <rect x="450" y="100" width="200" height="60" class="server-box" rx="5"/>
+  <text x="550" y="135" text-anchor="middle" class="white-text">AuthController</text>
+  
+  <!-- Arrow 2 -->
+  <path d="M 550 160 L 550 220" class="arrow"/>
+  <text x="560" y="195" class="arrow-text">2. login()</text>
+  
+  <!-- AuthService -->
+  <rect x="450" y="220" width="200" height="60" class="server-box" rx="5"/>
+  <text x="550" y="255" text-anchor="middle" class="white-text">AuthService</text>
+  
+  <!-- Arrow 3 -->
+  <path d="M 650 250 L 800 250" class="arrow"/>
+  <text x="670" y="240" class="arrow-text">3. authenticate()</text>
+  
+  <!-- AuthenticationManager -->
+  <rect x="800" y="220" width="250" height="60" class="box" rx="5"/>
+  <text x="925" y="255" text-anchor="middle" class="text">AuthenticationManager</text>
+  
+  <!-- Arrow 4 -->
+  <path d="M 925 280 L 925 340" class="arrow"/>
+  <text x="935" y="315" class="arrow-text">4. loadUserByUsername()</text>
+  
+  <!-- CustomUserDetailsService -->
+  <rect x="800" y="340" width="250" height="60" class="box" rx="5"/>
+  <text x="925" y="375" text-anchor="middle" class="text">CustomUserDetailsService</text>
+  
+  <!-- Arrow 5 -->
+  <path d="M 925 400 L 925 460" class="arrow"/>
+  <text x="935" y="435" class="arrow-text">5. findByEmail()</text>
+  
+  <!-- Database -->
+  <rect x="800" y="460" width="250" height="60" class="db-box" rx="5"/>
+  <text x="925" y="495" text-anchor="middle" class="white-text">Database (User + Role)</text>
+  
+  <!-- Arrow 6 (return) -->
+  <path d="M 900 460 L 900 400" class="arrow"/>
+  <text x="770" y="430" class="arrow-text">6. User object</text>
+  
+  <!-- Arrow 7 (return) -->
+  <path d="M 900 340 L 900 280" class="arrow"/>
+  <text x="770" y="310" class="arrow-text">7. UserDetails</text>
+  
+  <!-- Arrow 8 -->
+  <path d="M 800 250 L 650 250" class="arrow"/>
+  <text x="670" y="270" class="arrow-text">8. Authentication OK</text>
+  
+  <!-- Arrow 9 -->
+  <path d="M 550 280 L 550 340" class="arrow"/>
+  <text x="480" y="315" class="arrow-text">9. generateJwtToken()</text>
+  
+  <!-- JwtService -->
+  <rect x="450" y="340" width="200" height="60" class="success-box" rx="5"/>
+  <text x="550" y="375" text-anchor="middle" class="white-text">JwtService</text>
+  
+  <!-- Arrow 10 -->
+  <path d="M 450 370 L 250 370" class="arrow"/>
+  <text x="300" y="360" class="arrow-text">10. Response</text>
+  <text x="280" y="385" class="small-text">{accessToken, refreshToken}</text>
+  
+  <!-- Client Response -->
+  <rect x="50" y="340" width="200" height="60" class="success-box" rx="5"/>
+  <text x="150" y="365" text-anchor="middle" class="white-text">Client stocke</text>
+  <text x="150" y="385" text-anchor="middle" class="white-text">les tokens</text>
+
+  <!-- Phase 2: REQUÊTES PROTÉGÉES -->
+  <text x="50" y="460" class="subtitle">🔒 PHASE 2: REQUÊTES PROTÉGÉES (Avec JWT)</text>
+  
+  <!-- Client -->
+  <rect x="50" y="480" width="200" height="60" class="client-box" rx="5"/>
+  <text x="150" y="515" text-anchor="middle" class="white-text">Client</text>
+  
+  <!-- Arrow 11 -->
+  <path d="M 250 510 L 450 510" class="arrow"/>
+  <text x="290" y="500" class="arrow-text">11. GET /api/resource</text>
+  <text x="270" y="525" class="small-text">Authorization: Bearer {token}</text>
+  
+  <!-- Spring Security Filter -->
+  <rect x="450" y="480" width="250" height="60" class="box" rx="5"/>
+  <text x="575" y="515" text-anchor="middle" class="text">JwtAuthenticationFilter</text>
+  
+  <!-- Arrow 12 -->
+  <path d="M 575 540 L 575 600" class="arrow"/>
+  <text x="585" y="575" class="arrow-text">12. validateToken()</text>
+  
+  <!-- JwtService Validation -->
+  <rect x="450" y="600" width="250" height="60" class="success-box" rx="5"/>
+  <text x="575" y="635" text-anchor="middle" class="white-text">JwtService - Validation</text>
+  
+  <!-- Arrow 13 -->
+  <path d="M 700 630 L 850 630" class="arrow"/>
+  <text x="720" y="620" class="arrow-text">13. extractUsername()</text>
+  
+  <!-- UserDetailsService -->
+  <rect x="850" y="600" width="250" height="60" class="box" rx="5"/>
+  <text x="975" y="635" text-anchor="middle" class="text">CustomUserDetailsService</text>
+  
+  <!-- Arrow 14 -->
+  <path d="M 850 630 L 700 630" class="arrow"/>
+  <text x="720" y="650" class="arrow-text">14. UserDetails</text>
+  
+  <!-- Arrow 15 -->
+  <path d="M 575 660 L 575 720" class="arrow"/>
+  <text x="430" y="695" class="arrow-text">15. SecurityContext.setAuthentication()</text>
+  
+  <!-- SecurityContext -->
+  <rect x="450" y="720" width="250" height="60" class="success-box" rx="5"/>
+  <text x="575" y="755" text-anchor="middle" class="white-text">SecurityContext</text>
+  
+  <!-- Arrow 16 -->
+  <path d="M 450 750 L 250 750" class="arrow"/>
+  <text x="300" y="740" class="arrow-text">16. Accès autorisé</text>
+  <text x="300" y="765" class="small-text">200 OK + data</text>
+  
+  <!-- Client Success -->
+  <rect x="50" y="720" width="200" height="60" class="success-box" rx="5"/>
+  <text x="150" y="755" text-anchor="middle" class="white-text">Client reçoit data</text>
+
+  <!-- Phase 3: REFRESH TOKEN -->
+  <text x="50" y="840" class="subtitle">🔄 PHASE 3: REFRESH TOKEN (Renouvellement)</text>
+  
+  <!-- Client -->
+  <rect x="50" y="860" width="200" height="60" class="client-box" rx="5"/>
+  <text x="150" y="895" text-anchor="middle" class="white-text">Client (Token expiré)</text>
+  
+  <!-- Arrow 17 -->
+  <path d="M 250 890 L 450 890" class="arrow"/>
+  <text x="270" y="880" class="arrow-text">17. POST /api/v1/auth/refresh</text>
+  <text x="290" y="905" class="small-text">{refreshToken}</text>
+  
+  <!-- AuthController -->
+  <rect x="450" y="860" width="200" height="60" class="server-box" rx="5"/>
+  <text x="550" y="895" text-anchor="middle" class="white-text">AuthController</text>
+  
+  <!-- Arrow 18 -->
+  <path d="M 650 890 L 800 890" class="arrow"/>
+  <text x="670" y="880" class="arrow-text">18. refreshToken()</text>
+  
+  <!-- RefreshTokenService -->
+  <rect x="800" y="860" width="250" height="60" class="box" rx="5"/>
+  <text x="925" y="895" text-anchor="middle" class="text">RefreshTokenService</text>
+  
+  <!-- Arrow 19 -->
+  <path d="M 925 920 L 925 980" class="arrow"/>
+  <text x="935" y="955" class="arrow-text">19. verifyExpiration()</text>
+  
+  <!-- Database -->
+  <rect x="800" y="980" width="250" height="60" class="db-box" rx="5"/>
+  <text x="925" y="1015" text-anchor="middle" class="white-text">RefreshToken Table</text>
+  
+  <!-- Arrow 20 -->
+  <path d="M 900 980 L 900 920" class="arrow"/>
+  <text x="770" y="950" class="arrow-text">20. Token valide</text>
+  
+  <!-- Arrow 21 -->
+  <path d="M 800 890 L 650 890" class="arrow"/>
+  <text x="670" y="910" class="arrow-text">21. generateJwtToken()</text>
+  
+  <!-- Arrow 22 -->
+  <path d="M 450 890 L 250 890" class="arrow"/>
+  <text x="300" y="880" class="arrow-text">22. Nouveau accessToken</text>
+  
+  <!-- Client Success -->
+  <rect x="50" y="980" width="200" height="60" class="success-box" rx="5"/>
+  <text x="150" y="1015" text-anchor="middle" class="white-text">Client met à jour token</text>
+
+  <!-- Key Components Box -->
+  <rect x="50" y="1100" width="1100" height="280" fill="#f8f9fa" stroke="#34495e" stroke-width="2" rx="5"/>
+  <text x="600" y="1130" text-anchor="middle" class="subtitle">🔑 Composants Clés</text>
+  
+  <!-- Component 1 -->
+  <rect x="80" y="1150" width="330" height="100" class="box" rx="5"/>
+  <text x="245" y="1175" text-anchor="middle" class="subtitle">JwtService</text>
+  <text x="95" y="1200" class="small-text">• generateJwtToken() - Crée le JWT</text>
+  <text x="95" y="1220" class="small-text">• validateToken() - Vérifie signature</text>
+  <text x="95" y="1240" class="small-text">• extractUsername() - Extrait email</text>
+  
+  <!-- Component 2 -->
+  <rect x="435" y="1150" width="330" height="100" class="box" rx="5"/>
+  <text x="600" y="1175" text-anchor="middle" class="subtitle">JwtAuthenticationFilter</text>
+  <text x="450" y="1200" class="small-text">• Intercepte chaque requête</text>
+  <text x="450" y="1220" class="small-text">• Valide le token JWT</text>
+  <text x="450" y="1240" class="small-text">• Configure SecurityContext</text>
+  
+  <!-- Component 3 -->
+  <rect x="790" y="1150" width="330" height="100" class="box" rx="5"/>
+  <text x="955" y="1175" text-anchor="middle" class="subtitle">RefreshTokenService</text>
+  <text x="805" y="1200" class="small-text">• createRefreshToken() - Crée token</text>
+  <text x="805" y="1220" class="small-text">• verifyExpiration() - Vérifie date</text>
+  <text x="805" y="1240" class="small-text">• Stocke en base de données</text>
+  
+  <!-- Component 4 -->
+  <rect x="80" y="1270" width="510" height="90" class="box" rx="5"/>
+  <text x="335" y="1295" text-anchor="middle" class="subtitle">SecurityConfig</text>
+  <text x="95" y="1320" class="small-text">• Configure les endpoints publics (/api/v1/auth/**)</text>
+  <text x="95" y="1340" class="small-text">• Ajoute JwtAuthenticationFilter avant UsernamePasswordAuthenticationFilter</text>
+  
+  <!-- Component 5 -->
+  <rect x="610" y="1270" width="510" height="90" class="box" rx="5"/>
+  <text x="865" y="1295" text-anchor="middle" class="subtitle">CustomUserDetailsService</text>
+  <text x="625" y="1320" class="small-text">• Charge User depuis la base de données</text>
+  <text x="625" y="1340" class="small-text">• Convertit en UserDetails pour Spring Security</text>
+</svg>

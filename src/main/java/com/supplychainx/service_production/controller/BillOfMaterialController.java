@@ -18,6 +18,7 @@ import java.util.Map;
 public class BillOfMaterialController {
     private final BillOfMaterialService billOfMaterialService;
 
+    //    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'CHEF_PRODUCTION', 'PLANIFICATEUR', 'SUPERVISEUR_PRODUCTION')")
     public BillOfMaterialResponseDTO createBillOfMaterial(@Valid @RequestBody BillOfMaterialRequestDTO billOfMaterialRequestDTO) {

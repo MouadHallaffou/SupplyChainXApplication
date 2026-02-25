@@ -4,12 +4,19 @@ import com.supplychainx.service_livraison.model.Address;
 import com.supplychainx.service_livraison.model.Client;
 import com.supplychainx.service_livraison.repository.AddressRepository;
 import com.supplychainx.service_livraison.repository.ClientRepository;
+import com.supplychainx.service_user.model.Role;
+import com.supplychainx.service_user.model.User;
+import com.supplychainx.service_user.repository.RoleRepository;
+import com.supplychainx.service_user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.graphql.tester.AutoConfigureGraphQlTester;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.graphql.test.tester.GraphQlTester;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.Map;
@@ -17,10 +24,14 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@AutoConfigureMockMvc
 @AutoConfigureGraphQlTester
 @TestPropertySource(
         locations = "classpath:application-test.properties",
         properties = {
+                "jwt.secret=TEST_SECRET_KEY_256_BITS_MINIMUM_FOR_JJWT",
+                "jwt.expiration-ms=3600000",
+                "jwt.refresh-expiration-ms=86400000",
                 "spring.config.location=classpath:application-test.properties",
                 "spring.config.name=application-test"
         }
@@ -29,12 +40,16 @@ class AddressGraphQLIntegrationTest {
 
     @Autowired
     private GraphQlTester graphQlTester;
-
     @Autowired
     private AddressRepository addressRepository;
-
     @Autowired
     private ClientRepository clientRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private RoleRepository roleRepository;
 
     private Address testAddress;
     private Client testClient;
@@ -43,6 +58,22 @@ class AddressGraphQLIntegrationTest {
     void setUp() {
         addressRepository.deleteAll();
         clientRepository.deleteAll();
+        userRepository.deleteAll();
+        roleRepository.deleteAll();
+
+        Role adminRole = new Role();
+        adminRole.setName("ADMIN");
+        adminRole = roleRepository.save(adminRole);
+
+        User admin = new User();
+        admin.setEmail("admin@gmail.com");
+        admin.setPassword(passwordEncoder.encode("admin123"));
+        admin.setFirstName("Admin");
+        admin.setLastName("Test");
+        admin.setRole(adminRole);
+        admin.setIsActive(true);
+        userRepository.save(admin);
+
         testClient = clientRepository.save(createTestClient());
         testAddress = createTestAddress();
     }
@@ -67,18 +98,19 @@ class AddressGraphQLIntegrationTest {
     }
 
     @Test
+    @WithMockUser(username = "admin@gmail.com", roles = {"ADMIN"})
     void testCreateAddress() {
         String mutation = """
-                    mutation($input: AddressInput!) {
-                        createAddress(input: $input) {
-                            street
-                            city
-                            state
-                            country
-                            zipCode
-                        }
-                    }
-                """;
+            mutation($input: AddressInput!) {
+                createAddress(input: $input) {
+                    street
+                    city
+                    state
+                    country
+                    zipCode
+                }
+            }
+        """;
 
         Map<String, Object> input = Map.of(
                 "street", "456 New Street",
@@ -99,17 +131,18 @@ class AddressGraphQLIntegrationTest {
     }
 
     @Test
+    @WithMockUser(username = "admin@gmail.com", roles = {"ADMIN"})
     void testUpdateAddress() {
         String mutation = """
-                    mutation($id: ID!, $input: AddressInput!) {
-                        updateAddress(id: $id, input: $input) {
-                            addressId
-                            street
-                            city
-                            zipCode
-                        }
-                    }
-                """;
+            mutation($id: ID!, $input: AddressInput!) {
+                updateAddress(id: $id, input: $input) {
+                    addressId
+                    street
+                    city
+                    zipCode
+                }
+            }
+        """;
 
         Map<String, Object> input = Map.of(
                 "street", "789 Updated Street",
@@ -130,24 +163,25 @@ class AddressGraphQLIntegrationTest {
     }
 
     @Test
+    @WithMockUser(username = "admin@gmail.com", roles = {"ADMIN"})
     void testGetAllAddresses() {
         String query = """
-                    query {
-                        getAllAddresses(page: 0, size: 10, sortBy: "addressId", sortDir: "asc") {
-                            content {
-                                addressId
-                                street
-                                city
-                                state
-                                country
-                                zipCode
-                                clientId
-                            }
-                            totalElements
-                            totalPages
-                        }
+            query {
+                getAllAddresses(page: 0, size: 10, sortBy: "addressId", sortDir: "asc") {
+                    content {
+                        addressId
+                        street
+                        city
+                        state
+                        country
+                        zipCode
+                        clientId
                     }
-                """;
+                    totalElements
+                    totalPages
+                }
+            }
+        """;
 
         graphQlTester.document(query)
                 .execute()
@@ -157,18 +191,19 @@ class AddressGraphQLIntegrationTest {
     }
 
     @Test
+    @WithMockUser(username = "admin@gmail.com", roles = {"ADMIN"})
     void testGetAddressById() {
         String query = """
-                    query($id: ID!) {
-                        getAddressById(id: $id) {
-                            addressId
-                            street
-                            city
-                            zipCode
-                            clientId
-                        }
-                    }
-                """;
+            query($id: ID!) {
+                getAddressById(id: $id) {
+                    addressId
+                    street
+                    city
+                    zipCode
+                    clientId
+                }
+            }
+        """;
 
         graphQlTester.document(query)
                 .variable("id", testAddress.getAddressId())
@@ -179,12 +214,13 @@ class AddressGraphQLIntegrationTest {
     }
 
     @Test
+    @WithMockUser(username = "admin@gmail.com", roles = {"ADMIN"})
     void testDeleteAddress() {
         String mutation = """
-                    mutation($id: ID!) {
-                        deleteAddress(id: $id)
-                    }
-                """;
+            mutation($id: ID!) {
+                deleteAddress(id: $id)
+            }
+        """;
 
         graphQlTester.document(mutation)
                 .variable("id", testAddress.getAddressId())
@@ -194,14 +230,15 @@ class AddressGraphQLIntegrationTest {
     }
 
     @Test
+    @WithMockUser(username = "admin@gmail.com", roles = {"ADMIN"})
     void testGetAddressById_NotFound() {
         String query = """
-                    query($id: ID!) {
-                        getAddressById(id: $id) {
-                            addressId
-                        }
-                    }
-                """;
+            query($id: ID!) {
+                getAddressById(id: $id) {
+                    addressId
+                }
+            }
+        """;
 
         graphQlTester.document(query)
                 .variable("id", 999L)
