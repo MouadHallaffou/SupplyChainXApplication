@@ -16,13 +16,12 @@ Content-Type: application/json
 
 ###
 GET {{baseUrl}}
-Authorization: admin admin123
 
 ###
 GET {{baseUrl}}/2
 
 ###
-PUT {{baseUrl}}/2
+PUT {{baseUrl}}/6
 Content-Type: application/json
 
 {
