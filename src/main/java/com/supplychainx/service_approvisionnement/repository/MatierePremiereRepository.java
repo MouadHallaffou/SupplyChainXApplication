@@ -17,10 +17,5 @@ public interface MatierePremiereRepository extends JpaRepository<MatierePremiere
     Page<MatierePremiere> findByStockMinimumLessOrEqual(int stockCritique,
                                                         Pageable pageable);
 
-    boolean existsByNameIgnoreCase(@NotBlank(message = "Le nom de la matière première est obligatoire") String name);
-
-    @Query("SELECT DISTINCT mp FROM MatierePremiere mp " +
-            "JOIN mp.fournisseurs f " +
-            "WHERE f.fournisseurId = :fournisseurId")
-    List<MatierePremiere> findByFournisseurId(@Param("fournisseurId") Long fournisseurId);
+    boolean existsByNameIgnoreCase (String name);
 }

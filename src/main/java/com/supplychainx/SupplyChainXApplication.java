@@ -34,7 +34,7 @@ public class SupplyChainXApplication {
     CommandLineRunner start(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
         return args -> {
             Role adminRole = roleRepository.existsRolesByName("ADMIN") ?
-                    roleRepository.findById(1L).get() : null;
+                    roleRepository.findById(1L).orElse(null) : null;
             if (adminRole == null) {
                 Role role = new Role();
                 role.setName("ADMIN");
