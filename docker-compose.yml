@@ -21,7 +21,7 @@ services:
       retries: 10
       start_period: 40s
     networks:
-      - sonarnet
+      - supply-net
 
   # Application Spring Boot
   app:
@@ -42,7 +42,7 @@ services:
       logstash:
         condition: service_started
     networks:
-      - sonarnet
+      - supply-net
 
   # PostgreSQL pour SonarQube
   sonarqube-db:
@@ -58,7 +58,7 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - sonarnet
+      - supply-net
 
   # Serveur SonarQube
   sonarqube:
@@ -77,7 +77,7 @@ services:
     ports:
       - "9001:9000"
     networks:
-      - sonarnet
+      - supply-net
 
   # Jenkins avec Maven
   jenkins:
@@ -93,7 +93,7 @@ services:
       - jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - sonarnet
+      - supply-net
 
   # ELK Stack - Elasticsearch
   elasticsearch:
@@ -117,7 +117,7 @@ services:
     ports:
       - "9200:9200"
     networks:
-      - sonarnet
+      - supply-net
 
   # ELK Stack - Logstash
   logstash:
@@ -132,7 +132,7 @@ services:
     ports:
       - "5044:5044"
     networks:
-      - sonarnet
+      - supply-net
 
   # ELK Stack - Kibana
   kibana:
@@ -146,7 +146,7 @@ services:
     ports:
       - "5601:5601"
     networks:
-      - sonarnet
+      - supply-net
 
   # Keycloak
   keycloak-supply:
@@ -167,7 +167,7 @@ services:
     ports:
       - "8082:8080"
     networks:
-      - sonarnet
+      - supply-net
 
   # PostgresSQL pour Keycloak
   postgres:
@@ -182,7 +182,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - sonarnet
+      - supply-net
 
 volumes:
   mysql_data:
@@ -205,5 +205,5 @@ volumes:
     driver: local
 
 networks:
-  sonarnet:
+  supply-net:
     driver: bridge
